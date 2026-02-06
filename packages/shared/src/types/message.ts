@@ -1,11 +1,15 @@
-export type MessageRole = 'user' | 'assistant' | 'system';
+export type MessageRole = 'user' | 'assistant';
+
+export type MessageStatus = 'pending' | 'streaming' | 'complete' | 'error';
 
 export type Message = {
   id: string;
   projectId: string;
   role: MessageRole;
   content: string;
-  tokenCount: number | null;
+  toolCalls: unknown[] | null;
+  rawEvents: unknown[] | null;
+  status: MessageStatus;
   createdAt: Date;
 };
 
