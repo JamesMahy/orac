@@ -1,0 +1,20 @@
+meta {
+  name: Health Check - Wrong Credentials
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/health
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: admin
+  password: wrongpassword
+}
+
+assert {
+  res.status: eq 401
+}

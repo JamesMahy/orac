@@ -34,7 +34,7 @@ model Host {
 model Project {
   id        String    @id @default(uuid())
   hostId    String    @map("host_id")
-  host      Host      @relation(fields: [hostId], references: [id])
+  host      Host      @relation(fields: [hostId], references: [id], onDelete: Cascade)
   name      String    @db.VarChar(255)
   path      String    @db.Text
   sessionId String?   @map("session_id") @db.VarChar(255)
@@ -43,6 +43,7 @@ model Project {
   messages  Message[]
 
   @@map("projects")
+  @@index([hostId])
 }
 
 model Message {
@@ -57,4 +58,5 @@ model Message {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("messages")
+  @@index([projectId])
 }
