@@ -7,7 +7,9 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@components/*": ["src/components/*"],
+      "@routes/*": ["src/routes/*"],
+      "@features/*": ["src/features/*"]
     },
     "noEmit": true
   },

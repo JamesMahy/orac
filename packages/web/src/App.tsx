@@ -1,12 +1,20 @@
-import { useTranslation } from 'react-i18next';
+import { Routes, Route } from 'react-router-dom';
+import AppLayout from '@components/layout/AppLayout';
+import HostsRoute from '@routes/HostsRoute';
+import ProjectsRoute from '@routes/ProjectsRoute';
+import ChatRoute from '@routes/ChatRoute';
+import NotFoundRoute from '@routes/NotFoundRoute';
 
 function App() {
-  const { t } = useTranslation();
-
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <h1 className="text-4xl font-bold text-primary">{t('app.title')}</h1>
-    </div>
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route index element={<HostsRoute />} />
+        <Route path="projects" element={<ProjectsRoute />} />
+        <Route path="chat" element={<ChatRoute />} />
+        <Route path="*" element={<NotFoundRoute />} />
+      </Route>
+    </Routes>
   );
 }
 

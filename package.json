@@ -1,6 +1,7 @@
 {
   "name": "orac",
   "private": true,
+  "license": "MIT",
   "packageManager": "pnpm@10.4.1",
   "scripts": {
     "prepare": "pnpm build:shared",
