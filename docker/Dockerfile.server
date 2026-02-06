@@ -1,0 +1,31 @@
+FROM node:24-alpine AS base
+RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /app
+
+FROM base AS deps
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc ./
+COPY packages/shared/package.json packages/shared/
+COPY packages/server/package.json packages/server/
+RUN pnpm install --frozen-lockfile
+
+FROM base AS build
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
+COPY --from=deps /app/packages/server/node_modules ./packages/server/node_modules
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json .npmrc ./
+COPY packages/shared packages/shared
+COPY packages/server packages/server
+RUN pnpm build:shared && pnpm build:server
+
+FROM node:24-alpine AS production
+RUN addgroup -g 1001 -S orac && adduser -S orac -u 1001
+WORKDIR /app
+COPY --from=build --chown=orac:orac /app/packages/server/dist ./dist
+COPY --from=build --chown=orac:orac /app/packages/server/node_modules ./node_modules
+COPY --from=build --chown=orac:orac /app/packages/server/prisma ./prisma
+COPY --from=build --chown=orac:orac /app/packages/server/package.json ./
+USER orac
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api || exit 1
+CMD ["node", "dist/main"]

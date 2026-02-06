@@ -1,0 +1,40 @@
+{
+  "name": "orac",
+  "private": true,
+  "packageManager": "pnpm@10.4.1",
+  "scripts": {
+    "prepare": "pnpm build:shared",
+    "build": "pnpm build:shared && pnpm --filter @orac/server build && pnpm --filter @orac/web build",
+    "build:shared": "pnpm --filter @orac/shared build",
+    "build:server": "pnpm --filter @orac/server build",
+    "build:web": "pnpm --filter @orac/web build",
+    "dev:server": "pnpm --filter @orac/server start:dev",
+    "dev:web": "pnpm --filter @orac/web dev",
+    "test": "pnpm --filter @orac/server test && pnpm --filter @orac/web test",
+    "test:server": "pnpm --filter @orac/server test",
+    "test:web": "pnpm --filter @orac/web test",
+    "lint": "pnpm --filter @orac/server lint && pnpm --filter @orac/web lint",
+    "lint:server": "pnpm --filter @orac/server lint",
+    "lint:web": "pnpm --filter @orac/web lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm --filter @orac/shared typecheck && pnpm --filter @orac/server typecheck && pnpm --filter @orac/web typecheck",
+    "db:generate": "pnpm --filter @orac/server db:generate",
+    "db:push": "pnpm --filter @orac/server db:push",
+    "db:migrate": "pnpm --filter @orac/server db:migrate",
+    "db:studio": "pnpm --filter @orac/server db:studio",
+    "storybook": "pnpm --filter @orac/web storybook"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "prisma",
+      "@prisma/engines",
+      "esbuild",
+      "@nestjs/core"
+    ]
+  }
+}
