@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { Link, useOutletContext } from 'react-router-dom';
-import Header from '@components/layout/Header';
+import { Header } from '@components/layout/Header';
 import type { LayoutContext } from '@components/layout/AppLayout';
 
-export default function NotFoundRoute() {
+export function NotFoundRoute() {
   const { t } = useTranslation();
   const { onMenuToggle, sidebarOpen } = useOutletContext<LayoutContext>();
 

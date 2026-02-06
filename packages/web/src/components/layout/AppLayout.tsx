@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import Sidebar from './Sidebar';
+import { Sidebar } from './Sidebar';
 
 export type LayoutContext = {
   onMenuToggle: () => void;
   sidebarOpen: boolean;
 };
 
-export default function AppLayout() {
+export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { t } = useTranslation();

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import Hosts from './Hosts';
+import { Hosts } from './Hosts';
 import '../../i18n';
 
 describe('Hosts', () => {

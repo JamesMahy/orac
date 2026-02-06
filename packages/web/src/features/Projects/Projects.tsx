@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-export default function Projects() {
+export function Projects() {
   const { t } = useTranslation();
 
   return (

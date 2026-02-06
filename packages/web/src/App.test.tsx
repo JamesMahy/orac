@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PrimeReactProvider } from 'primereact/api';
-import App from './App';
+import { App } from './App';
 import './i18n';
 
 function renderWithProviders(ui: React.ReactElement, initialRoute = '/') {

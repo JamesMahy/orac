@@ -1,1 +1,1 @@
-export { default as Hosts } from './Hosts';
+export * from './Hosts';

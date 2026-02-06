@@ -6,7 +6,7 @@ type HeaderProps = {
   isSidebarOpen?: boolean;
 };
 
-export default function Header({
+export function Header({
   onMenuToggle,
   title,
   isSidebarOpen,

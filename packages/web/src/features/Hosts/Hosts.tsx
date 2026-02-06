@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-export default function Hosts() {
+export function Hosts() {
   const { t } = useTranslation();
 
   return (

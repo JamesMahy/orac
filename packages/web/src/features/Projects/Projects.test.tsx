@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import Projects from './Projects';
+import { Projects } from './Projects';
 import '../../i18n';
 
 describe('Projects', () => {

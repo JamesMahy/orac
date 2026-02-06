@@ -16,7 +16,7 @@ const navItems = [
   { to: '/chat', labelKey: 'nav.chat', icon: 'pi pi-comments' },
 ] as const;
 
-export default function Sidebar({
+export function Sidebar({
   open,
   onClose,
   collapsed,

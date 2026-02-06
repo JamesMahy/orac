@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-export default function Chat() {
+export function Chat() {
   const { t } = useTranslation();
 
   return (
