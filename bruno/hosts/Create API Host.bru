@@ -1,0 +1,33 @@
+meta {
+  name: Create API Host
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/hosts
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    "name": "My API Host",
+    "type": "api",
+    "endpoint": "https://api.openai.com/v1",
+    "apiKey": "sk-test-key",
+    "provider": "openai",
+    "model": "gpt-4"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.type: eq api
+  res.body.provider: eq openai
+}

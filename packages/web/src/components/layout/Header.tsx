@@ -6,11 +6,7 @@ type HeaderProps = {
   isSidebarOpen?: boolean;
 };
 
-export function Header({
-  onMenuToggle,
-  title,
-  isSidebarOpen,
-}: HeaderProps) {
+export function Header({ onMenuToggle, title, isSidebarOpen }: HeaderProps) {
   const { t } = useTranslation();
 
   return (

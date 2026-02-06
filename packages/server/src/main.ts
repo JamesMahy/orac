@@ -26,15 +26,17 @@ async function bootstrap() {
     credentials: true,
   });
 
-  const config = new DocumentBuilder()
-    .setTitle('ORAC API')
-    .setDescription('ORAC backend API')
-    .setVersion('0.1')
-    .addBasicAuth()
-    .build();
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('ORAC API')
+      .setDescription('ORAC backend API')
+      .setVersion('0.1')
+      .addBasicAuth()
+      .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port, '0.0.0.0');

@@ -1,0 +1,27 @@
+meta {
+  name: Update Host
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/hosts/{{hostId}}
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    "name": "Updated Host Name"
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.name: eq Updated Host Name
+}

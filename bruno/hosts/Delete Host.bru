@@ -1,0 +1,20 @@
+meta {
+  name: Delete Host
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/api/hosts/{{hostId}}
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+assert {
+  res.status: eq 204
+}

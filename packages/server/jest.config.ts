@@ -11,7 +11,9 @@ const config: Config = {
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
+    '^@common/(.*)$': '<rootDir>/common/$1',
+    '^@database/(.*)$': '<rootDir>/prisma/$1',
+    '^@hosts/(.*)$': '<rootDir>/hosts/$1',
   },
 };
 

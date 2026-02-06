@@ -1,0 +1,21 @@
+meta {
+  name: Get All Hosts
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/hosts
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+assert {
+  res.status: eq 200
+  res.body: isArray
+}

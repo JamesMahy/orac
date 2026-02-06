@@ -1,0 +1,21 @@
+meta {
+  name: Get Host By Id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/hosts/{{hostId}}
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.id: eq {{hostId}}
+}

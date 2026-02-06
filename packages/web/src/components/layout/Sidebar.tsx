@@ -121,9 +121,7 @@ export function Sidebar({
               className={({ isActive }) =>
                 clsx(
                   'flex items-center rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
-                  collapsed
-                    ? 'justify-center px-2 py-2'
-                    : 'gap-3 px-3 py-2',
+                  collapsed ? 'justify-center px-2 py-2' : 'gap-3 px-3 py-2',
                   isActive
                     ? 'bg-primary/10 text-primary'
                     : 'text-text-muted hover:bg-border/50 hover:text-text',
@@ -148,9 +146,7 @@ export function Sidebar({
             <i
               className={clsx(
                 'pi text-lg',
-                collapsed
-                  ? 'pi-angle-double-right'
-                  : 'pi-angle-double-left',
+                collapsed ? 'pi-angle-double-right' : 'pi-angle-double-left',
               )}
               aria-hidden="true"
             />

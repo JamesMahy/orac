@@ -7,7 +7,9 @@
     "rootDir": "./src",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@common/*": ["src/common/*"],
+      "@database/*": ["src/prisma/*"],
+      "@hosts/*": ["src/hosts/*"]
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
