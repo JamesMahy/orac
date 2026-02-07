@@ -1,0 +1,21 @@
+{
+  "app": {
+    "title": "ORAC"
+  },
+  "nav": {
+    "hosts": "Hosts",
+    "projects": "Projects",
+    "chat": "Chat",
+    "toggleMenu": "Toggle menu",
+    "closeMenu": "Close menu",
+    "sidebar": "Main navigation",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar"
+  },
+  "a11y": {
+    "skipToMain": "Skip to main content",
+    "required": "required",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
+  }
+}

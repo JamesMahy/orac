@@ -85,8 +85,7 @@ export class CreateHostDto {
   username?: string;
 
   @ApiProperty({
-    description:
-      'SSH password. Required when type is "ssh". Stored encrypted.',
+    description: 'SSH password. Required when type is "ssh". Stored encrypted.',
     required: false,
     example: 'secret',
     maxLength: 4096,

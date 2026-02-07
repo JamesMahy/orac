@@ -11,9 +11,9 @@ type SidebarProps = {
 };
 
 const navItems = [
-  { to: '/', labelKey: 'nav.hosts', icon: 'pi pi-server' },
-  { to: '/projects', labelKey: 'nav.projects', icon: 'pi pi-folder' },
-  { to: '/chat', labelKey: 'nav.chat', icon: 'pi pi-comments' },
+  { to: '/', labelKey: 'hosts', icon: 'pi pi-server' },
+  { to: '/projects', labelKey: 'projects', icon: 'pi pi-folder' },
+  { to: '/chat', labelKey: 'chat', icon: 'pi pi-comments' },
 ] as const;
 
 export function Sidebar({
@@ -22,7 +22,7 @@ export function Sidebar({
   collapsed,
   onToggleCollapse,
 }: SidebarProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const sidebarRef = useRef<HTMLElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
 
@@ -48,22 +48,22 @@ export function Sidebar({
 
     firstFocusable?.focus();
 
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
         onClose();
         return;
       }
 
-      if (e.key !== 'Tab') return;
+      if (event.key !== 'Tab') return;
 
-      if (e.shiftKey) {
+      if (event.shiftKey) {
         if (document.activeElement === firstFocusable) {
-          e.preventDefault();
+          event.preventDefault();
           lastFocusable?.focus();
         }
       } else {
         if (document.activeElement === lastFocusable) {
-          e.preventDefault();
+          event.preventDefault();
           firstFocusable?.focus();
         }
       }
@@ -117,7 +117,7 @@ export function Sidebar({
               to={item.to}
               onClick={onClose}
               end={item.to === '/'}
-              title={collapsed ? t(item.labelKey) : undefined}
+              title={collapsed ? t(`nav.${item.labelKey}`) : undefined}
               className={({ isActive }) =>
                 clsx(
                   'flex items-center rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
@@ -128,7 +128,7 @@ export function Sidebar({
                 )
               }>
               <i className={item.icon} aria-hidden="true" />
-              {!collapsed && t(item.labelKey)}
+              {!collapsed && t(`nav.${item.labelKey}`)}
             </NavLink>
           ))}
         </nav>

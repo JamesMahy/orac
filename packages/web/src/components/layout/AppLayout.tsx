@@ -11,14 +11,14 @@ export type LayoutContext = {
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('common', { keyPrefix: 'a11y' });
 
   return (
     <>
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-white focus:outline-none focus:ring-2 focus:ring-primary-dark">
-        {t('a11y.skipToMain')}
+        {t('skipToMain')}
       </a>
 
       <div className="flex h-screen bg-surface">
@@ -26,7 +26,7 @@ export function AppLayout() {
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
           collapsed={sidebarCollapsed}
-          onToggleCollapse={() => setSidebarCollapsed(prev => !prev)}
+          onToggleCollapse={() => setSidebarCollapsed(previous => !previous)}
         />
 
         <main
@@ -35,7 +35,7 @@ export function AppLayout() {
           <Outlet
             context={
               {
-                onMenuToggle: () => setSidebarOpen(prev => !prev),
+                onMenuToggle: () => setSidebarOpen(previous => !previous),
                 sidebarOpen,
               } satisfies LayoutContext
             }

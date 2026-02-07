@@ -5,14 +5,14 @@ import type { LayoutContext } from '@components/layout/AppLayout';
 import { Chat } from '@features/Chat';
 
 export function ChatRoute() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common', { keyPrefix: 'nav' });
   const { onMenuToggle, sidebarOpen } = useOutletContext<LayoutContext>();
 
   return (
     <>
       <Header
         onMenuToggle={onMenuToggle}
-        title={t('nav.chat')}
+        title={t('chat')}
         isSidebarOpen={sidebarOpen}
       />
       <Chat />

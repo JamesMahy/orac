@@ -5,14 +5,14 @@ import type { LayoutContext } from '@components/layout/AppLayout';
 import { Hosts } from '@features/Hosts';
 
 export function HostsRoute() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common', { keyPrefix: 'nav' });
   const { onMenuToggle, sidebarOpen } = useOutletContext<LayoutContext>();
 
   return (
     <>
       <Header
         onMenuToggle={onMenuToggle}
-        title={t('nav.hosts')}
+        title={t('hosts')}
         isSidebarOpen={sidebarOpen}
       />
       <Hosts />

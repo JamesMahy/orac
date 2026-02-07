@@ -7,9 +7,11 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
+      "@api/*": ["src/api/*"],
       "@components/*": ["src/components/*"],
+      "@features/*": ["src/features/*"],
       "@routes/*": ["src/routes/*"],
-      "@features/*": ["src/features/*"]
+      "@stores/*": ["src/stores/*"]
     },
     "noEmit": true
   },
