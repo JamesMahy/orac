@@ -10,7 +10,8 @@
     "closeMenu": "Close menu",
     "sidebar": "Main navigation",
     "collapseSidebar": "Collapse sidebar",
-    "expandSidebar": "Expand sidebar"
+    "expandSidebar": "Expand sidebar",
+    "logout": "Sign Out"
   },
   "a11y": {
     "skipToMain": "Skip to main content",

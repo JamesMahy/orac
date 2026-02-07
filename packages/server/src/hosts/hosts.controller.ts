@@ -9,13 +9,13 @@ import {
   HttpCode,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiBasicAuth, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiCookieAuth, ApiResponse } from '@nestjs/swagger';
 import { HostsService } from './hosts.service';
 import { CreateHostDto, UpdateHostDto } from './hosts.dto';
 import { HostsDocs } from './hosts.docs';
 
 @ApiTags('Hosts')
-@ApiBasicAuth()
+@ApiCookieAuth()
 @ApiResponse({ status: 401, description: 'Unauthorized' })
 @Controller('hosts')
 export class HostsController {

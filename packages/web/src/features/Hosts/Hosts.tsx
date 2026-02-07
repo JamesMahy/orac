@@ -78,9 +78,7 @@ export function Hosts() {
             await hostsApi.remove(host.id);
 
             queryClient.setQueryData<Host[]>(['hosts'], oldData =>
-              oldData?.filter(
-                existingHost => existingHost.id !== host.id,
-              ),
+              oldData?.filter(existingHost => existingHost.id !== host.id),
             );
 
             toast.current?.show({
@@ -184,12 +182,7 @@ export function Hosts() {
         emptyMessage={t('empty')}
         stripedRows>
         <Column field="name" header={t('name')} sortable />
-        <Column
-          field="type"
-          header={t('type')}
-          body={typeTemplate}
-          sortable
-        />
+        <Column field="type" header={t('type')} body={typeTemplate} sortable />
         <Column
           header={t('hostnameOrEndpoint')}
           body={hostTargetTemplate}
@@ -202,11 +195,7 @@ export function Hosts() {
           body={dateTemplate}
           sortable
         />
-        <Column
-          header={t('actions')}
-          body={actionsTemplate}
-          className="w-32"
-        />
+        <Column header={t('actions')} body={actionsTemplate} className="w-32" />
       </DataTable>
 
       <HostFormModal

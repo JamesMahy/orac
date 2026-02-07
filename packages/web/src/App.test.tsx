@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PrimeReactProvider } from 'primereact/api';
@@ -6,6 +6,14 @@ import { vi } from 'vitest';
 import { useAuthStore } from '@stores/authStore';
 import { App } from './App';
 import './i18n';
+
+vi.mock('@api/auth', () => ({
+  authApi: {
+    login: vi.fn(),
+    logout: vi.fn(),
+    checkSession: vi.fn().mockResolvedValue({ authenticated: false }),
+  },
+}));
 
 vi.mock('@api/hosts', () => ({
   hostsApi: {
@@ -36,6 +44,7 @@ function renderWithProviders(ui: React.ReactElement, initialRoute = '/') {
 describe('App', () => {
   beforeEach(() => {
     useAuthStore.getState().logout();
+    useAuthStore.getState().setLoading(false);
   });
 
   it('renders login page when not authenticated', () => {
@@ -46,7 +55,6 @@ describe('App', () => {
   });
 
   it('renders the sidebar with app title when authenticated', () => {
-    useAuthStore.getState().setCredentials('admin', 'password');
     useAuthStore.getState().authenticate();
     renderWithProviders(<App />);
     expect(screen.getByText('ORAC')).toBeInTheDocument();
@@ -56,14 +64,12 @@ describe('App', () => {
   });
 
   it('renders sidebar navigation links when authenticated', () => {
-    useAuthStore.getState().setCredentials('admin', 'password');
     useAuthStore.getState().authenticate();
     renderWithProviders(<App />);
     expect(screen.getAllByText('Hosts')).toHaveLength(2);
   });
 
   it('renders hosts page at /', async () => {
-    useAuthStore.getState().setCredentials('admin', 'password');
     useAuthStore.getState().authenticate();
     renderWithProviders(<App />);
     expect(
@@ -74,7 +80,6 @@ describe('App', () => {
   });
 
   it('renders projects page at /projects', () => {
-    useAuthStore.getState().setCredentials('admin', 'password');
     useAuthStore.getState().authenticate();
     renderWithProviders(<App />, '/projects');
     expect(
@@ -83,7 +88,6 @@ describe('App', () => {
   });
 
   it('renders chat page at /chat', () => {
-    useAuthStore.getState().setCredentials('admin', 'password');
     useAuthStore.getState().authenticate();
     renderWithProviders(<App />, '/chat');
     expect(
@@ -92,7 +96,6 @@ describe('App', () => {
   });
 
   it('renders 404 page for unknown routes', () => {
-    useAuthStore.getState().setCredentials('admin', 'password');
     useAuthStore.getState().authenticate();
     renderWithProviders(<App />, '/nonexistent');
     expect(screen.getByText('404')).toBeInTheDocument();
@@ -102,9 +105,23 @@ describe('App', () => {
   });
 
   it('renders skip link for keyboard accessibility', () => {
-    useAuthStore.getState().setCredentials('admin', 'password');
     useAuthStore.getState().authenticate();
     renderWithProviders(<App />);
     expect(screen.getByText('Skip to main content')).toBeInTheDocument();
+  });
+
+  it('restores session on mount when checkSession returns authenticated', async () => {
+    const { authApi } = await import('@api/auth');
+    vi.mocked(authApi.checkSession).mockResolvedValueOnce({
+      authenticated: true,
+    });
+
+    useAuthStore.getState().setLoading(true);
+    renderWithProviders(<App />);
+
+    await waitFor(() => {
+      expect(useAuthStore.getState().isAuthenticated).toBe(true);
+      expect(useAuthStore.getState().isLoading).toBe(false);
+    });
   });
 });

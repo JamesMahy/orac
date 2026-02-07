@@ -1,24 +1,23 @@
 import { create } from 'zustand';
 
 type AuthState = {
-  credentials: string | null;
   isAuthenticated: boolean;
-  setCredentials: (username: string, password: string) => void;
+  isLoading: boolean;
   authenticate: () => void;
   logout: () => void;
+  setLoading: (loading: boolean) => void;
 };
 
 export const useAuthStore = create<AuthState>()(setState => ({
-  credentials: null,
   isAuthenticated: false,
-  setCredentials: (username, password) => {
-    const encoded = btoa(`${username}:${password}`);
-    setState({ credentials: encoded });
-  },
+  isLoading: true,
   authenticate: () => {
     setState({ isAuthenticated: true });
   },
   logout: () => {
-    setState({ credentials: null, isAuthenticated: false });
+    setState({ isAuthenticated: false });
+  },
+  setLoading: (loading: boolean) => {
+    setState({ isLoading: loading });
   },
 }));

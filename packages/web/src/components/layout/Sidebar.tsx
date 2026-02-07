@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
+import { useAuthStore } from '@stores/authStore';
+import { authApi } from '@api/auth';
 
 type SidebarProps = {
   open: boolean;
@@ -133,11 +135,25 @@ export function Sidebar({
           ))}
         </nav>
 
-        <div className="hidden border-t border-border p-3 md:block">
+        <div className="border-t border-border p-3">
+          <button
+            onClick={() => {
+              authApi.logout().finally(() => {
+                useAuthStore.getState().logout();
+              });
+            }}
+            className={clsx(
+              'flex w-full items-center rounded-lg py-2 text-sm font-medium text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+              collapsed ? 'justify-center px-2' : 'gap-3 px-3',
+            )}
+            aria-label={t('nav.logout')}>
+            <i className="pi pi-sign-out text-lg" aria-hidden="true" />
+            {!collapsed && t('nav.logout')}
+          </button>
           <button
             onClick={onToggleCollapse}
             className={clsx(
-              'flex w-full items-center rounded-lg py-2 text-sm font-medium text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+              'hidden w-full items-center rounded-lg py-2 text-sm font-medium text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 md:flex',
               collapsed ? 'justify-center px-2' : 'gap-3 px-3',
             )}
             aria-label={t(

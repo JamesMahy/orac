@@ -1,17 +1,14 @@
+import cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { BasicAuthGuard } from './common/guards/basic-auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
-
-  const configService = app.get(ConfigService);
-  app.useGlobalGuards(new BasicAuthGuard(configService));
+  app.use(cookieParser());
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -31,7 +28,7 @@ async function bootstrap() {
       .setTitle('ORAC API')
       .setDescription('ORAC backend API')
       .setVersion('0.1')
-      .addBasicAuth()
+      .addCookieAuth('session')
       .build();
 
     const document = SwaggerModule.createDocument(app, config);

@@ -16,22 +16,24 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-api.interceptors.request.use(config => {
-  const { credentials } = useAuthStore.getState();
-  if (credentials) {
-    config.headers.Authorization = `Basic ${credentials}`;
-  }
-  return config;
-});
+let loggingOut = false;
 
 api.interceptors.response.use(
   response => response,
   error => {
     if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status === 401) {
-        useAuthStore.getState().logout();
+      if (error.response.status === 401 && !loggingOut) {
+        loggingOut = true;
+        api
+          .post('/api/auth/logout')
+          .catch(() => {})
+          .finally(() => {
+            useAuthStore.getState().logout();
+            loggingOut = false;
+          });
       }
 
       const errorData = error.response.data as Record<string, unknown>;

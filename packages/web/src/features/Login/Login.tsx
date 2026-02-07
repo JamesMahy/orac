@@ -14,7 +14,7 @@ type LoginFormData = {
 
 export function Login() {
   const { t } = useTranslation('features', { keyPrefix: 'Login' });
-  const { setCredentials, authenticate } = useAuthStore();
+  const authenticate = useAuthStore(state => state.authenticate);
 
   const {
     control,
@@ -28,13 +28,10 @@ export function Login() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setCredentials(data.username, data.password);
-
     try {
-      await authApi.login();
+      await authApi.login(data.username, data.password);
       authenticate();
     } catch (error) {
-      useAuthStore.getState().logout();
       if (error instanceof ApiError && error.status === 401) {
         setError('root', { message: t('invalid') });
       } else {

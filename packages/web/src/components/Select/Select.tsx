@@ -56,7 +56,9 @@ export function Select({
       <Dropdown
         inputId={id}
         value={value}
-        onChange={(event: DropdownChangeEvent) => onChange?.(event.value as string)}
+        onChange={(event: DropdownChangeEvent) =>
+          onChange?.(event.value as string)
+        }
         onBlur={onBlur}
         options={options}
         optionLabel="label"
