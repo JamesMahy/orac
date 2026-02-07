@@ -115,6 +115,9 @@ export function useHostForm({
   const onSubmit = useCallback(
     (data: HostFormData) => {
       setIsSubmitted(true);
+      if (data.type === 'ssh' && (data.port === undefined || data.port === ('' as unknown as number))) {
+        delete data.port;
+      }
       saveMutation.mutate(data);
     },
     [saveMutation],

@@ -93,8 +93,8 @@ describe('CreateHostDto', () => {
       await expectInvalid(omit(validSsh, 'username'), 'username');
     });
 
-    it('should reject SSH host without password', async () => {
-      await expectInvalid(omit(validSsh, 'password'), 'password');
+    it('should accept SSH host without password', async () => {
+      await expectValid(omit(validSsh, 'password'));
     });
 
     it('should reject hostname with shell metacharacters', async () => {

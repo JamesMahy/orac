@@ -191,6 +191,7 @@ export function HostFormModal({
                   control={control}
                   label={t('port')}
                   type="number"
+                  placeholder="22"
                   error={'port' in errors ? errors.port?.message : undefined}
                   showError={isSubmitted}
                   showDirtyState={isExistingHost}
@@ -236,11 +237,7 @@ export function HostFormModal({
                   }
                   showError={isSubmitted}
                   showDirtyState={isExistingHost}
-                  required
                   autoComplete="new-password"
-                  rules={{
-                    required: t('sshPasswordRequired'),
-                  }}
                 />
               </>
             )}

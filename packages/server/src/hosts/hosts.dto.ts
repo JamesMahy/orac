@@ -13,6 +13,7 @@ import {
   Matches,
   ValidateIf,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateHostDto {
   @ApiProperty({
@@ -63,6 +64,7 @@ export class CreateHostDto {
   })
   @ValidateIf((o: CreateHostDto) => o.type === 'ssh')
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   @Max(65535)
@@ -85,14 +87,15 @@ export class CreateHostDto {
   username?: string;
 
   @ApiProperty({
-    description: 'SSH password. Required when type is "ssh". Stored encrypted.',
+    description:
+      'SSH password. Optional — omit if using key-based or no authentication.',
     required: false,
     example: 'secret',
     maxLength: 4096,
   })
   @ValidateIf((o: CreateHostDto) => o.type === 'ssh')
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @MaxLength(4096)
   password?: string;
 
