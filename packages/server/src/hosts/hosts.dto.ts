@@ -80,9 +80,9 @@ export class CreateHostDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
-  @Matches(/^[a-zA-Z0-9._-]+$/, {
+  @Matches(/^[a-zA-Z0-9._@+-]+$/, {
     message:
-      'username must contain only alphanumeric characters, dots, hyphens, and underscores',
+      'username must contain only alphanumeric characters, dots, hyphens, underscores, @ and +',
   })
   username?: string;
 
@@ -98,6 +98,19 @@ export class CreateHostDto {
   @IsString()
   @MaxLength(4096)
   password?: string;
+
+  @ApiProperty({
+    description:
+      'SSH host key fingerprint (SHA256). Optional — set after user confirms the fingerprint.',
+    required: false,
+    example: 'SHA256:abc123def456...',
+    maxLength: 255,
+  })
+  @ValidateIf((o: CreateHostDto) => o.type === 'ssh')
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  hostKeyFingerprint?: string;
 
   // API fields
 
@@ -187,6 +200,14 @@ export class HostResponseDto {
   username!: string | null;
 
   @ApiProperty({
+    description: 'SSH host key fingerprint (SHA256)',
+    nullable: true,
+    required: false,
+    example: 'SHA256:abc123def456...',
+  })
+  hostKeyFingerprint!: string | null;
+
+  @ApiProperty({
     description: 'API endpoint URL',
     nullable: true,
     example: 'https://api.openai.com/v1',
@@ -206,6 +227,12 @@ export class HostResponseDto {
     example: 'gpt-4',
   })
   model!: string | null;
+
+  @ApiProperty({
+    description: 'Whether the host has a stored SSH password',
+    example: false,
+  })
+  hasPassword!: boolean;
 
   @ApiProperty({ description: 'Creation timestamp' })
   createdAt!: Date;

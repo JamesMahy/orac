@@ -7,6 +7,7 @@ import { SessionAuthGuard } from '@common/guards/session-auth.guard';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { HostsModule } from '@hosts/hosts.module';
+import { SshModule } from '@ssh/ssh.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { HostsModule } from '@hosts/hosts.module';
     EncryptionModule,
     AuthModule,
     HostsModule,
+    SshModule,
   ],
   controllers: [AppController],
   providers: [

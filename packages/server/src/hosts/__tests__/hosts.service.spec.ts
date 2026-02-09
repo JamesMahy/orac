@@ -116,11 +116,11 @@ describe('HostsService', () => {
       );
     });
 
-    it('should throw NotFoundException with generic message', async () => {
+    it('should throw NotFoundException with snake_case error code', async () => {
       prisma.host.findUnique.mockResolvedValue(null);
 
       await expect(service.findOne('nonexistent')).rejects.toThrow(
-        'Host not found',
+        'host_not_found',
       );
     });
   });
@@ -241,6 +241,23 @@ describe('HostsService', () => {
       });
     });
 
+    it('should set password to null when empty string is provided', async () => {
+      prisma.host.findUnique.mockResolvedValue(mockHost);
+      prisma.host.update.mockResolvedValue({
+        ...mockHost,
+        password: null,
+      });
+
+      await service.update(mockHost.id, { password: '' });
+
+      expect(encryption.encrypt).not.toHaveBeenCalled();
+      expect(prisma.host.update).toHaveBeenCalledWith({
+        where: { id: mockHost.id },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        data: expect.objectContaining({ password: null }),
+      });
+    });
+
     it('should throw NotFoundException when host not found', async () => {
       prisma.host.findUnique.mockResolvedValue(null);
 
@@ -282,6 +299,25 @@ describe('HostsService', () => {
       expect(result).not.toHaveProperty('apiKey');
       expect(result).toHaveProperty('name', 'Both Sensitive');
       expect(result).toHaveProperty('hostname');
+    });
+
+    it('should set hasPassword to true when password exists', async () => {
+      prisma.host.findUnique.mockResolvedValue(mockHost);
+
+      const result = await service.findOne(mockHost.id);
+
+      expect(result.hasPassword).toBe(true);
+    });
+
+    it('should set hasPassword to false when password is null', async () => {
+      prisma.host.findUnique.mockResolvedValue({
+        ...mockHost,
+        password: null,
+      });
+
+      const result = await service.findOne(mockHost.id);
+
+      expect(result.hasPassword).toBe(false);
     });
   });
 });

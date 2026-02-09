@@ -17,6 +17,7 @@ model Host {
   port      Int?      @default(22)
   username  String?   @db.VarChar(255)
   password  String?   @db.Text
+  hostKeyFingerprint String? @map("host_key_fingerprint") @db.VarChar(255)
 
   // API fields
   endpoint  String?   @db.VarChar(255)

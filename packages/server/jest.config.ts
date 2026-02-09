@@ -14,6 +14,7 @@ const config: Config = {
     '^@common/(.*)$': '<rootDir>/common/$1',
     '^@database/(.*)$': '<rootDir>/prisma/$1',
     '^@hosts/(.*)$': '<rootDir>/hosts/$1',
+    '^@ssh/(.*)$': '<rootDir>/ssh/$1',
   },
 };
 

@@ -9,7 +9,8 @@
     "paths": {
       "@common/*": ["src/common/*"],
       "@database/*": ["src/prisma/*"],
-      "@hosts/*": ["src/hosts/*"]
+      "@hosts/*": ["src/hosts/*"],
+      "@ssh/*": ["src/ssh/*"]
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true

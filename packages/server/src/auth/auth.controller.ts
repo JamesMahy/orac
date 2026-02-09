@@ -38,9 +38,7 @@ export class AuthController {
   @Post('logout')
   @Public()
   @AuthDocs.logout
-  logout(
-    @Res({ passthrough: true }) response: Response,
-  ): AuthResponseDto {
+  logout(@Res({ passthrough: true }) response: Response): AuthResponseDto {
     response.clearCookie(COOKIE_NAME, {
       httpOnly: this.cookieOptions.httpOnly,
       secure: this.cookieOptions.secure,

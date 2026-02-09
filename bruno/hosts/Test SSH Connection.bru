@@ -1,0 +1,30 @@
+meta {
+  name: Test SSH Connection
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/hosts/test-connection
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    "hostname": "192.168.1.100",
+    "port": 22,
+    "username": "root",
+    "password": "secret"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.success: isDefined
+}

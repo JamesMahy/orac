@@ -1,0 +1,22 @@
+meta {
+  name: Get Connection Status
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/hosts/{{hostId}}/status
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.hostId: eq {{hostId}}
+  res.body.status: isDefined
+}
