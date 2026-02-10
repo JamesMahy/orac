@@ -1,0 +1,20 @@
+meta {
+  name: Delete Workspace
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/api/workspaces/{{workspaceId}}
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+assert {
+  res.status: eq 204
+}

@@ -1,0 +1,21 @@
+meta {
+  name: List Workspaces
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/workspaces?projectId={{projectId}}
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+assert {
+  res.status: eq 200
+  res.body: isArray
+}

@@ -1,0 +1,28 @@
+meta {
+  name: Update Workspace
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/api/workspaces/{{workspaceId}}
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    "name": "Updated Workspace Name",
+    "path": "/home/james/updated-path"
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.name: eq Updated Workspace Name
+}
