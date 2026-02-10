@@ -5,6 +5,10 @@ export type {
   CreateSshHostDto,
   CreateApiHostDto,
   UpdateHostDto,
+  ConnectionStatus,
+  TestConnectionRequest,
+  TestConnectionResponse,
+  ConnectionStatusResponse,
 } from './host';
 export type { Project, CreateProjectDto, UpdateProjectDto } from './project';
 export type {

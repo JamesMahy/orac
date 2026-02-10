@@ -32,7 +32,7 @@ export class AuthService {
 
   login(username: string, password: string): string {
     if (!this.validateCredentials(username, password)) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('invalid_credentials');
     }
 
     return this.jwtService.sign({

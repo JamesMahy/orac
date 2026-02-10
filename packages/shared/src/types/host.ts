@@ -9,11 +9,14 @@ export type Host = {
   hostname: string | null;
   port: number | null;
   username: string | null;
+  hostKeyFingerprint: string | null;
 
   // API fields
   endpoint: string | null;
   provider: string | null;
   model: string | null;
+
+  hasPassword: boolean;
 
   createdAt: Date;
   updatedAt: Date;
@@ -26,6 +29,7 @@ export type CreateSshHostDto = {
   port?: number;
   username: string;
   password: string;
+  hostKeyFingerprint?: string;
 };
 
 export type CreateApiHostDto = {
@@ -40,3 +44,29 @@ export type CreateApiHostDto = {
 export type CreateHostDto = CreateSshHostDto | CreateApiHostDto;
 
 export type UpdateHostDto = Partial<CreateHostDto>;
+
+export type ConnectionStatus =
+  | 'connected'
+  | 'connecting'
+  | 'disconnected'
+  | 'error';
+
+export type TestConnectionRequest = {
+  hostname: string;
+  port?: number;
+  username: string;
+  password?: string;
+  hostId?: string;
+};
+
+export type TestConnectionResponse = {
+  success: boolean;
+  message?: string;
+  fingerprint?: string;
+};
+
+export type ConnectionStatusResponse = {
+  hostId: string;
+  status: ConnectionStatus;
+  message?: string;
+};
