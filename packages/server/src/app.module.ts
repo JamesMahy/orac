@@ -7,6 +7,8 @@ import { SessionAuthGuard } from '@common/guards/session-auth.guard';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { HostsModule } from '@hosts/hosts.module';
+import { ProjectsModule } from '@projects/projects.module';
+import { WorkspacesModule } from '@workspaces/workspaces.module';
 import { SshModule } from '@ssh/ssh.module';
 
 @Module({
@@ -18,6 +20,8 @@ import { SshModule } from '@ssh/ssh.module';
     EncryptionModule,
     AuthModule,
     HostsModule,
+    ProjectsModule,
+    WorkspacesModule,
     SshModule,
   ],
   controllers: [AppController],

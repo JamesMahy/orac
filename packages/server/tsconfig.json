@@ -10,6 +10,8 @@
       "@common/*": ["src/common/*"],
       "@database/*": ["src/prisma/*"],
       "@hosts/*": ["src/hosts/*"],
+      "@projects/*": ["src/projects/*"],
+      "@workspaces/*": ["src/workspaces/*"],
       "@ssh/*": ["src/ssh/*"]
     },
     "emitDecoratorMetadata": true,

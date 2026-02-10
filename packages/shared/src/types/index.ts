@@ -12,6 +12,11 @@ export type {
 } from './host';
 export type { Project, CreateProjectDto, UpdateProjectDto } from './project';
 export type {
+  Workspace,
+  CreateWorkspaceDto,
+  UpdateWorkspaceDto,
+} from './workspace';
+export type {
   Message,
   MessageRole,
   MessageStatus,

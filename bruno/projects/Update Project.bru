@@ -1,0 +1,27 @@
+meta {
+  name: Update Project
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/api/projects/{{projectId}}
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    "name": "Updated Project Name"
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.name: eq Updated Project Name
+}

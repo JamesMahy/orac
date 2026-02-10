@@ -4,7 +4,7 @@ export type MessageStatus = 'pending' | 'streaming' | 'complete' | 'error';
 
 export type Message = {
   id: string;
-  projectId: string;
+  workspaceId: string;
   role: MessageRole;
   content: string;
   toolCalls: unknown[] | null;
@@ -14,7 +14,7 @@ export type Message = {
 };
 
 export type CreateMessageDto = {
-  projectId: string;
+  workspaceId: string;
   role: MessageRole;
   content: string;
 };
