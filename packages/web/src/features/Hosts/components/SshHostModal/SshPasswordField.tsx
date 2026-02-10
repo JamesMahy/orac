@@ -30,9 +30,7 @@ export function SshPasswordField({
   if (isExistingHost && hasPassword && !isChangingPassword) {
     return (
       <div className="mb-4 flex flex-col gap-1">
-        <span className="text-sm font-medium text-text">
-          {t('Password')}
-        </span>
+        <span className="text-sm font-medium text-text">{t('Password')}</span>
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-color">
             {t('Password hidden for security')}

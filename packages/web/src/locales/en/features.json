@@ -47,6 +47,7 @@
     "Loading host information": "Loading host information",
     "Loading hosts": "Loading hosts",
     "Edit host": "Edit {{name}}",
+    "Browse host": "Browse {{name}}",
     "Delete host": "Delete {{name}}",
     "Please give this host a name": "Please give this host a name",
     "Please enter a hostname": "Please enter a hostname",
@@ -74,6 +75,20 @@
     "Password hidden for security": "Password hidden for security",
     "Change": "Change",
     "Remove password": "Remove password"
+  },
+  "FolderBrowser": {
+    "Browse Folders": "Browse Folders",
+    "Select Folder": "Select Folder",
+    "Cancel": "Cancel",
+    "This directory is empty": "This directory is empty",
+    "Failed to browse directory": "Failed to browse directory",
+    "error-path_not_found": "The specified path does not exist",
+    "error-permission_denied": "Permission denied to access this directory",
+    "error-browse_failed": "Failed to browse the remote directory",
+    "error-host_not_found": "Host not found",
+    "error-host_not_ssh": "Host is not an SSH host",
+    "Go to parent directory": "Go to parent directory",
+    "Current path": "Current path"
   },
   "Projects": {
     "No projects yet. Create a project to get started.": "No projects yet. Create a project to get started."

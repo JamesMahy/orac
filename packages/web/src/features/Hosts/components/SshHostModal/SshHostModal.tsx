@@ -103,9 +103,7 @@ export function SshHostModal({
   });
 
   const saveMutation = useMutation({
-    mutationFn: async (
-      data: SshFormData & { hostKeyFingerprint?: string },
-    ) => {
+    mutationFn: async (data: SshFormData & { hostKeyFingerprint?: string }) => {
       if (isExistingHost) {
         const dirty: Record<string, unknown> = {};
         for (const key of Object.keys(dirtyFields)) {
@@ -179,12 +177,8 @@ export function SshHostModal({
             previousFingerprint={storedFingerprint ?? undefined}
           />
         ),
-        header: storedFingerprint
-          ? t('Host Key Changed')
-          : t('New Host Key'),
-        icon: storedFingerprint
-          ? 'pi pi-exclamation-triangle'
-          : 'pi pi-shield',
+        header: storedFingerprint ? t('Host Key Changed') : t('New Host Key'),
+        icon: storedFingerprint ? 'pi pi-exclamation-triangle' : 'pi pi-shield',
         acceptClassName: storedFingerprint
           ? 'p-button-danger'
           : 'p-button-success',
@@ -339,10 +333,14 @@ export function SshHostModal({
         isExistingHost={isExistingHost}
         onClose={handleClose}
         onReset={loadHostData}
-        onSave={connectionTestFailed ? saveAnyway : () => {
-          clearErrors();
-          handleSubmit(handleFormSubmit)();
-        }}
+        onSave={
+          connectionTestFailed
+            ? saveAnyway
+            : () => {
+                clearErrors();
+                handleSubmit(handleFormSubmit)();
+              }
+        }
         saveLabel={
           connectionTestFailed
             ? t('Save Anyway')
@@ -364,10 +362,7 @@ export function SshHostModal({
           />
         }>
         <FormError
-          message={translateError(
-            errors?.root?.generalError?.message,
-            t,
-          )}
+          message={translateError(errors?.root?.generalError?.message, t)}
         />
 
         <FormTextInput

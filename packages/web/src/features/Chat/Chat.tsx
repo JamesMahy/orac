@@ -5,7 +5,9 @@ export function Chat() {
 
   return (
     <div className="flex-1 overflow-auto p-6">
-      <p className="text-text-muted">{t('Select a project to start chatting.')}</p>
+      <p className="text-text-muted">
+        {t('Select a project to start chatting.')}
+      </p>
     </div>
   );
 }

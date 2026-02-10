@@ -9,6 +9,7 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { InputText } from 'primereact/inputtext';
 import type { Host } from '@orac/shared';
 import { hostsApi } from '@api/hosts';
+import { FolderBrowser } from '@components/FolderBrowser';
 import { SshHostModal } from './components/SshHostModal/SshHostModal';
 import { ApiHostModal } from './components/ApiHostModal/ApiHostModal';
 
@@ -17,11 +18,10 @@ export function Hosts() {
   const toast = useRef<Toast>(null);
   const queryClient = useQueryClient();
 
-  const [activeModal, setActiveModal] = useState<'ssh' | 'api' | null>(
-    null,
-  );
+  const [activeModal, setActiveModal] = useState<'ssh' | 'api' | null>(null);
   const [editingHostId, setEditingHostId] = useState<string | null>(null);
   const [globalFilter, setGlobalFilter] = useState('');
+  const [browsingHostId, setBrowsingHostId] = useState<string | null>(null);
 
   const { data: hosts, isLoading } = useQuery({
     queryKey: ['hosts'],
@@ -73,6 +73,15 @@ export function Hosts() {
     },
     [queryClient, t, handleCloseModal],
   );
+
+  const handleFolderSelect = useCallback((path: string) => {
+    toast.current?.show({
+      severity: 'info',
+      summary: `Selected: ${path}`,
+      life: 3000,
+    });
+    setBrowsingHostId(null);
+  }, []);
 
   const handleDelete = useCallback(
     (host: Host) => {
@@ -130,6 +139,16 @@ export function Hosts() {
 
   const actionsTemplate = (host: Host) => (
     <div className="flex gap-1">
+      {host.type === 'ssh' && (
+        <Button
+          icon="pi pi-folder-open"
+          rounded
+          text
+          severity="secondary"
+          aria-label={t('Browse host', { name: host.name })}
+          onClick={() => setBrowsingHostId(host.id)}
+        />
+      )}
       <Button
         icon="pi pi-pencil"
         rounded
@@ -199,17 +218,10 @@ export function Hosts() {
         globalFilterFields={['name']}
         sortField="name"
         sortOrder={1}
-        emptyMessage={t(
-          'No hosts configured. Add a host to get started.',
-        )}
+        emptyMessage={t('No hosts configured. Add a host to get started.')}
         stripedRows>
         <Column field="name" header={t('Name')} sortable />
-        <Column
-          field="type"
-          header={t('Type')}
-          body={typeTemplate}
-          sortable
-        />
+        <Column field="type" header={t('Type')} body={typeTemplate} sortable />
         <Column
           header={t('Host / Endpoint')}
           body={hostTargetTemplate}
@@ -222,11 +234,7 @@ export function Hosts() {
           body={dateTemplate}
           sortable
         />
-        <Column
-          header={t('Actions')}
-          body={actionsTemplate}
-          className="w-32"
-        />
+        <Column header={t('Actions')} body={actionsTemplate} className="w-32" />
       </DataTable>
 
       <SshHostModal
@@ -241,6 +249,15 @@ export function Hosts() {
         onClose={handleCloseModal}
         onComplete={handleComplete}
       />
+
+      {browsingHostId && (
+        <FolderBrowser
+          visible={!!browsingHostId}
+          hostId={browsingHostId}
+          onSelect={handleFolderSelect}
+          onClose={() => setBrowsingHostId(null)}
+        />
+      )}
     </div>
   );
 }

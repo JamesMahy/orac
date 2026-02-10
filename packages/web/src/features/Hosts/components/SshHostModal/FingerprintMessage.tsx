@@ -14,9 +14,7 @@ export function FingerprintMessage({
   if (previousFingerprint) {
     return (
       <div>
-        <p>
-          {t('The host key has changed.')}
-        </p>
+        <p>{t('The host key has changed.')}</p>
         <p className="mt-2">
           {t('Previous:')}
           <code className="mt-1 block break-all font-mono text-xs">
@@ -35,9 +33,7 @@ export function FingerprintMessage({
 
   return (
     <div>
-      <p>
-        {t('Do you want to trust this host?')}
-      </p>
+      <p>{t('Do you want to trust this host?')}</p>
       <code className="mt-2 block break-all font-mono text-xs">
         {fingerprint}
       </code>

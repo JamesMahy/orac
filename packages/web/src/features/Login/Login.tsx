@@ -34,7 +34,8 @@ export function Login() {
       authenticate();
     } catch (error) {
       const code = extractErrorCode(error);
-      const message = translateError(code, t) ?? t('Unable to connect to server');
+      const message =
+        translateError(code, t) ?? t('Unable to connect to server');
       setError('root', { message });
     }
   };

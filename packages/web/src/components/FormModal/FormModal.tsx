@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { FormError } from '@components/FormError';
+import { LoadingSpinner } from '@components/LoadingSpinner';
 
 type FormModalProps = {
   visible: boolean;
@@ -94,20 +95,11 @@ export function FormModal({
       footer={footer}
       dismissableMask={false}
       className="w-full max-w-2xl">
-      {isLoading && (
-        <div
-          className="flex items-center justify-center p-8"
-          role="status"
-          aria-live="polite">
-          <i className="pi pi-spin pi-spinner text-2xl" aria-hidden="true" />
-        </div>
-      )}
+      <LoadingSpinner isLoading={!!isLoading} className="p-8" />
 
       <FormError message={errorMessage} />
 
-      {!isLoading && !errorMessage && (
-        <div className="p-2">{children}</div>
-      )}
+      {!isLoading && !errorMessage && <div className="p-2">{children}</div>}
     </Dialog>
   );
 }

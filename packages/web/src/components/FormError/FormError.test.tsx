@@ -4,9 +4,7 @@ import { FormError } from './FormError';
 describe('FormError', () => {
   it('renders the error message', () => {
     render(<FormError message="Something went wrong" />);
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'Something went wrong',
-    );
+    expect(screen.getByRole('alert')).toHaveTextContent('Something went wrong');
   });
 
   it('renders nothing when message is undefined', () => {
@@ -26,9 +24,6 @@ describe('FormError', () => {
 
   it('has assertive aria-live for screen readers', () => {
     render(<FormError message="Error" />);
-    expect(screen.getByRole('alert')).toHaveAttribute(
-      'aria-live',
-      'assertive',
-    );
+    expect(screen.getByRole('alert')).toHaveAttribute('aria-live', 'assertive');
   });
 });

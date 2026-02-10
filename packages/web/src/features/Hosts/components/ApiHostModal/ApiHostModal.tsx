@@ -139,10 +139,7 @@ export function ApiHostModal({
       onReset={loadHostData}
       onSave={handleFormSubmit}>
       <FormError
-        message={translateError(
-          errors?.root?.generalError?.message,
-          t,
-        )}
+        message={translateError(errors?.root?.generalError?.message, t)}
       />
 
       <FormTextInput

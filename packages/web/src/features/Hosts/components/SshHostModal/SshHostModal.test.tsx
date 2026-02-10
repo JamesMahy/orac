@@ -159,7 +159,9 @@ describe('SshHostModal — auto-test SSH connection on save', () => {
           screen.getByText('Connection test failed', { exact: false }),
         ).toBeInTheDocument();
       });
-      expect(screen.getByText('Connection test failed: Connection refused')).toBeInTheDocument();
+      expect(
+        screen.getByText('Connection test failed: Connection refused'),
+      ).toBeInTheDocument();
 
       expect(hostsApi.create).not.toHaveBeenCalled();
 
@@ -234,7 +236,9 @@ describe('SshHostModal — auto-test SSH connection on save', () => {
       await user.click(screen.getByRole('button', { name: 'Save' }));
 
       await waitFor(() => {
-        expect(screen.getByText('Connection test failed: Connection refused')).toBeInTheDocument();
+        expect(
+          screen.getByText('Connection test failed: Connection refused'),
+        ).toBeInTheDocument();
       });
 
       const hostnameInput = screen.getByLabelText(/^Hostname/);
@@ -272,7 +276,9 @@ describe('SshHostModal — auto-test SSH connection on save', () => {
       await user.click(screen.getByRole('button', { name: 'Save' }));
 
       await waitFor(() => {
-        expect(screen.getByText('Connection test failed: Connection refused')).toBeInTheDocument();
+        expect(
+          screen.getByText('Connection test failed: Connection refused'),
+        ).toBeInTheDocument();
       });
 
       const hostnameInput = screen.getByLabelText(/^Hostname/);

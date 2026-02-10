@@ -121,9 +121,7 @@ describe('FormModal', () => {
       hasUnsavedChanges: true,
       onReset,
     });
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Reset Form' }),
-    );
+    await userEvent.click(screen.getByRole('button', { name: 'Reset Form' }));
     expect(onReset).toHaveBeenCalledOnce();
   });
 
@@ -143,9 +141,7 @@ describe('FormModal', () => {
       onReset: vi.fn(),
     });
     expect(screen.getByText('Cancel').closest('button')).toBeDisabled();
-    expect(
-      screen.getByRole('button', { name: 'Reset Form' }),
-    ).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Reset Form' })).toBeDisabled();
   });
 
   it('shows custom save label', () => {
