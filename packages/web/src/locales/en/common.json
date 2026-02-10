@@ -18,5 +18,13 @@
     "required": "required",
     "showPassword": "Show password",
     "hidePassword": "Hide password"
+  },
+  "form": {
+    "Save": "Save",
+    "Saving...": "Saving...",
+    "Cancel": "Cancel",
+    "Close": "Close",
+    "Reset Form": "Reset Form",
+    "You have unsaved changes. Are you sure you want to close?": "You have unsaved changes. Are you sure you want to close?"
   }
 }

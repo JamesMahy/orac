@@ -38,9 +38,11 @@ const mockHosts = [
     hostname: '192.168.1.1',
     port: 22,
     username: 'root',
+    hostKeyFingerprint: null,
     endpoint: null,
     provider: null,
     model: null,
+    hasPassword: false,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
   },
@@ -51,9 +53,11 @@ const mockHosts = [
     hostname: null,
     port: null,
     username: null,
+    hostKeyFingerprint: null,
     endpoint: 'https://api.openai.com/v1',
     provider: 'openai',
     model: 'gpt-4',
+    hasPassword: false,
     createdAt: new Date('2024-01-02'),
     updatedAt: new Date('2024-01-02'),
   },
@@ -83,12 +87,21 @@ describe('Hosts', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders Add Host button', async () => {
+  it('renders Add SSH Host button', async () => {
     vi.mocked(hostsApi.getAll).mockResolvedValue([]);
     renderHosts();
 
     expect(
-      await screen.findByRole('button', { name: 'Add Host' }),
+      await screen.findByRole('button', { name: 'Add SSH Host' }),
+    ).toBeInTheDocument();
+  });
+
+  it('renders Add API Host button', async () => {
+    vi.mocked(hostsApi.getAll).mockResolvedValue([]);
+    renderHosts();
+
+    expect(
+      await screen.findByRole('button', { name: 'Add API Host' }),
     ).toBeInTheDocument();
   });
 

@@ -1,4 +1,4 @@
-type SshFormData = {
+export type SshFormData = {
   name: string;
   type: 'ssh';
   hostname: string;
@@ -7,7 +7,7 @@ type SshFormData = {
   password: string;
 };
 
-type ApiFormData = {
+export type ApiFormData = {
   name: string;
   type: 'api';
   endpoint: string;
@@ -15,5 +15,3 @@ type ApiFormData = {
   provider: string;
   model: string;
 };
-
-export type HostFormData = SshFormData | ApiFormData;

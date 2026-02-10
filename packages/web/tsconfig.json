@@ -11,7 +11,8 @@
       "@components/*": ["src/components/*"],
       "@features/*": ["src/features/*"],
       "@routes/*": ["src/routes/*"],
-      "@stores/*": ["src/stores/*"]
+      "@stores/*": ["src/stores/*"],
+      "@utils/*": ["src/utils/*"]
     },
     "noEmit": true
   },
