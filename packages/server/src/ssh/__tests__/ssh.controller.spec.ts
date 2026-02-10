@@ -11,6 +11,7 @@ describe('SshController', () => {
     mockSshService = {
       testConnection: jest.fn(),
       getStatus: jest.fn(),
+      browse: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -88,6 +89,38 @@ describe('SshController', () => {
         status: 'error',
         message: 'Connection refused',
       });
+    });
+  });
+
+  describe('GET /hosts/:id/browse', () => {
+    it('should delegate to sshService.browse', async () => {
+      const hostId = '550e8400-e29b-41d4-a716-446655440000';
+      const expected = {
+        path: '/home/james',
+        parentPath: '/home',
+        entries: [{ name: 'Documents', type: 'directory', size: 4096 }],
+      };
+      mockSshService.browse.mockResolvedValue(expected);
+
+      const result = await controller.browse(hostId, {
+        path: '/home/james',
+      });
+
+      expect(mockSshService.browse).toHaveBeenCalledWith(hostId, '/home/james');
+      expect(result).toEqual(expected);
+    });
+
+    it('should pass undefined path when not provided', async () => {
+      const hostId = '550e8400-e29b-41d4-a716-446655440000';
+      mockSshService.browse.mockResolvedValue({
+        path: '/home/james',
+        parentPath: '/home',
+        entries: [],
+      });
+
+      await controller.browse(hostId, {});
+
+      expect(mockSshService.browse).toHaveBeenCalledWith(hostId, undefined);
     });
   });
 });

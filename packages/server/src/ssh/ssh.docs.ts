@@ -1,9 +1,16 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+} from '@nestjs/swagger';
 import {
   TestConnectionDto,
   TestConnectionResponseDto,
   ConnectionStatusDto,
+  BrowseDirectoryResponseDto,
 } from './ssh.dto';
 
 export const SshDocs = {
@@ -26,6 +33,23 @@ export const SshDocs = {
       description: 'Connection status',
       type: ConnectionStatusDto,
     }),
+    ApiResponse({ status: 404, description: 'Host not found' }),
+  ),
+
+  browse: applyDecorators(
+    ApiOperation({ summary: 'Browse directories on a remote SSH host' }),
+    ApiParam({ name: 'id', description: 'Host UUID', format: 'uuid' }),
+    ApiQuery({
+      name: 'path',
+      required: false,
+      description: 'Absolute path to browse. Defaults to ~',
+    }),
+    ApiResponse({
+      status: 200,
+      description: 'Directory listing',
+      type: BrowseDirectoryResponseDto,
+    }),
+    ApiResponse({ status: 400, description: 'Invalid path or host type' }),
     ApiResponse({ status: 404, description: 'Host not found' }),
   ),
 };

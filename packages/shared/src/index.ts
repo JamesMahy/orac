@@ -16,4 +16,6 @@ export type {
   StreamStartEvent,
   StreamEndEvent,
   StreamErrorEvent,
+  DirectoryEntry,
+  BrowseDirectoryResponse,
 } from './types';

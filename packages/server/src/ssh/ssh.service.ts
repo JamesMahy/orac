@@ -1,4 +1,5 @@
 import { createHash } from 'crypto';
+import { dirname } from 'path';
 import {
   Injectable,
   Logger,
@@ -10,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { Client } from 'ssh2';
 import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '@common/crypto/encryption.service';
+import { shellEscape } from '../helpers';
 import type { TestConnectionDto } from './ssh.dto';
 
 type ConnectionStatus = 'connected' | 'connecting' | 'disconnected' | 'error';
@@ -27,6 +29,18 @@ type ExecResult = {
   stdout: string;
   stderr: string;
   exitCode: number;
+};
+
+type DirectoryEntry = {
+  name: string;
+  type: 'directory' | 'file';
+  size: number;
+};
+
+type BrowseResult = {
+  path: string;
+  parentPath: string | null;
+  entries: DirectoryEntry[];
 };
 
 type ConnectionConfig = {
@@ -290,6 +304,38 @@ export class SshService implements OnModuleDestroy {
     });
   }
 
+  async browse(hostId: string, path?: string): Promise<BrowseResult> {
+    const cdPrefix = path ? `cd ${shellEscape(path)} && ` : '';
+    const pathResult = await this.exec(hostId, `${cdPrefix}pwd`);
+
+    if (pathResult.stderr.includes('Permission denied')) {
+      throw new BadRequestException('permission_denied');
+    }
+
+    if (pathResult.exitCode !== 0) {
+      throw new BadRequestException('path_not_found');
+    }
+
+    const resolvedPath = pathResult.stdout.trim();
+    const lsResult = await this.exec(
+      hostId,
+      `ls -1d ${shellEscape(resolvedPath)}/*/  2>/dev/null`,
+    );
+
+    const entries: DirectoryEntry[] = lsResult.stdout
+      .split('\n')
+      .filter(line => line.length > 0)
+      .map(line => ({
+        name: line.replace(/\/$/, '').split('/').pop()!,
+        type: 'directory' as const,
+        size: 0,
+      }));
+
+    const parentPath = resolvedPath === '/' ? null : dirname(resolvedPath);
+
+    return { path: resolvedPath, parentPath, entries };
+  }
+
   private establishConnection(hostId: string, config: ConnectionConfig) {
     return new Promise<void>((resolve, reject) => {
       const client = new Client();
@@ -390,12 +436,10 @@ export class SshService implements OnModuleDestroy {
       `Reconnecting to host ${hostId} in ${delay}ms (attempt ${entry.reconnectAttempts})`,
     );
 
-    entry.reconnectTimer = setTimeout(async () => {
+    entry.reconnectTimer = setTimeout(() => {
       const currentAttempts = entry.reconnectAttempts;
 
-      try {
-        await this.establishConnection(hostId, config);
-      } catch {
+      void this.establishConnection(hostId, config).catch(() => {
         this.logger.warn(`Reconnect failed for host ${hostId}`);
         const newEntry = this.connections.get(hostId);
 
@@ -403,7 +447,7 @@ export class SshService implements OnModuleDestroy {
           newEntry.reconnectAttempts = currentAttempts;
           this.scheduleReconnect(hostId, config);
         }
-      }
+      });
     }, delay);
   }
 

@@ -915,4 +915,114 @@ describe('SshService', () => {
       jest.useRealTimers();
     });
   });
+
+  describe('browse', () => {
+    type ExecResponse = { stdout: string; stderr?: string; exitCode?: number };
+
+    function setupBrowse(pwdResponse: ExecResponse, lsResponse: ExecResponse) {
+      let callIndex = 0;
+      mockClient.exec.mockImplementation(
+        (
+          _command: string,
+          callback: (error: Error | null, stream: MockStream) => void,
+        ) => {
+          const response = callIndex === 0 ? pwdResponse : lsResponse;
+          callIndex++;
+          const stream = createMockStream();
+          callback(null, stream);
+          if (response.stdout) stream.__triggerData(response.stdout);
+          if (response.stderr) stream.__triggerStderr(response.stderr);
+          stream.__triggerClose(response.exitCode ?? 0);
+        },
+      );
+    }
+
+    it('should return directories from listing', async () => {
+      await connectHost(service, prisma);
+      setupBrowse(
+        { stdout: '/home/james/Development\n' },
+        {
+          stdout:
+            '/home/james/Development/src/\n/home/james/Development/docs/\n',
+        },
+      );
+
+      const result = await service.browse(
+        mockSshHost.id,
+        '/home/james/Development',
+      );
+
+      expect(result.path).toBe('/home/james/Development');
+      expect(result.parentPath).toBe('/home/james');
+      expect(result.entries).toHaveLength(2);
+      expect(result.entries.map(entry => entry.name)).toEqual(['src', 'docs']);
+    });
+
+    it('should throw path_not_found when cd fails', async () => {
+      await connectHost(service, prisma);
+      setupBrowse(
+        { stdout: '', stderr: 'No such file or directory', exitCode: 1 },
+        { stdout: '' },
+      );
+
+      await expect(
+        service.browse(mockSshHost.id, '/nonexistent'),
+      ).rejects.toThrow('path_not_found');
+    });
+
+    it('should throw permission_denied on stderr check', async () => {
+      await connectHost(service, prisma);
+      setupBrowse(
+        { stdout: '', stderr: 'Permission denied', exitCode: 1 },
+        { stdout: '' },
+      );
+
+      await expect(
+        service.browse(mockSshHost.id, '/root/secret'),
+      ).rejects.toThrow('permission_denied');
+    });
+
+    it('should return null parentPath at root', async () => {
+      await connectHost(service, prisma);
+      setupBrowse({ stdout: '/\n' }, { stdout: '/bin/\n/etc/\n' });
+
+      const result = await service.browse(mockSshHost.id, '/');
+
+      expect(result.parentPath).toBeNull();
+    });
+
+    it('should not use cd when no path given', async () => {
+      await connectHost(service, prisma);
+      setupBrowse(
+        { stdout: '/home/james\n' },
+        { stdout: '/home/james/Dev/\n' },
+      );
+
+      await service.browse(mockSshHost.id);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const executedCommand = mockClient.exec.mock.calls[0][0] as string;
+      expect(executedCommand).toBe('pwd');
+    });
+
+    it('should handle empty directory', async () => {
+      await connectHost(service, prisma);
+      setupBrowse({ stdout: '/home/james/empty\n' }, { stdout: '' });
+
+      const result = await service.browse(mockSshHost.id, '/home/james/empty');
+
+      expect(result.entries).toHaveLength(0);
+      expect(result.path).toBe('/home/james/empty');
+    });
+
+    it('should return empty entries when ls fails', async () => {
+      await connectHost(service, prisma);
+      setupBrowse({ stdout: '/home/james\n' }, { stdout: '', exitCode: 2 });
+
+      const result = await service.browse(mockSshHost.id, '/home/james');
+
+      expect(result.entries).toHaveLength(0);
+      expect(result.path).toBe('/home/james');
+    });
+  });
 });

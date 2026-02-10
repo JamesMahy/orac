@@ -23,3 +23,4 @@ export type {
   StreamEndEvent,
   StreamErrorEvent,
 } from './stream-events';
+export type { DirectoryEntry, BrowseDirectoryResponse } from './folder-browser';

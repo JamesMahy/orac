@@ -1,0 +1,26 @@
+meta {
+  name: Browse Folders
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/hosts/{{hostId}}/browse?path=/home
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+params:query {
+  path: /home
+}
+
+assert {
+  res.status: eq 200
+  res.body.path: isDefined
+  res.body.entries: isDefined
+}

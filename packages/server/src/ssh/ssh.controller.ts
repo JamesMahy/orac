@@ -4,11 +4,12 @@ import {
   Get,
   Body,
   Param,
+  Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiCookieAuth, ApiResponse } from '@nestjs/swagger';
 import { SshService } from './ssh.service';
-import { TestConnectionDto } from './ssh.dto';
+import { TestConnectionDto, BrowseQueryDto } from './ssh.dto';
 import { SshDocs } from './ssh.docs';
 
 @ApiTags('SSH')
@@ -28,5 +29,14 @@ export class SshController {
   @SshDocs.getStatus
   getStatus(@Param('id', ParseUUIDPipe) id: string) {
     return { hostId: id, ...this.sshService.getStatus(id) };
+  }
+
+  @Get(':id/browse')
+  @SshDocs.browse
+  browse(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: BrowseQueryDto,
+  ) {
+    return this.sshService.browse(id, query.path);
   }
 }

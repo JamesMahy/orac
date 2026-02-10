@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
@@ -120,4 +120,61 @@ export class ConnectionStatusDto {
     example: 'Connection refused',
   })
   message?: string;
+}
+
+export class BrowseQueryDto {
+  @ApiPropertyOptional({
+    description: 'Absolute path to browse. Defaults to the home directory (~).',
+    example: '/home/james/Development',
+    maxLength: 4096,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(4096)
+  @Matches(/^[a-zA-Z0-9/_~. -]*$/, {
+    message: 'invalid_path_format',
+  })
+  path?: string;
+}
+
+export class DirectoryEntryDto {
+  @ApiProperty({
+    description: 'File or directory name',
+    example: 'src',
+  })
+  name!: string;
+
+  @ApiProperty({
+    description: 'Entry type',
+    enum: ['directory', 'file'],
+    example: 'directory',
+  })
+  type!: 'directory' | 'file';
+
+  @ApiProperty({
+    description: 'Size in bytes',
+    example: 4096,
+  })
+  size!: number;
+}
+
+export class BrowseDirectoryResponseDto {
+  @ApiProperty({
+    description: 'Resolved absolute path of the browsed directory',
+    example: '/home/james/Development',
+  })
+  path!: string;
+
+  @ApiProperty({
+    description: 'Parent directory path, or null if at filesystem root',
+    nullable: true,
+    example: '/home/james',
+  })
+  parentPath!: string | null;
+
+  @ApiProperty({
+    description: 'Directory entries',
+    type: [DirectoryEntryDto],
+  })
+  entries!: DirectoryEntryDto[];
 }
