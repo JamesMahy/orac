@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { HostModals } from '@components/HostModals';
 import { ProjectModal } from '@components/ProjectModal';
 import { Sidebar } from './Sidebar';
 
@@ -23,6 +24,7 @@ export function AppLayout() {
       </a>
 
       <ProjectModal />
+      <HostModals />
 
       <div className="flex h-screen bg-surface">
         <Sidebar

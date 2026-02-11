@@ -1,5 +1,6 @@
 export type {
   Host,
+  HostType,
   CreateHostDto,
   UpdateHostDto,
   ConnectionStatus,

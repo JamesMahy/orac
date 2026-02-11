@@ -15,6 +15,14 @@ vi.mock('@api/hosts', () => ({
   },
 }));
 
+vi.mock('@stores/hostModalStore', () => ({
+  useHostModalStore: vi.fn(() => ({
+    openCreateSsh: vi.fn(),
+    openCreateApi: vi.fn(),
+    openEdit: vi.fn(),
+  })),
+}));
+
 const { hostsApi } = await import('@api/hosts');
 
 function renderHosts() {

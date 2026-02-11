@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -9,70 +8,26 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { InputText } from 'primereact/inputtext';
 import type { Host } from '@orac/shared';
 import { hostsApi } from '@api/hosts';
-import { queryKeys } from '@api/queryKeys';
 import { FolderBrowser } from '@components/FolderBrowser';
-import { SshHostModal } from './components/SshHostModal/SshHostModal';
-import { ApiHostModal } from './components/ApiHostModal/ApiHostModal';
+import { useHosts, useHostCache } from '@hooks/useHosts';
+import { useHostModalStore } from '@stores/hostModalStore';
 
 export function Hosts() {
   const { t } = useTranslation('features', { keyPrefix: 'Hosts' });
   const toast = useRef<Toast>(null);
-  const queryClient = useQueryClient();
 
-  const [activeModal, setActiveModal] = useState<'ssh' | 'api' | null>(null);
-  const [editingHostId, setEditingHostId] = useState<string | null>(null);
   const [globalFilter, setGlobalFilter] = useState('');
   const [browsingHostId, setBrowsingHostId] = useState<string | null>(null);
 
-  const { data: hosts, isLoading } = useQuery({
-    queryKey: queryKeys.hosts,
-    queryFn: hostsApi.getAll,
-    staleTime: 0,
-  });
+  const { data: hosts, isLoading } = useHosts();
+  const { removeHost } = useHostCache();
+  const { openCreateSsh, openCreateApi, openEdit } = useHostModalStore();
 
-  const handleCreateSshHost = useCallback(() => {
-    setEditingHostId(null);
-    setActiveModal('ssh');
-  }, []);
-
-  const handleCreateApiHost = useCallback(() => {
-    setEditingHostId(null);
-    setActiveModal('api');
-  }, []);
-
-  const handleEdit = useCallback((host: Host) => {
-    setEditingHostId(host.id);
-    setActiveModal(host.type);
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setActiveModal(null);
-    setEditingHostId(null);
-  }, []);
-
-  const handleComplete = useCallback(
-    (host: Host, isNew: boolean) => {
-      queryClient.setQueryData<Host[]>(queryKeys.hosts, oldData => {
-        if (!oldData) return [host];
-        if (isNew) return [host, ...oldData];
-        return oldData.map(existingHost =>
-          existingHost.id === host.id ? host : existingHost,
-        );
-      });
-
-      toast.current?.show({
-        severity: 'success',
-        summary: isNew
-          ? t('Host created', { name: host.name })
-          : t('Host updated', { name: host.name }),
-        life: 3000,
-      });
-
-      if (isNew) {
-        handleCloseModal();
-      }
+  const handleEdit = useCallback(
+    (host: Host) => {
+      openEdit(host.id, host.type);
     },
-    [queryClient, t, handleCloseModal],
+    [openEdit],
   );
 
   const handleFolderSelect = useCallback((path: string) => {
@@ -97,9 +52,7 @@ export function Hosts() {
           try {
             await hostsApi.remove(host.id);
 
-            queryClient.setQueryData<Host[]>(queryKeys.hosts, oldData =>
-              oldData?.filter(existingHost => existingHost.id !== host.id),
-            );
+            removeHost(host.id);
 
             toast.current?.show({
               severity: 'success',
@@ -118,7 +71,7 @@ export function Hosts() {
         },
       });
     },
-    [queryClient, t],
+    [removeHost, t],
   );
 
   const typeTemplate = (host: Host) => (
@@ -188,13 +141,13 @@ export function Hosts() {
           label={t('Add SSH Host')}
           icon="pi pi-desktop"
           severity="success"
-          onClick={handleCreateSshHost}
+          onClick={openCreateSsh}
         />
         <Button
           label={t('Add API Host')}
           icon="pi pi-cloud"
           severity="success"
-          onClick={handleCreateApiHost}
+          onClick={openCreateApi}
         />
       </div>
     </div>
@@ -237,19 +190,6 @@ export function Hosts() {
         />
         <Column header={t('Actions')} body={actionsTemplate} className="w-32" />
       </DataTable>
-
-      <SshHostModal
-        visible={activeModal === 'ssh'}
-        existingHostId={editingHostId}
-        onClose={handleCloseModal}
-        onComplete={handleComplete}
-      />
-      <ApiHostModal
-        visible={activeModal === 'api'}
-        existingHostId={editingHostId}
-        onClose={handleCloseModal}
-        onComplete={handleComplete}
-      />
 
       {browsingHostId && (
         <FolderBrowser

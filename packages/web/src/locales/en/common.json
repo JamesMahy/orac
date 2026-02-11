@@ -14,7 +14,12 @@
     "logout": "Sign Out",
     "addProject": "Add project",
     "manageProjects": "Manage projects",
-    "editProject": "Edit {{name}}"
+    "editProject": "Edit {{name}}",
+    "addHost": "Add host",
+    "addSshHost": "Add SSH host",
+    "addApiHost": "Add API host",
+    "manageHosts": "Manage hosts",
+    "editHost": "Edit {{name}}"
   },
   "a11y": {
     "skipToMain": "Skip to main content",

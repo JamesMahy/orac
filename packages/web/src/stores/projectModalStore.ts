@@ -18,6 +18,6 @@ export const useProjectModalStore = create<ProjectModalState>()(setState => ({
     setState({ visible: true, editingProjectId: id });
   },
   close: () => {
-    setState({ visible: false, editingProjectId: null });
+    setState({ visible: false });
   },
 }));

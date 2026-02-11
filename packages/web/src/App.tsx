@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from '@components/layout/AppLayout';
 import { Login } from '@features/Login';
 import { HostsRoute } from '@routes/HostsRoute';
@@ -40,7 +40,8 @@ export function App() {
   return (
     <Routes>
       <Route element={<AppLayout />}>
-        <Route index element={<HostsRoute />} />
+        <Route index element={<Navigate to="/hosts" replace />} />
+        <Route path="hosts" element={<HostsRoute />} />
         <Route path="projects" element={<ProjectsRoute />} />
         <Route path="chat" element={<ChatRoute />} />
         <Route path="*" element={<NotFoundRoute />} />

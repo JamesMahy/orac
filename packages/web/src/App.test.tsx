@@ -79,9 +79,9 @@ describe('App', () => {
     expect(screen.getAllByText('Hosts')).toHaveLength(2);
   });
 
-  it('renders hosts page at /', async () => {
+  it('renders hosts page at /hosts', async () => {
     useAuthStore.getState().authenticate();
-    renderWithProviders(<App />);
+    renderWithProviders(<App />, '/hosts');
     expect(
       await screen.findByText(
         'No hosts configured. Add a host to get started.',

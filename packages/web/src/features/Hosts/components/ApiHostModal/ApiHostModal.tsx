@@ -1,14 +1,14 @@
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import type { Host } from '@orac/shared';
 import { FormError } from '@components/FormError';
 import { FormModal } from '@components/FormModal';
 import { FormTextInput } from '@components/TextInput';
 import { FormPasswordInput } from '@components/PasswordInput';
 import { hostsApi } from '@api/hosts';
-import { queryKeys } from '@api/queryKeys';
+import { useHost } from '@hooks/useHosts';
 import { extractErrorCode, translateError } from '@utils/translateError';
 import type { ApiFormData } from '../../hosts.types';
 
@@ -53,13 +53,7 @@ export function ApiHostModal({
     isLoading,
     isError,
     error: fetchError,
-  } = useQuery({
-    queryKey: queryKeys.host(existingHostId!),
-    queryFn: () => hostsApi.getById(existingHostId!),
-    enabled: !!existingHostId,
-    retry: false,
-    staleTime: 0,
-  });
+  } = useHost(existingHostId ?? null);
 
   const {
     control,
