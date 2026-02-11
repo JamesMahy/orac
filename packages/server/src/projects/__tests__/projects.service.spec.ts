@@ -6,6 +6,7 @@ import { ProjectsService } from '../projects.service';
 const mockProject = {
   id: '550e8400-e29b-41d4-a716-446655440000',
   name: 'Bearly Fit',
+  description: 'Fitness tracking application',
   createdAt: new Date('2025-01-01'),
   updatedAt: new Date('2025-01-01'),
 };
@@ -97,11 +98,32 @@ describe('ProjectsService', () => {
     it('should create and return a project', async () => {
       prisma.project.create.mockResolvedValue(mockProject);
 
-      const result = await service.create({ name: 'Bearly Fit' });
+      const result = await service.create({
+        name: 'Bearly Fit',
+        description: 'Fitness tracking application',
+      });
 
       expect(result).toEqual(mockProject);
       expect(prisma.project.create).toHaveBeenCalledWith({
-        data: { name: 'Bearly Fit' },
+        data: {
+          name: 'Bearly Fit',
+          description: 'Fitness tracking application',
+        },
+      });
+    });
+
+    it('should create a project without description', async () => {
+      const projectWithoutDescription = {
+        ...mockProject,
+        description: null,
+      };
+      prisma.project.create.mockResolvedValue(projectWithoutDescription);
+
+      const result = await service.create({ name: 'Bearly Fit' });
+
+      expect(result).toEqual(projectWithoutDescription);
+      expect(prisma.project.create).toHaveBeenCalledWith({
+        data: { name: 'Bearly Fit', description: undefined },
       });
     });
   });
@@ -119,7 +141,23 @@ describe('ProjectsService', () => {
       expect(result).toEqual(updated);
       expect(prisma.project.update).toHaveBeenCalledWith({
         where: { id: mockProject.id },
-        data: { name: 'Updated Name' },
+        data: { name: 'Updated Name', description: undefined },
+      });
+    });
+
+    it('should update description', async () => {
+      const updated = { ...mockProject, description: 'New description' };
+      prisma.project.findUnique.mockResolvedValue(mockProject);
+      prisma.project.update.mockResolvedValue(updated);
+
+      const result = await service.update(mockProject.id, {
+        description: 'New description',
+      });
+
+      expect(result).toEqual(updated);
+      expect(prisma.project.update).toHaveBeenCalledWith({
+        where: { id: mockProject.id },
+        data: { name: undefined, description: 'New description' },
       });
     });
 

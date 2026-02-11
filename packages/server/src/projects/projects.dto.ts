@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PartialType } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
 
 export class CreateProjectDto {
   @ApiProperty({
@@ -12,6 +12,16 @@ export class CreateProjectDto {
   @IsNotEmpty()
   @MaxLength(255)
   name!: string;
+
+  @ApiPropertyOptional({
+    description: 'Project description',
+    example: 'Fitness tracking application',
+    maxLength: 2000,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  description?: string;
 }
 
 export class UpdateProjectDto extends PartialType(CreateProjectDto) {}
@@ -28,6 +38,12 @@ export class ProjectResponseDto {
     example: 'Bearly Fit',
   })
   name!: string;
+
+  @ApiPropertyOptional({
+    description: 'Project description',
+    example: 'Fitness tracking application',
+  })
+  description!: string | null;
 
   @ApiProperty({ description: 'Creation timestamp' })
   createdAt!: Date;

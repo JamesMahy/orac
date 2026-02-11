@@ -25,7 +25,7 @@ export class ProjectsService {
 
   async create(dto: CreateProjectDto) {
     return this.prisma.project.create({
-      data: { name: dto.name },
+      data: { name: dto.name, description: dto.description },
     });
   }
 
@@ -38,7 +38,7 @@ export class ProjectsService {
     }
     return this.prisma.project.update({
       where: { id },
-      data: { name: dto.name },
+      data: { name: dto.name, description: dto.description },
     });
   }
 

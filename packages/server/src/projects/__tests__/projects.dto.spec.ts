@@ -30,6 +30,17 @@ describe('CreateProjectDto', () => {
     it('should accept a name at max length', async () => {
       await expectValid({ name: 'a'.repeat(255) });
     });
+
+    it('should accept a project with description', async () => {
+      await expectValid({
+        name: 'Bearly Fit',
+        description: 'Fitness tracking application',
+      });
+    });
+
+    it('should accept a project without description', async () => {
+      await expectValid({ name: 'Bearly Fit' });
+    });
   });
 
   describe('name validation', () => {
@@ -47,6 +58,29 @@ describe('CreateProjectDto', () => {
 
     it('should reject non-string name', async () => {
       await expectInvalid({ name: 123 }, 'name');
+    });
+  });
+
+  describe('description validation', () => {
+    it('should accept description at max length', async () => {
+      await expectValid({
+        name: 'Bearly Fit',
+        description: 'a'.repeat(2000),
+      });
+    });
+
+    it('should reject description exceeding 2000 characters', async () => {
+      await expectInvalid(
+        { name: 'Bearly Fit', description: 'a'.repeat(2001) },
+        'description',
+      );
+    });
+
+    it('should reject non-string description', async () => {
+      await expectInvalid(
+        { name: 'Bearly Fit', description: 123 },
+        'description',
+      );
     });
   });
 });
