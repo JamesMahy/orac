@@ -3,7 +3,9 @@ import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { useAuthStore } from '@stores/authStore';
+import { useProjectModalStore } from '@stores/projectModalStore';
 import { authApi } from '@api/auth';
+import { useProjects } from '@hooks/useProjects';
 
 type SidebarProps = {
   open: boolean;
@@ -27,6 +29,10 @@ export function Sidebar({
   const { t } = useTranslation('common');
   const sidebarRef = useRef<HTMLElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
+
+  const { data: projects } = useProjects();
+
+  const { openCreate, openEdit } = useProjectModalStore();
 
   useEffect(() => {
     if (!open) {
@@ -113,26 +119,112 @@ export function Sidebar({
         </div>
 
         <nav aria-label={t('nav.sidebar')} className="flex-1 space-y-1 p-3">
-          {navItems.map(item => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              onClick={onClose}
-              end={item.to === '/'}
-              title={collapsed ? t(`nav.${item.labelKey}`) : undefined}
-              className={({ isActive }) =>
-                clsx(
-                  'flex items-center rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
-                  collapsed ? 'justify-center px-2 py-2' : 'gap-3 px-3 py-2',
-                  isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-text-muted hover:bg-border/50 hover:text-text',
-                )
-              }>
-              <i className={item.icon} aria-hidden="true" />
-              {!collapsed && t(`nav.${item.labelKey}`)}
-            </NavLink>
-          ))}
+          {navItems.map(item => {
+            if (item.labelKey === 'projects') {
+              return (
+                <div key={item.to}>
+                  <div
+                    className={clsx(
+                      'flex items-center rounded-lg text-sm font-medium',
+                      collapsed ? 'justify-center' : 'gap-0',
+                    )}>
+                    <NavLink
+                      to={item.to}
+                      onClick={onClose}
+                      title={
+                        collapsed ? t(`nav.${item.labelKey}`) : undefined
+                      }
+                      className={({ isActive }) =>
+                        clsx(
+                          'flex flex-1 items-center rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                          collapsed
+                            ? 'justify-center px-2 py-2'
+                            : 'gap-3 px-3 py-2',
+                          isActive
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-text-muted hover:bg-border/50 hover:text-text',
+                        )
+                      }>
+                      <i className={item.icon} aria-hidden="true" />
+                      {!collapsed && t(`nav.${item.labelKey}`)}
+                    </NavLink>
+                    {!collapsed && (
+                      <div className="flex">
+                        <button
+                          onClick={openCreate}
+                          className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                          aria-label={t('nav.addProject')}>
+                          <i
+                            className="pi pi-plus text-xs"
+                            aria-hidden="true"
+                          />
+                        </button>
+                        <NavLink
+                          to="/projects"
+                          onClick={onClose}
+                          className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                          aria-label={t('nav.manageProjects')}>
+                          <i
+                            className="pi pi-cog text-xs"
+                            aria-hidden="true"
+                          />
+                        </NavLink>
+                      </div>
+                    )}
+                  </div>
+
+                  {!collapsed && projects && projects.length > 0 && (
+                    <ul className="mt-1 space-y-0.5 pl-6">
+                      {projects.map(project => (
+                        <li
+                          key={project.id}
+                          className="group flex items-center">
+                          <NavLink
+                            to="/projects"
+                            onClick={onClose}
+                            className="flex-1 truncate rounded-md px-3 py-1 text-sm text-text-muted transition-colors hover:bg-border/50 hover:text-text">
+                            {project.name}
+                          </NavLink>
+                          <button
+                            onClick={() => openEdit(project.id)}
+                            className="rounded-lg p-1 text-text-muted opacity-0 transition-opacity hover:bg-border/50 hover:text-text focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group-hover:opacity-100"
+                            aria-label={t('nav.editProject', { name: project.name })}>
+                            <i
+                              className="pi pi-pencil text-xs"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={onClose}
+                end={item.to === '/'}
+                title={collapsed ? t(`nav.${item.labelKey}`) : undefined}
+                className={({ isActive }) =>
+                  clsx(
+                    'flex items-center rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                    collapsed
+                      ? 'justify-center px-2 py-2'
+                      : 'gap-3 px-3 py-2',
+                    isActive
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-text-muted hover:bg-border/50 hover:text-text',
+                  )
+                }>
+                <i className={item.icon} aria-hidden="true" />
+                {!collapsed && t(`nav.${item.labelKey}`)}
+              </NavLink>
+            );
+          })}
         </nav>
 
         <div className="border-t border-border p-3">

@@ -91,7 +91,27 @@
     "Current path": "Current path"
   },
   "Projects": {
-    "No projects yet. Create a project to get started.": "No projects yet. Create a project to get started."
+    "No projects yet. Create a project to get started.": "No projects yet. Create a project to get started.",
+    "Add Project": "Add Project",
+    "Create Project": "Create Project",
+    "Update Project": "Update {{name}}",
+    "Delete Project": "Delete Project",
+    "Are you sure you want to delete this project?": "Are you sure you want to delete \"{{name}}\"?",
+    "Project deleted": "{{name}} deleted",
+    "Project created": "{{name}} created",
+    "Project updated": "{{name}} updated",
+    "Failed to delete project": "Failed to delete {{name}}",
+    "Failed to save project": "Failed to save project",
+    "Name": "Name",
+    "Description": "Description",
+    "Created": "Created",
+    "Actions": "Actions",
+    "Search projects by name": "Search projects by name",
+    "Loading projects": "Loading projects",
+    "Edit project": "Edit {{name}}",
+    "Delete project": "Delete {{name}}",
+    "Please give this project a name": "Please give this project a name",
+    "error-project_not_found": "Project not found"
   },
   "Chat": {
     "Select a project to start chatting.": "Select a project to start chatting."

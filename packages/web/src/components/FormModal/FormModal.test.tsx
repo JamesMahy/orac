@@ -94,7 +94,7 @@ describe('FormModal', () => {
   it('shows Reset Form button for existing host with changes', () => {
     const onReset = vi.fn();
     renderFormModal({
-      isExistingHost: true,
+      isExisting: true,
       hasUnsavedChanges: true,
       onReset,
     });
@@ -105,7 +105,7 @@ describe('FormModal', () => {
 
   it('hides Reset Form button when no unsaved changes', () => {
     renderFormModal({
-      isExistingHost: true,
+      isExisting: true,
       hasUnsavedChanges: false,
       onReset: vi.fn(),
     });
@@ -117,7 +117,7 @@ describe('FormModal', () => {
   it('calls onReset when Reset Form is clicked', async () => {
     const onReset = vi.fn();
     renderFormModal({
-      isExistingHost: true,
+      isExisting: true,
       hasUnsavedChanges: true,
       onReset,
     });
@@ -127,7 +127,7 @@ describe('FormModal', () => {
 
   it('disables Save for existing host without changes', () => {
     renderFormModal({
-      isExistingHost: true,
+      isExisting: true,
       hasUnsavedChanges: false,
     });
     expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
@@ -137,7 +137,7 @@ describe('FormModal', () => {
     renderFormModal({
       isBusy: true,
       hasUnsavedChanges: true,
-      isExistingHost: true,
+      isExisting: true,
       onReset: vi.fn(),
     });
     expect(screen.getByText('Cancel').closest('button')).toBeDisabled();

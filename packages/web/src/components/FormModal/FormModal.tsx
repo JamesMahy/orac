@@ -12,7 +12,7 @@ type FormModalProps = {
   errorMessage?: string;
   hasUnsavedChanges?: boolean;
   isBusy?: boolean;
-  isExistingHost?: boolean;
+  isExisting?: boolean;
   onClose: () => void;
   onReset?: () => void;
   onSave: () => void;
@@ -29,7 +29,7 @@ export function FormModal({
   errorMessage,
   hasUnsavedChanges,
   isBusy,
-  isExistingHost,
+  isExisting,
   onClose,
   onReset,
   onSave,
@@ -57,7 +57,7 @@ export function FormModal({
   const footer = (
     <div className="flex items-center justify-between">
       <div className="flex gap-2">
-        {isExistingHost && hasUnsavedChanges && onReset && (
+        {isExisting && hasUnsavedChanges && onReset && (
           <Button
             label={t('Reset Form')}
             onClick={onReset}
@@ -81,7 +81,7 @@ export function FormModal({
           onClick={onSave}
           severity={saveSeverity}
           loading={isBusy}
-          disabled={isExistingHost && !hasUnsavedChanges}
+          disabled={isExisting && !hasUnsavedChanges}
         />
       </div>
     </div>
@@ -95,11 +95,18 @@ export function FormModal({
       footer={footer}
       dismissableMask={false}
       className="w-full max-w-2xl">
-      <LoadingSpinner isLoading={!!isLoading} className="p-8" />
-
-      <FormError message={errorMessage} />
-
-      {!isLoading && !errorMessage && <div className="p-2">{children}</div>}
+      <div className="min-h-[300px]">
+        {isLoading ? (
+          <LoadingSpinner
+            isLoading
+            className="flex min-h-[300px] items-center justify-center"
+          />
+        ) : errorMessage ? (
+          <FormError message={errorMessage} />
+        ) : (
+          <div className="p-2">{children}</div>
+        )}
+      </div>
     </Dialog>
   );
 }

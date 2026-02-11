@@ -8,6 +8,7 @@ import { FormModal } from '@components/FormModal';
 import { FormTextInput } from '@components/TextInput';
 import { FormPasswordInput } from '@components/PasswordInput';
 import { hostsApi } from '@api/hosts';
+import { queryKeys } from '@api/queryKeys';
 import { extractErrorCode, translateError } from '@utils/translateError';
 import type { ApiFormData } from '../../hosts.types';
 
@@ -53,7 +54,7 @@ export function ApiHostModal({
     isError,
     error: fetchError,
   } = useQuery({
-    queryKey: ['host', existingHostId],
+    queryKey: queryKeys.host(existingHostId!),
     queryFn: () => hostsApi.getById(existingHostId!),
     enabled: !!existingHostId,
     retry: false,
@@ -134,7 +135,7 @@ export function ApiHostModal({
       errorMessage={translateError(fetchErrorCode, t)}
       hasUnsavedChanges={isDirty}
       isBusy={saveMutation.isPending}
-      isExistingHost={isExistingHost}
+      isExisting={isExistingHost}
       onClose={handleClose}
       onReset={loadHostData}
       onSave={handleFormSubmit}>

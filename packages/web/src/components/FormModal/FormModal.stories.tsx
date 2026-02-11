@@ -35,7 +35,7 @@ export const WithUnsavedChanges: Story = {
 export const ExistingHost: Story = {
   args: {
     header: 'Update My Server',
-    isExistingHost: true,
+    isExisting: true,
     hasUnsavedChanges: true,
     onReset: () => {},
   },
@@ -44,7 +44,7 @@ export const ExistingHost: Story = {
 export const ExistingHostNoChanges: Story = {
   args: {
     header: 'Update My Server',
-    isExistingHost: true,
+    isExisting: true,
     hasUnsavedChanges: false,
   },
 };

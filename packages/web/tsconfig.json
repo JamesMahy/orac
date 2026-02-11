@@ -11,6 +11,7 @@
       "@components/*": ["src/components/*"],
       "@features/*": ["src/features/*"],
       "@routes/*": ["src/routes/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@stores/*": ["src/stores/*"],
       "@utils/*": ["src/utils/*"]
     },

@@ -25,6 +25,16 @@ vi.mock('@api/hosts', () => ({
   },
 }));
 
+vi.mock('@api/projects', () => ({
+  projectsApi: {
+    getAll: vi.fn().mockResolvedValue([]),
+    getById: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    remove: vi.fn(),
+  },
+}));
+
 function renderWithProviders(ui: React.ReactElement, initialRoute = '/') {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -79,11 +89,13 @@ describe('App', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders projects page at /projects', () => {
+  it('renders projects page at /projects', async () => {
     useAuthStore.getState().authenticate();
     renderWithProviders(<App />, '/projects');
     expect(
-      screen.getByText('No projects yet. Create a project to get started.'),
+      await screen.findByText(
+        'No projects yet. Create a project to get started.',
+      ),
     ).toBeInTheDocument();
   });
 

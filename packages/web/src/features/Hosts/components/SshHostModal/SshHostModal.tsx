@@ -10,6 +10,7 @@ import { FormError } from '@components/FormError';
 import { FormModal } from '@components/FormModal';
 import { FormTextInput } from '@components/TextInput';
 import { hostsApi } from '@api/hosts';
+import { queryKeys } from '@api/queryKeys';
 import { sshApi } from '@api/ssh';
 import { extractErrorCode, translateError } from '@utils/translateError';
 import type { SshFormData } from '../../hosts.types';
@@ -79,7 +80,7 @@ export function SshHostModal({
     isError,
     error: fetchError,
   } = useQuery({
-    queryKey: ['host', existingHostId],
+    queryKey: queryKeys.host(existingHostId!),
     queryFn: () => hostsApi.getById(existingHostId!),
     enabled: !!existingHostId,
     retry: false,
@@ -330,7 +331,7 @@ export function SshHostModal({
         errorMessage={translateError(fetchErrorCode, t)}
         hasUnsavedChanges={hasChanges}
         isBusy={isBusy}
-        isExistingHost={isExistingHost}
+        isExisting={isExistingHost}
         onClose={handleClose}
         onReset={loadHostData}
         onSave={

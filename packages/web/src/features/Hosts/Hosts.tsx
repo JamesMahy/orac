@@ -9,6 +9,7 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { InputText } from 'primereact/inputtext';
 import type { Host } from '@orac/shared';
 import { hostsApi } from '@api/hosts';
+import { queryKeys } from '@api/queryKeys';
 import { FolderBrowser } from '@components/FolderBrowser';
 import { SshHostModal } from './components/SshHostModal/SshHostModal';
 import { ApiHostModal } from './components/ApiHostModal/ApiHostModal';
@@ -24,7 +25,7 @@ export function Hosts() {
   const [browsingHostId, setBrowsingHostId] = useState<string | null>(null);
 
   const { data: hosts, isLoading } = useQuery({
-    queryKey: ['hosts'],
+    queryKey: queryKeys.hosts,
     queryFn: hostsApi.getAll,
     staleTime: 0,
   });
@@ -51,7 +52,7 @@ export function Hosts() {
 
   const handleComplete = useCallback(
     (host: Host, isNew: boolean) => {
-      queryClient.setQueryData<Host[]>(['hosts'], oldData => {
+      queryClient.setQueryData<Host[]>(queryKeys.hosts, oldData => {
         if (!oldData) return [host];
         if (isNew) return [host, ...oldData];
         return oldData.map(existingHost =>
@@ -96,7 +97,7 @@ export function Hosts() {
           try {
             await hostsApi.remove(host.id);
 
-            queryClient.setQueryData<Host[]>(['hosts'], oldData =>
+            queryClient.setQueryData<Host[]>(queryKeys.hosts, oldData =>
               oldData?.filter(existingHost => existingHost.id !== host.id),
             );
 
