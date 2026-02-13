@@ -3,7 +3,7 @@ import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
   {
-    ignores: ['dist/', 'node_modules/'],
+    ignores: ['dist/', 'node_modules/', 'coverage/'],
   },
   ...tseslint.configs.recommendedTypeChecked,
   {
@@ -19,6 +19,10 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
     },
   },
   prettier,

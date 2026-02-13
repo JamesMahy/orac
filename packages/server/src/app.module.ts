@@ -10,6 +10,7 @@ import { HostsModule } from '@hosts/hosts.module';
 import { ProjectsModule } from '@projects/projects.module';
 import { WorkspacesModule } from '@workspaces/workspaces.module';
 import { SshModule } from '@ssh/ssh.module';
+import { AdaptersModule } from '@adapters/adapters.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SshModule } from '@ssh/ssh.module';
     ProjectsModule,
     WorkspacesModule,
     SshModule,
+    AdaptersModule,
   ],
   controllers: [AppController],
   providers: [

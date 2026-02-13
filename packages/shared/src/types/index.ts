@@ -29,3 +29,16 @@ export type {
   StreamErrorEvent,
 } from './stream-events';
 export type { DirectoryEntry, BrowseDirectoryResponse } from './folder-browser';
+export type {
+  AdapterType,
+  AdapterSessionStrategy,
+  AdapterCapability,
+  AdapterCommand,
+  AdapterField,
+  AdapterDefinition,
+  TokenUsage,
+  AdapterStreamEvent,
+  AdapterErrorCode,
+  SendMessageOptions,
+  HandleCommandOptions,
+} from './adapter';

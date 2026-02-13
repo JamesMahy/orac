@@ -12,7 +12,8 @@
       "@hosts/*": ["src/hosts/*"],
       "@projects/*": ["src/projects/*"],
       "@workspaces/*": ["src/workspaces/*"],
-      "@ssh/*": ["src/ssh/*"]
+      "@ssh/*": ["src/ssh/*"],
+      "@adapters/*": ["src/adapters/*"]
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
