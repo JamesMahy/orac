@@ -16,8 +16,9 @@ export type AdapterCommand = {
 export type AdapterField = {
   key: string;
   label: string;
-  type: 'text' | 'password' | 'number' | 'textarea' | 'select';
+  type: 'text' | 'number' | 'textarea' | 'select';
   required: boolean;
+  secure?: boolean;
   options?: string[];
   default?: string;
   min?: number;

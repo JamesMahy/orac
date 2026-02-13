@@ -23,13 +23,20 @@ export class AdapterFieldDto {
 
   @ApiProperty({
     description: 'Input type',
-    enum: ['text', 'password', 'number', 'textarea', 'select'],
-    example: 'password',
+    enum: ['text', 'number', 'textarea', 'select'],
+    example: 'text',
   })
   type!: string;
 
   @ApiProperty({ description: 'Whether the field is required', example: true })
   required!: boolean;
+
+  @ApiProperty({
+    description: 'Whether the field value should be encrypted and masked',
+    required: false,
+    example: true,
+  })
+  secure?: boolean;
 
   @ApiProperty({
     description: 'Options for select fields',

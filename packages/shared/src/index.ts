@@ -33,4 +33,7 @@ export type {
   AdapterErrorCode,
   SendMessageOptions,
   HandleCommandOptions,
+  Clanker,
+  CreateClankerDto,
+  UpdateClankerDto,
 } from './types';

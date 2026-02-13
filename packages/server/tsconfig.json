@@ -13,7 +13,8 @@
       "@projects/*": ["src/projects/*"],
       "@workspaces/*": ["src/workspaces/*"],
       "@ssh/*": ["src/ssh/*"],
-      "@adapters/*": ["src/adapters/*"]
+      "@adapters/*": ["src/adapters/*"],
+      "@clankers/*": ["src/clankers/*"]
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true

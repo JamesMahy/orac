@@ -11,6 +11,7 @@ import { ProjectsModule } from '@projects/projects.module';
 import { WorkspacesModule } from '@workspaces/workspaces.module';
 import { SshModule } from '@ssh/ssh.module';
 import { AdaptersModule } from '@adapters/adapters.module';
+import { ClankersModule } from '@clankers/clankers.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AdaptersModule } from '@adapters/adapters.module';
     WorkspacesModule,
     SshModule,
     AdaptersModule,
+    ClankersModule,
   ],
   controllers: [AppController],
   providers: [

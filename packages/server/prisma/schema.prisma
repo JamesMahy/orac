@@ -28,6 +28,7 @@ model Host {
   createdAt  DateTime    @default(now()) @map("created_at")
   updatedAt  DateTime    @updatedAt @map("updated_at")
   workspaces Workspace[]
+  clankers   Clanker[]
 
   @@map("hosts")
 }
@@ -74,4 +75,24 @@ model Message {
 
   @@map("messages")
   @@index([workspaceId])
+}
+
+model Clanker {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(255)
+  adapterId String   @map("adapter_id") @db.VarChar(100)
+
+  // Console adapters only — which SSH host runs this CLI tool
+  hostId    String?  @map("host_id")
+  host      Host?    @relation(fields: [hostId], references: [id], onDelete: SetNull)
+
+  // Adapter-specific config — driven by adapter.fields
+  config    Json     @default("{}")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("clankers")
+  @@index([hostId])
+  @@index([adapterId])
 }

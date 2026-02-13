@@ -42,3 +42,4 @@ export type {
   SendMessageOptions,
   HandleCommandOptions,
 } from './adapter';
+export type { Clanker, CreateClankerDto, UpdateClankerDto } from './clanker';
