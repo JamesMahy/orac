@@ -21,15 +21,15 @@ export class HostsService {
     const hosts = await this.prisma.host.findMany({
       orderBy: { createdAt: 'desc' },
     });
-    return hosts.map(h => this.stripSensitive(h));
+    return hosts.map(host => this.toResponse(host));
   }
 
-  async findOne(id: string): Promise<HostResponse> {
-    const host = await this.prisma.host.findUnique({ where: { id } });
+  async findOne(hostId: string): Promise<HostResponse> {
+    const host = await this.prisma.host.findUnique({ where: { hostId } });
     if (!host) {
       throw new NotFoundException('host_not_found');
     }
-    return this.stripSensitive(host);
+    return this.toResponse(host);
   }
 
   async create(dto: CreateHostDto): Promise<HostResponse> {
@@ -54,11 +54,11 @@ export class HostsService {
     };
 
     const host = await this.prisma.host.create({ data });
-    return this.stripSensitive(host);
+    return this.toResponse(host);
   }
 
-  async update(id: string, dto: UpdateHostDto): Promise<HostResponse> {
-    const existing = await this.prisma.host.findUnique({ where: { id } });
+  async update(hostId: string, dto: UpdateHostDto): Promise<HostResponse> {
+    const existing = await this.prisma.host.findUnique({ where: { hostId } });
     if (!existing) {
       throw new NotFoundException('host_not_found');
     }
@@ -85,20 +85,20 @@ export class HostsService {
       model: dto.model,
     };
 
-    const host = await this.prisma.host.update({ where: { id }, data });
-    return this.stripSensitive(host);
+    const host = await this.prisma.host.update({ where: { hostId }, data });
+    return this.toResponse(host);
   }
 
-  async remove(id: string): Promise<void> {
-    const existing = await this.prisma.host.findUnique({ where: { id } });
+  async remove(hostId: string) {
+    const existing = await this.prisma.host.findUnique({ where: { hostId } });
     if (!existing) {
       throw new NotFoundException('host_not_found');
     }
-    this.sshService?.disconnect(id);
-    await this.prisma.host.delete({ where: { id } });
+    this.sshService?.disconnect(hostId);
+    await this.prisma.host.delete({ where: { hostId } });
   }
 
-  private stripSensitive(host: Host): HostResponse {
+  private toResponse(host: Host): HostResponse {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, apiKey, ...rest } = host;
     return { ...rest, hasPassword: !!password };

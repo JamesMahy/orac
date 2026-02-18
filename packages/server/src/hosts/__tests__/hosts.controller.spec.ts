@@ -5,7 +5,7 @@ import { HostsService } from '../hosts.service';
 import { CreateHostDto } from '../hosts.dto';
 
 const strippedHost = {
-  id: '550e8400-e29b-41d4-a716-446655440000',
+  hostId: '550e8400-e29b-41d4-a716-446655440000',
   name: 'Test SSH Host',
   type: 'ssh',
   hostname: '192.168.1.1',
@@ -14,6 +14,7 @@ const strippedHost = {
   endpoint: null,
   provider: null,
   model: null,
+  hasPassword: false,
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -50,19 +51,21 @@ describe('HostsController', () => {
     });
   });
 
-  describe('GET /:id', () => {
-    it('should call findOne with id', async () => {
+  describe('GET /:hostId', () => {
+    it('should call findOne with hostId', async () => {
       mockHostsService.findOne.mockResolvedValue(strippedHost);
 
-      const result = await controller.findOne(strippedHost.id);
+      const result = await controller.findOne(strippedHost.hostId);
 
-      expect(mockHostsService.findOne).toHaveBeenCalledWith(strippedHost.id);
+      expect(mockHostsService.findOne).toHaveBeenCalledWith(
+        strippedHost.hostId,
+      );
       expect(result).toEqual(strippedHost);
     });
 
     it('should propagate NotFoundException from service', async () => {
       mockHostsService.findOne.mockRejectedValue(
-        new NotFoundException('Host not found'),
+        new NotFoundException('host_not_found'),
       );
 
       await expect(controller.findOne('nonexistent')).rejects.toThrow(
@@ -90,18 +93,18 @@ describe('HostsController', () => {
     });
   });
 
-  describe('PATCH /:id', () => {
-    it('should call update with id and dto', async () => {
+  describe('PATCH /:hostId', () => {
+    it('should call update with hostId and dto', async () => {
       const dto = { name: 'Updated Host' };
       mockHostsService.update.mockResolvedValue({
         ...strippedHost,
         name: 'Updated Host',
       });
 
-      const result = await controller.update(strippedHost.id, dto);
+      const result = await controller.update(strippedHost.hostId, dto);
 
       expect(mockHostsService.update).toHaveBeenCalledWith(
-        strippedHost.id,
+        strippedHost.hostId,
         dto,
       );
       expect(result.name).toBe('Updated Host');
@@ -109,7 +112,7 @@ describe('HostsController', () => {
 
     it('should propagate NotFoundException from service', async () => {
       mockHostsService.update.mockRejectedValue(
-        new NotFoundException('Host not found'),
+        new NotFoundException('host_not_found'),
       );
 
       await expect(
@@ -118,18 +121,20 @@ describe('HostsController', () => {
     });
   });
 
-  describe('DELETE /:id', () => {
-    it('should call remove with id', async () => {
+  describe('DELETE /:hostId', () => {
+    it('should call remove with hostId', async () => {
       mockHostsService.remove.mockResolvedValue(undefined);
 
-      await controller.remove(strippedHost.id);
+      await controller.remove(strippedHost.hostId);
 
-      expect(mockHostsService.remove).toHaveBeenCalledWith(strippedHost.id);
+      expect(mockHostsService.remove).toHaveBeenCalledWith(
+        strippedHost.hostId,
+      );
     });
 
     it('should propagate NotFoundException from service', async () => {
       mockHostsService.remove.mockRejectedValue(
-        new NotFoundException('Host not found'),
+        new NotFoundException('host_not_found'),
       );
 
       await expect(controller.remove('nonexistent')).rejects.toThrow(

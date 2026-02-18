@@ -1,7 +1,7 @@
 export type HostType = 'ssh' | 'api';
 
 export type Host = {
-  id: string;
+  hostId: string;
   name: string;
   type: HostType;
 

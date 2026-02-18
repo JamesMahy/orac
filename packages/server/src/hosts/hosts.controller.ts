@@ -27,10 +27,10 @@ export class HostsController {
     return this.hostsService.findAll();
   }
 
-  @Get(':id')
+  @Get(':hostId')
   @HostsDocs.findOne
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.hostsService.findOne(id);
+  findOne(@Param('hostId', ParseUUIDPipe) hostId: string) {
+    return this.hostsService.findOne(hostId);
   }
 
   @Post()
@@ -39,16 +39,19 @@ export class HostsController {
     return this.hostsService.create(dto);
   }
 
-  @Patch(':id')
+  @Patch(':hostId')
   @HostsDocs.update
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateHostDto) {
-    return this.hostsService.update(id, dto);
+  update(
+    @Param('hostId', ParseUUIDPipe) hostId: string,
+    @Body() dto: UpdateHostDto,
+  ) {
+    return this.hostsService.update(hostId, dto);
   }
 
-  @Delete(':id')
+  @Delete(':hostId')
   @HttpCode(204)
   @HostsDocs.remove
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.hostsService.remove(id);
+  remove(@Param('hostId', ParseUUIDPipe) hostId: string) {
+    return this.hostsService.remove(hostId);
   }
 }

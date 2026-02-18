@@ -5,7 +5,7 @@ import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '@common/crypto/encryption.service';
 
 const mockHost = {
-  id: '550e8400-e29b-41d4-a716-446655440000',
+  hostId: '550e8400-e29b-41d4-a716-446655440000',
   name: 'Test SSH Host',
   type: 'ssh',
   hostname: '192.168.1.1',
@@ -22,7 +22,7 @@ const mockHost = {
 
 const mockApiHost = {
   ...mockHost,
-  id: '550e8400-e29b-41d4-a716-446655440001',
+  hostId: '550e8400-e29b-41d4-a716-446655440001',
   name: 'Test API Host',
   type: 'api',
   hostname: null,
@@ -37,7 +37,7 @@ const mockApiHost = {
 
 const mockBothSensitive = {
   ...mockHost,
-  id: '550e8400-e29b-41d4-a716-446655440002',
+  hostId: '550e8400-e29b-41d4-a716-446655440002',
   name: 'Both Sensitive',
   password: 'enc_pw',
   apiKey: 'enc_key',
@@ -83,9 +83,14 @@ describe('HostsService', () => {
       expect(result).toHaveLength(2);
       expect(result[0]).not.toHaveProperty('password');
       expect(result[0]).not.toHaveProperty('apiKey');
+      expect(result[0]).toHaveProperty('hostId', mockHost.hostId);
       expect(result[1]).not.toHaveProperty('password');
       expect(result[1]).not.toHaveProperty('apiKey');
+      expect(result[1]).toHaveProperty('hostId', mockApiHost.hostId);
       expect(result[0]).toHaveProperty('name', 'Test SSH Host');
+      expect(prisma.host.findMany).toHaveBeenCalledWith({
+        orderBy: { createdAt: 'desc' },
+      });
     });
 
     it('should return empty array when no hosts exist', async () => {
@@ -101,11 +106,15 @@ describe('HostsService', () => {
     it('should return a host with sensitive fields stripped', async () => {
       prisma.host.findUnique.mockResolvedValue(mockHost);
 
-      const result = await service.findOne(mockHost.id);
+      const result = await service.findOne(mockHost.hostId);
 
       expect(result).not.toHaveProperty('password');
       expect(result).not.toHaveProperty('apiKey');
+      expect(result).toHaveProperty('hostId', mockHost.hostId);
       expect(result).toHaveProperty('name', 'Test SSH Host');
+      expect(prisma.host.findUnique).toHaveBeenCalledWith({
+        where: { hostId: mockHost.hostId },
+      });
     });
 
     it('should throw NotFoundException when not found', async () => {
@@ -201,11 +210,11 @@ describe('HostsService', () => {
       prisma.host.findUnique.mockResolvedValue(mockHost);
       prisma.host.update.mockResolvedValue(mockHost);
 
-      await service.update(mockHost.id, { password: 'new-secret' });
+      await service.update(mockHost.hostId, { password: 'new-secret' });
 
       expect(encryption.encrypt).toHaveBeenCalledWith('new-secret');
       expect(prisma.host.update).toHaveBeenCalledWith({
-        where: { id: mockHost.id },
+        where: { hostId: mockHost.hostId },
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data: expect.objectContaining({ password: 'encrypted_value' }),
       });
@@ -215,11 +224,11 @@ describe('HostsService', () => {
       prisma.host.findUnique.mockResolvedValue(mockApiHost);
       prisma.host.update.mockResolvedValue(mockApiHost);
 
-      await service.update(mockApiHost.id, { apiKey: 'new-key' });
+      await service.update(mockApiHost.hostId, { apiKey: 'new-key' });
 
       expect(encryption.encrypt).toHaveBeenCalledWith('new-key');
       expect(prisma.host.update).toHaveBeenCalledWith({
-        where: { id: mockApiHost.id },
+        where: { hostId: mockApiHost.hostId },
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data: expect.objectContaining({ apiKey: 'encrypted_value' }),
       });
@@ -232,11 +241,11 @@ describe('HostsService', () => {
         name: 'Renamed',
       });
 
-      await service.update(mockHost.id, { name: 'Renamed' });
+      await service.update(mockHost.hostId, { name: 'Renamed' });
 
       expect(encryption.encrypt).not.toHaveBeenCalled();
       expect(prisma.host.update).toHaveBeenCalledWith({
-        where: { id: mockHost.id },
+        where: { hostId: mockHost.hostId },
         data: { name: 'Renamed' },
       });
     });
@@ -248,11 +257,11 @@ describe('HostsService', () => {
         password: null,
       });
 
-      await service.update(mockHost.id, { password: '' });
+      await service.update(mockHost.hostId, { password: '' });
 
       expect(encryption.encrypt).not.toHaveBeenCalled();
       expect(prisma.host.update).toHaveBeenCalledWith({
-        where: { id: mockHost.id },
+        where: { hostId: mockHost.hostId },
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data: expect.objectContaining({ password: null }),
       });
@@ -272,11 +281,11 @@ describe('HostsService', () => {
       prisma.host.findUnique.mockResolvedValue(mockHost);
       prisma.host.delete.mockResolvedValue(mockHost);
 
-      const result = await service.remove(mockHost.id);
+      const result = await service.remove(mockHost.hostId);
 
       expect(result).toBeUndefined();
       expect(prisma.host.delete).toHaveBeenCalledWith({
-        where: { id: mockHost.id },
+        where: { hostId: mockHost.hostId },
       });
     });
 
@@ -289,14 +298,15 @@ describe('HostsService', () => {
     });
   });
 
-  describe('stripSensitive', () => {
+  describe('toResponse', () => {
     it('should strip both password and apiKey when both are present', async () => {
       prisma.host.findUnique.mockResolvedValue(mockBothSensitive);
 
-      const result = await service.findOne(mockBothSensitive.id);
+      const result = await service.findOne(mockBothSensitive.hostId);
 
       expect(result).not.toHaveProperty('password');
       expect(result).not.toHaveProperty('apiKey');
+      expect(result).toHaveProperty('hostId', mockBothSensitive.hostId);
       expect(result).toHaveProperty('name', 'Both Sensitive');
       expect(result).toHaveProperty('hostname');
     });
@@ -304,7 +314,7 @@ describe('HostsService', () => {
     it('should set hasPassword to true when password exists', async () => {
       prisma.host.findUnique.mockResolvedValue(mockHost);
 
-      const result = await service.findOne(mockHost.id);
+      const result = await service.findOne(mockHost.hostId);
 
       expect(result.hasPassword).toBe(true);
     });
@@ -315,7 +325,7 @@ describe('HostsService', () => {
         password: null,
       });
 
-      const result = await service.findOne(mockHost.id);
+      const result = await service.findOne(mockHost.hostId);
 
       expect(result.hasPassword).toBe(false);
     });

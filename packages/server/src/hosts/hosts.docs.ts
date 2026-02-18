@@ -14,7 +14,7 @@ export const HostsDocs = {
 
   findOne: applyDecorators(
     ApiOperation({ summary: 'Get a host by ID' }),
-    ApiParam({ name: 'id', description: 'Host UUID', format: 'uuid' }),
+    ApiParam({ name: 'hostId', description: 'Host UUID', format: 'uuid' }),
     ApiResponse({
       status: 200,
       description: 'Host found',
@@ -35,7 +35,7 @@ export const HostsDocs = {
 
   update: applyDecorators(
     ApiOperation({ summary: 'Update a host' }),
-    ApiParam({ name: 'id', description: 'Host UUID', format: 'uuid' }),
+    ApiParam({ name: 'hostId', description: 'Host UUID', format: 'uuid' }),
     ApiResponse({
       status: 200,
       description: 'Host updated',
@@ -47,7 +47,7 @@ export const HostsDocs = {
 
   remove: applyDecorators(
     ApiOperation({ summary: 'Delete a host' }),
-    ApiParam({ name: 'id', description: 'Host UUID', format: 'uuid' }),
+    ApiParam({ name: 'hostId', description: 'Host UUID', format: 'uuid' }),
     ApiResponse({ status: 204, description: 'Host deleted' }),
     ApiResponse({ status: 404, description: 'Host not found' }),
   ),
