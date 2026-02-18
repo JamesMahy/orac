@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PrimeReactProvider } from 'primereact/api';
 import { vi } from 'vitest';
+import type { Project } from '@orac/shared';
 import { Projects } from './Projects';
 import '../../i18n';
 
@@ -40,16 +41,16 @@ function renderProjects() {
   );
 }
 
-const mockProjects = [
+const mockProjects: Project[] = [
   {
-    id: '1',
+    projectId: '1',
     name: 'Bearly Fit',
     description: 'Fitness tracking application',
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
   },
   {
-    id: '2',
+    projectId: '2',
     name: 'ORAC',
     description: null,
     createdAt: new Date('2024-01-02'),

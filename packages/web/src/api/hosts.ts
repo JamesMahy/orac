@@ -7,8 +7,8 @@ export const hostsApi = {
     return data;
   },
 
-  getById: async (id: string): Promise<Host> => {
-    const { data } = await api.get<Host>(`/api/hosts/${id}`);
+  getById: async (hostId: string): Promise<Host> => {
+    const { data } = await api.get<Host>(`/api/hosts/${hostId}`);
     return data;
   },
 
@@ -17,12 +17,15 @@ export const hostsApi = {
     return data;
   },
 
-  update: async (id: string, hostData: UpdateHostDto): Promise<Host> => {
-    const { data } = await api.patch<Host>(`/api/hosts/${id}`, hostData);
+  update: async (hostId: string, hostData: UpdateHostDto): Promise<Host> => {
+    const { data } = await api.patch<Host>(
+      `/api/hosts/${hostId}`,
+      hostData,
+    );
     return data;
   },
 
-  remove: async (id: string): Promise<void> => {
-    await api.delete(`/api/hosts/${id}`);
+  remove: async (hostId: string): Promise<void> => {
+    await api.delete(`/api/hosts/${hostId}`);
   },
 };

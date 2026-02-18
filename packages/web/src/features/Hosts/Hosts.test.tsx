@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PrimeReactProvider } from 'primereact/api';
 import { vi } from 'vitest';
+import type { Host } from '@orac/shared';
 import { Hosts } from './Hosts';
 import '../../i18n';
 
@@ -38,11 +39,11 @@ function renderHosts() {
   );
 }
 
-const mockHosts = [
+const mockHosts: Host[] = [
   {
-    id: '1',
+    hostId: '1',
     name: 'My SSH Host',
-    type: 'ssh' as const,
+    type: 'ssh',
     hostname: '192.168.1.1',
     port: 22,
     username: 'root',
@@ -55,9 +56,9 @@ const mockHosts = [
     updatedAt: new Date('2024-01-01'),
   },
   {
-    id: '2',
+    hostId: '2',
     name: 'My API Host',
-    type: 'api' as const,
+    type: 'api',
     hostname: null,
     port: null,
     username: null,

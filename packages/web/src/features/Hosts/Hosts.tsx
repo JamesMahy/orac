@@ -25,7 +25,7 @@ export function Hosts() {
 
   const handleEdit = useCallback(
     (host: Host) => {
-      openEdit(host.id, host.type);
+      openEdit(host.hostId, host.type);
     },
     [openEdit],
   );
@@ -50,9 +50,9 @@ export function Hosts() {
         acceptClassName: 'p-button-danger',
         accept: async () => {
           try {
-            await hostsApi.remove(host.id);
+            await hostsApi.remove(host.hostId);
 
-            removeHost(host.id);
+            removeHost(host.hostId);
 
             toast.current?.show({
               severity: 'success',
@@ -100,7 +100,7 @@ export function Hosts() {
           text
           severity="secondary"
           aria-label={t('Browse host', { name: host.name })}
-          onClick={() => setBrowsingHostId(host.id)}
+          onClick={() => setBrowsingHostId(host.hostId)}
         />
       )}
       <Button

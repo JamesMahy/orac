@@ -42,9 +42,10 @@ export function useProjectCache() {
     (project: Project) => {
       queryClient.setQueryData<Project[]>(keys.all, oldData =>
         oldData?.map(existing =>
-          existing.id === project.id ? project : existing,
+          existing.projectId === project.projectId ? project : existing,
         ),
       );
+      queryClient.setQueryData(keys.detail(project.projectId), project);
     },
     [queryClient],
   );
@@ -52,7 +53,7 @@ export function useProjectCache() {
   const removeProject = useCallback(
     (projectId: string) => {
       queryClient.setQueryData<Project[]>(keys.all, oldData =>
-        oldData?.filter(existing => existing.id !== projectId),
+        oldData?.filter(existing => existing.projectId !== projectId),
       );
     },
     [queryClient],

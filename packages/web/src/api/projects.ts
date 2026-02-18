@@ -11,8 +11,8 @@ export const projectsApi = {
     return data;
   },
 
-  getById: async (id: string): Promise<Project> => {
-    const { data } = await api.get<Project>(`/api/projects/${id}`);
+  getById: async (projectId: string): Promise<Project> => {
+    const { data } = await api.get<Project>(`/api/projects/${projectId}`);
     return data;
   },
 
@@ -22,17 +22,17 @@ export const projectsApi = {
   },
 
   update: async (
-    id: string,
+    projectId: string,
     projectData: UpdateProjectDto,
   ): Promise<Project> => {
     const { data } = await api.patch<Project>(
-      `/api/projects/${id}`,
+      `/api/projects/${projectId}`,
       projectData,
     );
     return data;
   },
 
-  remove: async (id: string): Promise<void> => {
-    await api.delete(`/api/projects/${id}`);
+  remove: async (projectId: string): Promise<void> => {
+    await api.delete(`/api/projects/${projectId}`);
   },
 };

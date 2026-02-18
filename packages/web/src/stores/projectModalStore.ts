@@ -4,7 +4,7 @@ type ProjectModalState = {
   visible: boolean;
   editingProjectId: string | null;
   openCreate: () => void;
-  openEdit: (id: string) => void;
+  openEdit: (projectId: string) => void;
   close: () => void;
 };
 
@@ -14,8 +14,8 @@ export const useProjectModalStore = create<ProjectModalState>()(setState => ({
   openCreate: () => {
     setState({ visible: true, editingProjectId: null });
   },
-  openEdit: (id: string) => {
-    setState({ visible: true, editingProjectId: id });
+  openEdit: (projectId: string) => {
+    setState({ visible: true, editingProjectId: projectId });
   },
   close: () => {
     setState({ visible: false });

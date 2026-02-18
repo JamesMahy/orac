@@ -42,9 +42,10 @@ export function useHostCache() {
     (host: Host) => {
       queryClient.setQueryData<Host[]>(keys.all, oldData =>
         oldData?.map(existing =>
-          existing.id === host.id ? host : existing,
+          existing.hostId === host.hostId ? host : existing,
         ),
       );
+      queryClient.setQueryData(keys.detail(host.hostId), host);
     },
     [queryClient],
   );
@@ -52,7 +53,7 @@ export function useHostCache() {
   const removeHost = useCallback(
     (hostId: string) => {
       queryClient.setQueryData<Host[]>(keys.all, oldData =>
-        oldData?.filter(existing => existing.id !== hostId),
+        oldData?.filter(existing => existing.hostId !== hostId),
       );
     },
     [queryClient],

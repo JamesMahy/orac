@@ -28,7 +28,7 @@ const { hostsApi } = await import('@api/hosts');
 const { sshApi } = await import('@api/ssh');
 
 const mockApiHost: Host = {
-  id: '2',
+  hostId: '2',
   name: 'My API Host',
   type: 'api',
   hostname: null,

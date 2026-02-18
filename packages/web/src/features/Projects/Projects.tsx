@@ -33,9 +33,9 @@ export function Projects() {
         acceptClassName: 'p-button-danger',
         accept: async () => {
           try {
-            await projectsApi.remove(project.id);
+            await projectsApi.remove(project.projectId);
 
-            removeProject(project.id);
+            removeProject(project.projectId);
 
             toast.current?.show({
               severity: 'success',
@@ -75,7 +75,7 @@ export function Projects() {
         text
         severity="info"
         aria-label={t('Edit project', { name: project.name })}
-        onClick={() => openEdit(project.id)}
+        onClick={() => openEdit(project.projectId)}
       />
       <Button
         icon="pi pi-trash"
@@ -130,9 +130,7 @@ export function Projects() {
         globalFilterFields={['name']}
         sortField="name"
         sortOrder={1}
-        emptyMessage={t(
-          'No projects yet. Create a project to get started.',
-        )}
+        emptyMessage={t('No projects yet. Create a project to get started.')}
         stripedRows>
         <Column field="name" header={t('Name')} sortable />
         <Column
@@ -146,11 +144,7 @@ export function Projects() {
           body={dateTemplate}
           sortable
         />
-        <Column
-          header={t('Actions')}
-          body={actionsTemplate}
-          className="w-32"
-        />
+        <Column header={t('Actions')} body={actionsTemplate} className="w-32" />
       </DataTable>
     </div>
   );
