@@ -4,7 +4,7 @@ import { AdaptersController } from '../adapters.controller';
 import { AdaptersService } from '../adapters.service';
 
 const claudeCodeDefinition = {
-  id: 'claude-code',
+  adapterId: 'claude-code',
   name: 'Claude Code',
   type: 'console' as const,
   command: 'claude',
@@ -49,7 +49,7 @@ describe('AdaptersController', () => {
     });
   });
 
-  describe('GET /adapters/:id', () => {
+  describe('GET /adapters/:adapterId', () => {
     it('should return a single adapter definition', () => {
       mockAdaptersService.findOne.mockReturnValue(claudeCodeDefinition);
 

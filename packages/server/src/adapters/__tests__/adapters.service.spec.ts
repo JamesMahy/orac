@@ -18,7 +18,7 @@ describe('AdaptersService', () => {
       const result = service.findAll();
 
       expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('claude-code');
+      expect(result[0].adapterId).toBe('claude-code');
     });
   });
 
@@ -27,7 +27,7 @@ describe('AdaptersService', () => {
       const result = service.findOne('claude-code');
 
       expect(result).toEqual({
-        id: 'claude-code',
+        adapterId: 'claude-code',
         name: 'Claude Code',
         type: 'console',
         command: 'claude',
@@ -59,7 +59,7 @@ describe('AdaptersService', () => {
     it('should return the adapter instance', () => {
       const adapter = service.getAdapter('claude-code');
 
-      expect(adapter.id).toBe('claude-code');
+      expect(adapter.adapterId).toBe('claude-code');
       expect(adapter.name).toBe('Claude Code');
       expect(adapter.command).toBe('claude');
     });

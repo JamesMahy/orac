@@ -11,7 +11,7 @@ import type {
 } from '@orac/shared';
 
 export abstract class BaseAdapter {
-  abstract readonly id: string;
+  abstract readonly adapterId: string;
   abstract readonly name: string;
   abstract readonly type: AdapterType;
   abstract readonly capabilities: AdapterCapability[];
@@ -24,7 +24,7 @@ export abstract class BaseAdapter {
 
   toDefinition(): AdapterDefinition {
     return {
-      id: this.id,
+      adapterId: this.adapterId,
       name: this.name,
       type: this.type,
       command: this.command,

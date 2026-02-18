@@ -9,7 +9,9 @@ export class AdaptersService {
 
   constructor() {
     const registered: BaseAdapter[] = [new ClaudeCodeAdapter()];
-    this.adapters = new Map(registered.map(adapter => [adapter.id, adapter]));
+    this.adapters = new Map(
+      registered.map(adapter => [adapter.adapterId, adapter]),
+    );
   }
 
   findAll(): AdapterDefinition[] {
@@ -18,16 +20,16 @@ export class AdaptersService {
     );
   }
 
-  findOne(id: string): AdapterDefinition {
-    const adapter = this.adapters.get(id);
+  findOne(adapterId: string): AdapterDefinition {
+    const adapter = this.adapters.get(adapterId);
     if (!adapter) {
       throw new NotFoundException('adapter_not_found');
     }
     return adapter.toDefinition();
   }
 
-  getAdapter(id: string): BaseAdapter {
-    const adapter = this.adapters.get(id);
+  getAdapter(adapterId: string): BaseAdapter {
+    const adapter = this.adapters.get(adapterId);
     if (!adapter) {
       throw new NotFoundException('adapter_not_found');
     }

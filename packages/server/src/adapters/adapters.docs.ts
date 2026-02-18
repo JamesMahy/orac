@@ -15,7 +15,7 @@ export const AdaptersDocs = {
   findOne: applyDecorators(
     ApiOperation({ summary: 'Get an adapter by ID' }),
     ApiParam({
-      name: 'id',
+      name: 'adapterId',
       description: 'Adapter slug identifier',
       example: 'claude-code',
     }),

@@ -16,9 +16,9 @@ export class AdaptersController {
     return this.adaptersService.findAll();
   }
 
-  @Get(':id')
+  @Get(':adapterId')
   @AdaptersDocs.findOne
-  findOne(@Param('id') id: string) {
-    return this.adaptersService.findOne(id);
+  findOne(@Param('adapterId') adapterId: string) {
+    return this.adaptersService.findOne(adapterId);
   }
 }

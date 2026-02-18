@@ -27,7 +27,7 @@ export type AdapterField = {
 };
 
 export type AdapterDefinition = {
-  id: string;
+  adapterId: string;
   name: string;
   type: AdapterType;
   command: string | null;

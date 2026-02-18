@@ -75,7 +75,7 @@ export class AdapterDefinitionDto {
     description: 'Unique adapter identifier',
     example: 'claude-code',
   })
-  id!: string;
+  adapterId!: string;
 
   @ApiProperty({
     description: 'Display name',

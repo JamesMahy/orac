@@ -8,7 +8,7 @@ import type {
 } from '@orac/shared';
 
 export class ClaudeCodeAdapter extends ConsoleAdapter {
-  readonly id = 'claude-code';
+  readonly adapterId = 'claude-code';
   readonly name = 'Claude Code';
   readonly command = 'claude';
 
