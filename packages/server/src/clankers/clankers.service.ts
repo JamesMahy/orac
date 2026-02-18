@@ -3,7 +3,7 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
-import { Clanker, Prisma } from '@prisma/client';
+import { Host, Prisma } from '@prisma/client';
 import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '@common/crypto/encryption.service';
 import { AdaptersService } from '@adapters/adapters.service';
@@ -12,10 +12,10 @@ import { sanitizeObject } from '../helpers';
 import { CreateClankerDto, UpdateClankerDto } from './clankers.dto';
 
 type ClankerResponse = {
-  id: string;
+  clankerId: string;
   name: string;
-  adapterId: string;
-  hostId: string | null;
+  adapter: { adapterId: string; name: string };
+  host: { hostId: string; name: string } | null;
   config: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
@@ -31,6 +31,7 @@ export class ClankersService {
 
   async findAll(): Promise<ClankerResponse[]> {
     const clankers = await this.prisma.clanker.findMany({
+      include: { host: true },
       orderBy: { createdAt: 'desc' },
     });
     return clankers.map(clanker => {
@@ -39,8 +40,11 @@ export class ClankersService {
     });
   }
 
-  async findOne(id: string): Promise<ClankerResponse> {
-    const clanker = await this.prisma.clanker.findUnique({ where: { id } });
+  async findOne(clankerId: string): Promise<ClankerResponse> {
+    const clanker = await this.prisma.clanker.findUnique({
+      where: { clankerId },
+      include: { host: true },
+    });
     if (!clanker) {
       throw new NotFoundException('clanker_not_found');
     }
@@ -56,7 +60,7 @@ export class ClankersService {
         throw new BadRequestException('host_id_required');
       }
       const host = await this.prisma.host.findUnique({
-        where: { id: dto.hostId },
+        where: { hostId: dto.hostId },
       });
       if (!host) {
         throw new NotFoundException('host_not_found');
@@ -74,13 +78,19 @@ export class ClankersService {
         hostId: dto.hostId ?? null,
         config: encryptedConfig as Prisma.InputJsonValue,
       },
+      include: { host: true },
     });
 
     return this.toResponse(clanker, adapter);
   }
 
-  async update(id: string, dto: UpdateClankerDto): Promise<ClankerResponse> {
-    const existing = await this.prisma.clanker.findUnique({ where: { id } });
+  async update(
+    clankerId: string,
+    dto: UpdateClankerDto,
+  ): Promise<ClankerResponse> {
+    const existing = await this.prisma.clanker.findUnique({
+      where: { clankerId },
+    });
     if (!existing) {
       throw new NotFoundException('clanker_not_found');
     }
@@ -88,10 +98,10 @@ export class ClankersService {
     const adapterId = dto.adapterId ?? existing.adapterId;
     const adapter = this.adapters.getAdapter(adapterId);
 
-    if (dto.hostId !== undefined) {
+    if (dto.hostId !== undefined && dto.hostId !== null) {
       if (adapter.type === 'console') {
         const host = await this.prisma.host.findUnique({
-          where: { id: dto.hostId },
+          where: { hostId: dto.hostId },
         });
         if (!host) {
           throw new NotFoundException('host_not_found');
@@ -114,25 +124,28 @@ export class ClankersService {
     };
 
     const clanker = await this.prisma.clanker.update({
-      where: { id },
+      where: { clankerId },
       data,
+      include: { host: true },
     });
 
     return this.toResponse(clanker, adapter);
   }
 
-  async remove(id: string): Promise<void> {
-    const existing = await this.prisma.clanker.findUnique({ where: { id } });
+  async remove(clankerId: string) {
+    const existing = await this.prisma.clanker.findUnique({
+      where: { clankerId },
+    });
     if (!existing) {
       throw new NotFoundException('clanker_not_found');
     }
-    await this.prisma.clanker.delete({ where: { id } });
+    return this.prisma.clanker.delete({ where: { clankerId } });
   }
 
   private validateConfig(
     adapter: BaseAdapter,
     config: Record<string, unknown>,
-  ): void {
+  ) {
     for (const field of adapter.fields) {
       if (field.required && !(field.key in config)) {
         throw new BadRequestException(`field_required:${field.key}`);
@@ -143,12 +156,15 @@ export class ClankersService {
         config[field.key] !== undefined
       ) {
         const value = Number(config[field.key]);
+
         if (isNaN(value)) {
           throw new BadRequestException(`field_invalid:${field.key}`);
         }
+
         if (field.min !== undefined && value < field.min) {
           throw new BadRequestException(`field_invalid:${field.key}`);
         }
+
         if (field.max !== undefined && value > field.max) {
           throw new BadRequestException(`field_invalid:${field.key}`);
         }
@@ -192,12 +208,16 @@ export class ClankersService {
     return stripped;
   }
 
-  private toResponse(clanker: Clanker, adapter: BaseAdapter): ClankerResponse {
+  private toResponse(
+    clanker: { host: Host | null } & Prisma.ClankerGetPayload<object>,
+    adapter: BaseAdapter,
+  ): ClankerResponse {
+    const { host } = clanker;
     return {
-      id: clanker.id,
+      clankerId: clanker.clankerId,
       name: clanker.name,
-      adapterId: clanker.adapterId,
-      hostId: clanker.hostId,
+      adapter: { adapterId: adapter.adapterId, name: adapter.name },
+      host: host ? { hostId: host.hostId, name: host.name } : null,
       config: this.maskSecureFields(
         adapter,
         clanker.config as Record<string, unknown>,

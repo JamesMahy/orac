@@ -1,8 +1,18 @@
-export type Clanker = {
-  id: string;
-  name: string;
+export type ClankerAdapter = {
   adapterId: string;
-  hostId: string | null;
+  name: string;
+};
+
+export type ClankerHost = {
+  hostId: string;
+  name: string;
+};
+
+export type Clanker = {
+  clankerId: string;
+  name: string;
+  adapter: ClankerAdapter;
+  host: ClankerHost | null;
   config: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;

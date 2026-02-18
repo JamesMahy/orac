@@ -27,10 +27,10 @@ export class ClankersController {
     return this.clankersService.findAll();
   }
 
-  @Get(':id')
+  @Get(':clankerId')
   @ClankersDocs.findOne
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.clankersService.findOne(id);
+  findOne(@Param('clankerId', ParseUUIDPipe) clankerId: string) {
+    return this.clankersService.findOne(clankerId);
   }
 
   @Post()
@@ -39,19 +39,19 @@ export class ClankersController {
     return this.clankersService.create(dto);
   }
 
-  @Patch(':id')
+  @Patch(':clankerId')
   @ClankersDocs.update
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('clankerId', ParseUUIDPipe) clankerId: string,
     @Body() dto: UpdateClankerDto,
   ) {
-    return this.clankersService.update(id, dto);
+    return this.clankersService.update(clankerId, dto);
   }
 
-  @Delete(':id')
+  @Delete(':clankerId')
   @HttpCode(204)
   @ClankersDocs.remove
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.clankersService.remove(id);
+  remove(@Param('clankerId', ParseUUIDPipe) clankerId: string) {
+    return this.clankersService.remove(clankerId);
   }
 }

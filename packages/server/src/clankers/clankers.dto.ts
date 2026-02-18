@@ -51,12 +51,31 @@ export class CreateClankerDto {
 
 export class UpdateClankerDto extends PartialType(CreateClankerDto) {}
 
+class ClankerAdapterDto {
+  @ApiProperty({ description: 'Adapter identifier', example: 'claude-code' })
+  adapterId!: string;
+
+  @ApiProperty({ description: 'Adapter display name', example: 'Claude Code' })
+  name!: string;
+}
+
+class ClankerHostDto {
+  @ApiProperty({
+    description: 'Host unique identifier',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  hostId!: string;
+
+  @ApiProperty({ description: 'Host display name', example: 'prod-server' })
+  name!: string;
+}
+
 export class ClankerResponseDto {
   @ApiProperty({
     description: 'Clanker unique identifier',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  id!: string;
+  clankerId!: string;
 
   @ApiProperty({
     description: 'Display name for the clanker',
@@ -65,17 +84,17 @@ export class ClankerResponseDto {
   name!: string;
 
   @ApiProperty({
-    description: 'Adapter ID this clanker uses',
-    example: 'claude-code',
+    description: 'Adapter this clanker uses',
+    type: ClankerAdapterDto,
   })
-  adapterId!: string;
+  adapter!: ClankerAdapterDto;
 
   @ApiProperty({
-    description: 'Host ID for console adapters',
+    description: 'Host for console adapters',
+    type: ClankerHostDto,
     nullable: true,
-    example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  hostId!: string | null;
+  host!: ClankerHostDto | null;
 
   @ApiProperty({
     description:

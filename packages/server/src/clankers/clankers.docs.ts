@@ -14,7 +14,7 @@ export const ClankersDocs = {
 
   findOne: applyDecorators(
     ApiOperation({ summary: 'Get a clanker by ID' }),
-    ApiParam({ name: 'id', description: 'Clanker UUID', format: 'uuid' }),
+    ApiParam({ name: 'clankerId', description: 'Clanker UUID', format: 'uuid' }),
     ApiResponse({
       status: 200,
       description: 'Clanker found',
@@ -31,11 +31,15 @@ export const ClankersDocs = {
       type: ClankerResponseDto,
     }),
     ApiResponse({ status: 400, description: 'Validation error' }),
+    ApiResponse({
+      status: 404,
+      description: 'Adapter or host not found',
+    }),
   ),
 
   update: applyDecorators(
     ApiOperation({ summary: 'Update a clanker' }),
-    ApiParam({ name: 'id', description: 'Clanker UUID', format: 'uuid' }),
+    ApiParam({ name: 'clankerId', description: 'Clanker UUID', format: 'uuid' }),
     ApiResponse({
       status: 200,
       description: 'Clanker updated',
@@ -47,7 +51,7 @@ export const ClankersDocs = {
 
   remove: applyDecorators(
     ApiOperation({ summary: 'Delete a clanker' }),
-    ApiParam({ name: 'id', description: 'Clanker UUID', format: 'uuid' }),
+    ApiParam({ name: 'clankerId', description: 'Clanker UUID', format: 'uuid' }),
     ApiResponse({ status: 204, description: 'Clanker deleted' }),
     ApiResponse({ status: 404, description: 'Clanker not found' }),
   ),

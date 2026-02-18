@@ -5,10 +5,10 @@ import { ClankersService } from '../clankers.service';
 import { CreateClankerDto } from '../clankers.dto';
 
 const strippedClanker = {
-  id: '660e8400-e29b-41d4-a716-446655440000',
+  clankerId: '660e8400-e29b-41d4-a716-446655440000',
   name: 'Claude on prod',
-  adapterId: 'claude-code',
-  hostId: '550e8400-e29b-41d4-a716-446655440000',
+  adapter: { adapterId: 'claude-code', name: 'Claude Code' },
+  host: { hostId: '550e8400-e29b-41d4-a716-446655440000', name: 'Test Host' },
   config: {},
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -46,14 +46,14 @@ describe('ClankersController', () => {
     });
   });
 
-  describe('GET /:id', () => {
-    it('should call findOne with id', async () => {
+  describe('GET /:clankerId', () => {
+    it('should call findOne with clankerId', async () => {
       mockClankersService.findOne.mockResolvedValue(strippedClanker);
 
-      const result = await controller.findOne(strippedClanker.id);
+      const result = await controller.findOne(strippedClanker.clankerId);
 
       expect(mockClankersService.findOne).toHaveBeenCalledWith(
-        strippedClanker.id,
+        strippedClanker.clankerId,
       );
       expect(result).toEqual(strippedClanker);
     });
@@ -85,18 +85,18 @@ describe('ClankersController', () => {
     });
   });
 
-  describe('PATCH /:id', () => {
-    it('should call update with id and dto', async () => {
+  describe('PATCH /:clankerId', () => {
+    it('should call update with clankerId and dto', async () => {
       const dto = { name: 'Updated Clanker' };
       mockClankersService.update.mockResolvedValue({
         ...strippedClanker,
         name: 'Updated Clanker',
       });
 
-      const result = await controller.update(strippedClanker.id, dto);
+      const result = await controller.update(strippedClanker.clankerId, dto);
 
       expect(mockClankersService.update).toHaveBeenCalledWith(
-        strippedClanker.id,
+        strippedClanker.clankerId,
         dto,
       );
       expect(result.name).toBe('Updated Clanker');
@@ -113,14 +113,14 @@ describe('ClankersController', () => {
     });
   });
 
-  describe('DELETE /:id', () => {
-    it('should call remove with id', async () => {
+  describe('DELETE /:clankerId', () => {
+    it('should call remove with clankerId', async () => {
       mockClankersService.remove.mockResolvedValue(undefined);
 
-      await controller.remove(strippedClanker.id);
+      await controller.remove(strippedClanker.clankerId);
 
       expect(mockClankersService.remove).toHaveBeenCalledWith(
-        strippedClanker.id,
+        strippedClanker.clankerId,
       );
     });
 
