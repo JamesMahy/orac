@@ -12,9 +12,9 @@ export class ProjectsService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(projectId: string) {
     const project = await this.prisma.project.findUnique({
-      where: { id },
+      where: { projectId },
       include: { workspaces: true },
     });
     if (!project) {
@@ -24,31 +24,36 @@ export class ProjectsService {
   }
 
   async create(dto: CreateProjectDto) {
+    const { name, description } = dto;
     return this.prisma.project.create({
-      data: { name: dto.name, description: dto.description },
+      data: { name, description },
     });
   }
 
-  async update(id: string, dto: UpdateProjectDto) {
+  async update(projectId: string, dto: UpdateProjectDto) {
+    const { name, description } = dto;
+
     const existing = await this.prisma.project.findUnique({
-      where: { id },
+      where: { projectId },
     });
     if (!existing) {
       throw new NotFoundException('project_not_found');
     }
+
     return this.prisma.project.update({
-      where: { id },
-      data: { name: dto.name, description: dto.description },
+      where: { projectId },
+      data: { name, description },
     });
   }
 
-  async remove(id: string) {
+  async remove(projectId: string) {
     const existing = await this.prisma.project.findUnique({
-      where: { id },
+      where: { projectId },
     });
+
     if (!existing) {
       throw new NotFoundException('project_not_found');
     }
-    await this.prisma.project.delete({ where: { id } });
+    return this.prisma.project.delete({ where: { projectId } });
   }
 }

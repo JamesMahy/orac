@@ -14,7 +14,7 @@ export const ProjectsDocs = {
 
   findOne: applyDecorators(
     ApiOperation({ summary: 'Get a project by ID' }),
-    ApiParam({ name: 'id', description: 'Project UUID', format: 'uuid' }),
+    ApiParam({ name: 'projectId', description: 'Project UUID', format: 'uuid' }),
     ApiResponse({
       status: 200,
       description: 'Project found',
@@ -35,7 +35,7 @@ export const ProjectsDocs = {
 
   update: applyDecorators(
     ApiOperation({ summary: 'Update a project' }),
-    ApiParam({ name: 'id', description: 'Project UUID', format: 'uuid' }),
+    ApiParam({ name: 'projectId', description: 'Project UUID', format: 'uuid' }),
     ApiResponse({
       status: 200,
       description: 'Project updated',
@@ -47,7 +47,7 @@ export const ProjectsDocs = {
 
   remove: applyDecorators(
     ApiOperation({ summary: 'Delete a project' }),
-    ApiParam({ name: 'id', description: 'Project UUID', format: 'uuid' }),
+    ApiParam({ name: 'projectId', description: 'Project UUID', format: 'uuid' }),
     ApiResponse({ status: 204, description: 'Project deleted' }),
     ApiResponse({ status: 404, description: 'Project not found' }),
   ),

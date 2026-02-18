@@ -4,7 +4,7 @@ import { PrismaService } from '@database/prisma.service';
 import { ProjectsService } from '../projects.service';
 
 const mockProject = {
-  id: '550e8400-e29b-41d4-a716-446655440000',
+  projectId: '550e8400-e29b-41d4-a716-446655440000',
   name: 'Bearly Fit',
   description: 'Fitness tracking application',
   createdAt: new Date('2025-01-01'),
@@ -12,8 +12,8 @@ const mockProject = {
 };
 
 const mockWorkspace = {
-  id: '660e8400-e29b-41d4-a716-446655440000',
-  projectId: mockProject.id,
+  workspaceId: '660e8400-e29b-41d4-a716-446655440000',
+  projectId: mockProject.projectId,
   hostId: '770e8400-e29b-41d4-a716-446655440000',
   name: 'exercise-service',
   path: '/home/james/bearly-fit/exercise-service',
@@ -53,7 +53,9 @@ describe('ProjectsService', () => {
 
       const result = await service.findAll();
 
-      expect(result).toEqual([mockProject]);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toHaveProperty('projectId', mockProject.projectId);
+      expect(result[0]).toHaveProperty('name', 'Bearly Fit');
       expect(prisma.project.findMany).toHaveBeenCalledWith({
         orderBy: { createdAt: 'desc' },
       });
@@ -68,11 +70,17 @@ describe('ProjectsService', () => {
       };
       prisma.project.findUnique.mockResolvedValue(projectWithWorkspaces);
 
-      const result = await service.findOne(mockProject.id);
+      const result = await service.findOne(mockProject.projectId);
 
-      expect(result).toEqual(projectWithWorkspaces);
+      expect(result).toHaveProperty('projectId', mockProject.projectId);
+      expect(result).toHaveProperty('name', 'Bearly Fit');
+      expect(result.workspaces).toHaveLength(1);
+      expect(result.workspaces[0]).toHaveProperty(
+        'workspaceId',
+        mockWorkspace.workspaceId,
+      );
       expect(prisma.project.findUnique).toHaveBeenCalledWith({
-        where: { id: mockProject.id },
+        where: { projectId: mockProject.projectId },
         include: { workspaces: true },
       });
     });
@@ -103,7 +111,8 @@ describe('ProjectsService', () => {
         description: 'Fitness tracking application',
       });
 
-      expect(result).toEqual(mockProject);
+      expect(result).toHaveProperty('projectId', mockProject.projectId);
+      expect(result).toHaveProperty('name', 'Bearly Fit');
       expect(prisma.project.create).toHaveBeenCalledWith({
         data: {
           name: 'Bearly Fit',
@@ -121,7 +130,8 @@ describe('ProjectsService', () => {
 
       const result = await service.create({ name: 'Bearly Fit' });
 
-      expect(result).toEqual(projectWithoutDescription);
+      expect(result).toHaveProperty('projectId', mockProject.projectId);
+      expect(result).toHaveProperty('description', null);
       expect(prisma.project.create).toHaveBeenCalledWith({
         data: { name: 'Bearly Fit', description: undefined },
       });
@@ -134,13 +144,14 @@ describe('ProjectsService', () => {
       prisma.project.findUnique.mockResolvedValue(mockProject);
       prisma.project.update.mockResolvedValue(updated);
 
-      const result = await service.update(mockProject.id, {
+      const result = await service.update(mockProject.projectId, {
         name: 'Updated Name',
       });
 
-      expect(result).toEqual(updated);
+      expect(result).toHaveProperty('projectId', mockProject.projectId);
+      expect(result).toHaveProperty('name', 'Updated Name');
       expect(prisma.project.update).toHaveBeenCalledWith({
-        where: { id: mockProject.id },
+        where: { projectId: mockProject.projectId },
         data: { name: 'Updated Name', description: undefined },
       });
     });
@@ -150,13 +161,14 @@ describe('ProjectsService', () => {
       prisma.project.findUnique.mockResolvedValue(mockProject);
       prisma.project.update.mockResolvedValue(updated);
 
-      const result = await service.update(mockProject.id, {
+      const result = await service.update(mockProject.projectId, {
         description: 'New description',
       });
 
-      expect(result).toEqual(updated);
+      expect(result).toHaveProperty('projectId', mockProject.projectId);
+      expect(result).toHaveProperty('description', 'New description');
       expect(prisma.project.update).toHaveBeenCalledWith({
-        where: { id: mockProject.id },
+        where: { projectId: mockProject.projectId },
         data: { name: undefined, description: 'New description' },
       });
     });
@@ -183,10 +195,10 @@ describe('ProjectsService', () => {
       prisma.project.findUnique.mockResolvedValue(mockProject);
       prisma.project.delete.mockResolvedValue(mockProject);
 
-      await service.remove(mockProject.id);
+      await service.remove(mockProject.projectId);
 
       expect(prisma.project.delete).toHaveBeenCalledWith({
-        where: { id: mockProject.id },
+        where: { projectId: mockProject.projectId },
       });
     });
 

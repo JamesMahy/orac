@@ -27,10 +27,10 @@ export class ProjectsController {
     return this.projectsService.findAll();
   }
 
-  @Get(':id')
+  @Get(':projectId')
   @ProjectsDocs.findOne
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.projectsService.findOne(id);
+  findOne(@Param('projectId', ParseUUIDPipe) projectId: string) {
+    return this.projectsService.findOne(projectId);
   }
 
   @Post()
@@ -39,19 +39,19 @@ export class ProjectsController {
     return this.projectsService.create(dto);
   }
 
-  @Patch(':id')
+  @Patch(':projectId')
   @ProjectsDocs.update
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() dto: UpdateProjectDto,
   ) {
-    return this.projectsService.update(id, dto);
+    return this.projectsService.update(projectId, dto);
   }
 
-  @Delete(':id')
+  @Delete(':projectId')
   @HttpCode(204)
   @ProjectsDocs.remove
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.projectsService.remove(id);
+  remove(@Param('projectId', ParseUUIDPipe) projectId: string) {
+    return this.projectsService.remove(projectId);
   }
 }

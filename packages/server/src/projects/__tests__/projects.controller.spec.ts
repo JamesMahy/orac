@@ -4,8 +4,9 @@ import { ProjectsController } from '../projects.controller';
 import { ProjectsService } from '../projects.service';
 
 const mockProject = {
-  id: '550e8400-e29b-41d4-a716-446655440000',
+  projectId: '550e8400-e29b-41d4-a716-446655440000',
   name: 'Bearly Fit',
+  description: null,
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -42,13 +43,15 @@ describe('ProjectsController', () => {
     });
   });
 
-  describe('GET /:id', () => {
-    it('should call findOne with id', async () => {
+  describe('GET /:projectId', () => {
+    it('should call findOne with projectId', async () => {
       mockProjectsService.findOne.mockResolvedValue(mockProject);
 
-      const result = await controller.findOne(mockProject.id);
+      const result = await controller.findOne(mockProject.projectId);
 
-      expect(mockProjectsService.findOne).toHaveBeenCalledWith(mockProject.id);
+      expect(mockProjectsService.findOne).toHaveBeenCalledWith(
+        mockProject.projectId,
+      );
       expect(result).toEqual(mockProject);
     });
 
@@ -75,18 +78,18 @@ describe('ProjectsController', () => {
     });
   });
 
-  describe('PATCH /:id', () => {
-    it('should call update with id and dto', async () => {
+  describe('PATCH /:projectId', () => {
+    it('should call update with projectId and dto', async () => {
       const dto = { name: 'Updated Name' };
       mockProjectsService.update.mockResolvedValue({
         ...mockProject,
         name: 'Updated Name',
       });
 
-      const result = await controller.update(mockProject.id, dto);
+      const result = await controller.update(mockProject.projectId, dto);
 
       expect(mockProjectsService.update).toHaveBeenCalledWith(
-        mockProject.id,
+        mockProject.projectId,
         dto,
       );
       expect(result.name).toBe('Updated Name');
@@ -103,13 +106,15 @@ describe('ProjectsController', () => {
     });
   });
 
-  describe('DELETE /:id', () => {
-    it('should call remove with id', async () => {
+  describe('DELETE /:projectId', () => {
+    it('should call remove with projectId', async () => {
       mockProjectsService.remove.mockResolvedValue(undefined);
 
-      await controller.remove(mockProject.id);
+      await controller.remove(mockProject.projectId);
 
-      expect(mockProjectsService.remove).toHaveBeenCalledWith(mockProject.id);
+      expect(mockProjectsService.remove).toHaveBeenCalledWith(
+        mockProject.projectId,
+      );
     });
 
     it('should propagate NotFoundException from service', async () => {
