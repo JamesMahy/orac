@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PartialType } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
@@ -49,7 +48,38 @@ export class CreateClankerDto {
   config?: Record<string, unknown>;
 }
 
-export class UpdateClankerDto extends PartialType(CreateClankerDto) {}
+export class UpdateClankerDto {
+  @ApiProperty({
+    description: 'Display name for the clanker',
+    example: 'Claude on prod',
+    maxLength: 255,
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  name?: string;
+
+  @ApiProperty({
+    description: 'Host ID for console adapters',
+    required: false,
+    nullable: true,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @IsOptional()
+  @IsUUID()
+  hostId?: string | null;
+
+  @ApiProperty({
+    description: 'Adapter-specific configuration driven by adapter.fields',
+    required: false,
+    example: { model: 'claude-4-opus' },
+  })
+  @IsOptional()
+  @IsObject()
+  config?: Record<string, unknown>;
+}
 
 class ClankerAdapterDto {
   @ApiProperty({ description: 'Adapter identifier', example: 'claude-code' })

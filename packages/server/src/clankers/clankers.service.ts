@@ -53,29 +53,31 @@ export class ClankersService {
   }
 
   async create(dto: CreateClankerDto): Promise<ClankerResponse> {
-    const adapter = this.adapters.getAdapter(dto.adapterId);
+    const { name, adapterId, hostId, config: rawConfig } = dto;
+    const adapter = this.adapters.getAdapter(adapterId);
 
-    if (adapter.type === 'console') {
-      if (!dto.hostId) {
-        throw new BadRequestException('host_id_required');
-      }
+    if (adapter.type === 'console' && !hostId) {
+      throw new BadRequestException('host_id_required');
+    }
+
+    if (hostId) {
       const host = await this.prisma.host.findUnique({
-        where: { hostId: dto.hostId },
+        where: { hostId },
       });
       if (!host) {
         throw new NotFoundException('host_not_found');
       }
     }
 
-    const config = sanitizeObject(dto.config ?? {});
+    const config = sanitizeObject(rawConfig ?? {});
     this.validateConfig(adapter, config);
     const encryptedConfig = this.encryptConfig(adapter, config);
 
     const clanker = await this.prisma.clanker.create({
       data: {
-        name: dto.name,
-        adapterId: dto.adapterId,
-        hostId: dto.hostId ?? null,
+        name,
+        adapterId,
+        hostId: hostId ?? null,
         config: encryptedConfig as Prisma.InputJsonValue,
       },
       include: { host: true },
@@ -95,31 +97,29 @@ export class ClankersService {
       throw new NotFoundException('clanker_not_found');
     }
 
-    const adapterId = dto.adapterId ?? existing.adapterId;
-    const adapter = this.adapters.getAdapter(adapterId);
+    const { name, hostId, config: rawConfig } = dto;
 
-    if (dto.hostId !== undefined && dto.hostId !== null) {
-      if (adapter.type === 'console') {
-        const host = await this.prisma.host.findUnique({
-          where: { hostId: dto.hostId },
-        });
-        if (!host) {
-          throw new NotFoundException('host_not_found');
-        }
+    if (hostId) {
+      const host = await this.prisma.host.findUnique({
+        where: { hostId },
+      });
+      if (!host) {
+        throw new NotFoundException('host_not_found');
       }
     }
 
+    const adapter = this.adapters.getAdapter(existing.adapterId);
+
     let config: Record<string, unknown> | undefined;
-    if (dto.config !== undefined) {
-      const sanitizedConfig = sanitizeObject(dto.config);
+    if (rawConfig !== undefined) {
+      const sanitizedConfig = sanitizeObject(rawConfig);
       this.validateConfig(adapter, sanitizedConfig);
       config = this.encryptConfig(adapter, sanitizedConfig);
     }
 
     const data: Prisma.ClankerUncheckedUpdateInput = {
-      name: dto.name,
-      adapterId: dto.adapterId,
-      hostId: dto.hostId !== undefined ? (dto.hostId ?? null) : undefined,
+      name,
+      hostId: hostId !== undefined ? (hostId ?? null) : undefined,
       config: config as Prisma.InputJsonValue | undefined,
     };
 
