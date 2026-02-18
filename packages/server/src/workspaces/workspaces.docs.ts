@@ -21,7 +21,7 @@ export const WorkspacesDocs = {
   findOne: applyDecorators(
     ApiOperation({ summary: 'Get a workspace by ID' }),
     ApiParam({
-      name: 'id',
+      name: 'workspaceId',
       description: 'Workspace UUID',
       format: 'uuid',
     }),
@@ -47,7 +47,7 @@ export const WorkspacesDocs = {
   update: applyDecorators(
     ApiOperation({ summary: 'Update a workspace' }),
     ApiParam({
-      name: 'id',
+      name: 'workspaceId',
       description: 'Workspace UUID',
       format: 'uuid',
     }),
@@ -63,7 +63,7 @@ export const WorkspacesDocs = {
   remove: applyDecorators(
     ApiOperation({ summary: 'Delete a workspace' }),
     ApiParam({
-      name: 'id',
+      name: 'workspaceId',
       description: 'Workspace UUID',
       format: 'uuid',
     }),

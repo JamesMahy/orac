@@ -13,9 +13,9 @@ export class WorkspacesService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(workspaceId: string) {
     const workspace = await this.prisma.workspace.findUnique({
-      where: { id },
+      where: { workspaceId },
     });
     if (!workspace) {
       throw new NotFoundException('workspace_not_found');
@@ -25,14 +25,14 @@ export class WorkspacesService {
 
   async create(dto: CreateWorkspaceDto) {
     const project = await this.prisma.project.findUnique({
-      where: { id: dto.projectId },
+      where: { projectId: dto.projectId },
     });
     if (!project) {
       throw new NotFoundException('project_not_found');
     }
 
     const host = await this.prisma.host.findUnique({
-      where: { id: dto.hostId },
+      where: { hostId: dto.hostId },
     });
     if (!host) {
       throw new NotFoundException('host_not_found');
@@ -48,15 +48,15 @@ export class WorkspacesService {
     });
   }
 
-  async update(id: string, dto: UpdateWorkspaceDto) {
+  async update(workspaceId: string, dto: UpdateWorkspaceDto) {
     const existing = await this.prisma.workspace.findUnique({
-      where: { id },
+      where: { workspaceId },
     });
     if (!existing) {
       throw new NotFoundException('workspace_not_found');
     }
     return this.prisma.workspace.update({
-      where: { id },
+      where: { workspaceId },
       data: {
         name: dto.name,
         path: dto.path,
@@ -64,13 +64,13 @@ export class WorkspacesService {
     });
   }
 
-  async remove(id: string) {
+  async remove(workspaceId: string) {
     const existing = await this.prisma.workspace.findUnique({
-      where: { id },
+      where: { workspaceId },
     });
     if (!existing) {
       throw new NotFoundException('workspace_not_found');
     }
-    await this.prisma.workspace.delete({ where: { id } });
+    await this.prisma.workspace.delete({ where: { workspaceId } });
   }
 }

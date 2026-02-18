@@ -63,7 +63,7 @@ export class WorkspaceResponseDto {
     description: 'Workspace unique identifier',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  id!: string;
+  workspaceId!: string;
 
   @ApiProperty({
     description: 'Project ID this workspace belongs to',

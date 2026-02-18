@@ -32,10 +32,10 @@ export class WorkspacesController {
     return this.workspacesService.findAll(query.projectId);
   }
 
-  @Get(':id')
+  @Get(':workspaceId')
   @WorkspacesDocs.findOne
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.workspacesService.findOne(id);
+  findOne(@Param('workspaceId', ParseUUIDPipe) workspaceId: string) {
+    return this.workspacesService.findOne(workspaceId);
   }
 
   @Post()
@@ -44,19 +44,19 @@ export class WorkspacesController {
     return this.workspacesService.create(dto);
   }
 
-  @Patch(':id')
+  @Patch(':workspaceId')
   @WorkspacesDocs.update
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
     @Body() dto: UpdateWorkspaceDto,
   ) {
-    return this.workspacesService.update(id, dto);
+    return this.workspacesService.update(workspaceId, dto);
   }
 
-  @Delete(':id')
+  @Delete(':workspaceId')
   @HttpCode(204)
   @WorkspacesDocs.remove
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.workspacesService.remove(id);
+  remove(@Param('workspaceId', ParseUUIDPipe) workspaceId: string) {
+    return this.workspacesService.remove(workspaceId);
   }
 }

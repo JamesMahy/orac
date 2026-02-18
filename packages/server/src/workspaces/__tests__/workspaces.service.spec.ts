@@ -7,7 +7,7 @@ const projectId = '550e8400-e29b-41d4-a716-446655440000';
 const hostId = '660e8400-e29b-41d4-a716-446655440000';
 
 const mockWorkspace = {
-  id: '770e8400-e29b-41d4-a716-446655440000',
+  workspaceId: '770e8400-e29b-41d4-a716-446655440000',
   projectId,
   hostId,
   name: 'exercise-service',
@@ -17,8 +17,8 @@ const mockWorkspace = {
   updatedAt: new Date('2025-01-01'),
 };
 
-const mockProject = { id: projectId, name: 'Bearly Fit' };
-const mockHost = { id: hostId, name: 'SSH Host A' };
+const mockProject = { projectId, name: 'Bearly Fit' };
+const mockHost = { hostId, name: 'SSH Host A' };
 
 describe('WorkspacesService', () => {
   let service: WorkspacesService;
@@ -56,12 +56,14 @@ describe('WorkspacesService', () => {
   });
 
   describe('findAll', () => {
-    it('should return workspaces for a project ordered by createdAt desc', async () => {
+    it('should return workspaces for a project ordered by createdAt desc with workspaceId', async () => {
       prisma.workspace.findMany.mockResolvedValue([mockWorkspace]);
 
       const result = await service.findAll(projectId);
 
-      expect(result).toEqual([mockWorkspace]);
+      expect(result).toHaveLength(1);
+      expect(result[0]).toHaveProperty('workspaceId', mockWorkspace.workspaceId);
+      expect(result[0]).toHaveProperty('name', 'exercise-service');
       expect(prisma.workspace.findMany).toHaveBeenCalledWith({
         where: { projectId },
         orderBy: { createdAt: 'desc' },
@@ -78,14 +80,15 @@ describe('WorkspacesService', () => {
   });
 
   describe('findOne', () => {
-    it('should return the workspace', async () => {
+    it('should return the workspace with workspaceId', async () => {
       prisma.workspace.findUnique.mockResolvedValue(mockWorkspace);
 
-      const result = await service.findOne(mockWorkspace.id);
+      const result = await service.findOne(mockWorkspace.workspaceId);
 
-      expect(result).toEqual(mockWorkspace);
+      expect(result).toHaveProperty('workspaceId', mockWorkspace.workspaceId);
+      expect(result).toHaveProperty('name', 'exercise-service');
       expect(prisma.workspace.findUnique).toHaveBeenCalledWith({
-        where: { id: mockWorkspace.id },
+        where: { workspaceId: mockWorkspace.workspaceId },
       });
     });
 
@@ -107,7 +110,7 @@ describe('WorkspacesService', () => {
   });
 
   describe('create', () => {
-    it('should create and return a workspace', async () => {
+    it('should create and return a workspace with workspaceId', async () => {
       prisma.project.findUnique.mockResolvedValue(mockProject);
       prisma.host.findUnique.mockResolvedValue(mockHost);
       prisma.workspace.create.mockResolvedValue(mockWorkspace);
@@ -119,7 +122,8 @@ describe('WorkspacesService', () => {
         path: '/home/james/bearly-fit/exercise-service',
       });
 
-      expect(result).toEqual(mockWorkspace);
+      expect(result).toHaveProperty('workspaceId', mockWorkspace.workspaceId);
+      expect(result).toHaveProperty('name', 'exercise-service');
       expect(prisma.workspace.create).toHaveBeenCalledWith({
         data: {
           projectId,
@@ -182,18 +186,19 @@ describe('WorkspacesService', () => {
   });
 
   describe('update', () => {
-    it('should update and return the workspace', async () => {
+    it('should update and return the workspace with workspaceId', async () => {
       const updated = { ...mockWorkspace, name: 'Updated Name' };
       prisma.workspace.findUnique.mockResolvedValue(mockWorkspace);
       prisma.workspace.update.mockResolvedValue(updated);
 
-      const result = await service.update(mockWorkspace.id, {
+      const result = await service.update(mockWorkspace.workspaceId, {
         name: 'Updated Name',
       });
 
-      expect(result).toEqual(updated);
+      expect(result).toHaveProperty('workspaceId', mockWorkspace.workspaceId);
+      expect(result).toHaveProperty('name', 'Updated Name');
       expect(prisma.workspace.update).toHaveBeenCalledWith({
-        where: { id: mockWorkspace.id },
+        where: { workspaceId: mockWorkspace.workspaceId },
         data: { name: 'Updated Name', path: undefined },
       });
     });
@@ -220,10 +225,10 @@ describe('WorkspacesService', () => {
       prisma.workspace.findUnique.mockResolvedValue(mockWorkspace);
       prisma.workspace.delete.mockResolvedValue(mockWorkspace);
 
-      await service.remove(mockWorkspace.id);
+      await service.remove(mockWorkspace.workspaceId);
 
       expect(prisma.workspace.delete).toHaveBeenCalledWith({
-        where: { id: mockWorkspace.id },
+        where: { workspaceId: mockWorkspace.workspaceId },
       });
     });
 

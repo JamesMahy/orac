@@ -7,7 +7,7 @@ const projectId = '550e8400-e29b-41d4-a716-446655440000';
 const hostId = '660e8400-e29b-41d4-a716-446655440000';
 
 const mockWorkspace = {
-  id: '770e8400-e29b-41d4-a716-446655440000',
+  workspaceId: '770e8400-e29b-41d4-a716-446655440000',
   projectId,
   hostId,
   name: 'exercise-service',
@@ -51,14 +51,14 @@ describe('WorkspacesController', () => {
     });
   });
 
-  describe('GET /:id', () => {
-    it('should call findOne with id', async () => {
+  describe('GET /:workspaceId', () => {
+    it('should call findOne with workspaceId', async () => {
       mockWorkspacesService.findOne.mockResolvedValue(mockWorkspace);
 
-      const result = await controller.findOne(mockWorkspace.id);
+      const result = await controller.findOne(mockWorkspace.workspaceId);
 
       expect(mockWorkspacesService.findOne).toHaveBeenCalledWith(
-        mockWorkspace.id,
+        mockWorkspace.workspaceId,
       );
       expect(result).toEqual(mockWorkspace);
     });
@@ -91,18 +91,18 @@ describe('WorkspacesController', () => {
     });
   });
 
-  describe('PATCH /:id', () => {
-    it('should call update with id and dto', async () => {
+  describe('PATCH /:workspaceId', () => {
+    it('should call update with workspaceId and dto', async () => {
       const dto = { name: 'Updated Name' };
       mockWorkspacesService.update.mockResolvedValue({
         ...mockWorkspace,
         name: 'Updated Name',
       });
 
-      const result = await controller.update(mockWorkspace.id, dto);
+      const result = await controller.update(mockWorkspace.workspaceId, dto);
 
       expect(mockWorkspacesService.update).toHaveBeenCalledWith(
-        mockWorkspace.id,
+        mockWorkspace.workspaceId,
         dto,
       );
       expect(result.name).toBe('Updated Name');
@@ -119,14 +119,14 @@ describe('WorkspacesController', () => {
     });
   });
 
-  describe('DELETE /:id', () => {
-    it('should call remove with id', async () => {
+  describe('DELETE /:workspaceId', () => {
+    it('should call remove with workspaceId', async () => {
       mockWorkspacesService.remove.mockResolvedValue(undefined);
 
-      await controller.remove(mockWorkspace.id);
+      await controller.remove(mockWorkspace.workspaceId);
 
       expect(mockWorkspacesService.remove).toHaveBeenCalledWith(
-        mockWorkspace.id,
+        mockWorkspace.workspaceId,
       );
     });
 
