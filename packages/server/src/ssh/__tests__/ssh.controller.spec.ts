@@ -59,7 +59,7 @@ describe('SshController', () => {
     });
   });
 
-  describe('GET /hosts/:id/status', () => {
+  describe('GET /hosts/:hostId/status', () => {
     it('should return status with hostId', () => {
       const hostId = '550e8400-e29b-41d4-a716-446655440000';
       mockSshService.getStatus.mockReturnValue({
@@ -92,7 +92,7 @@ describe('SshController', () => {
     });
   });
 
-  describe('GET /hosts/:id/browse', () => {
+  describe('GET /hosts/:hostId/browse', () => {
     it('should delegate to sshService.browse', async () => {
       const hostId = '550e8400-e29b-41d4-a716-446655440000';
       const expected = {

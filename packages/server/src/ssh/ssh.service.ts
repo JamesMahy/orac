@@ -138,7 +138,7 @@ export class SshService implements OnModuleDestroy {
     }
 
     const host = await this.prisma.host.findUnique({
-      where: { id: hostId },
+      where: { hostId },
     });
 
     if (!host) {
@@ -199,7 +199,7 @@ export class SshService implements OnModuleDestroy {
 
     if (!password && config.hostId) {
       const host = await this.prisma.host.findUnique({
-        where: { id: config.hostId },
+        where: { hostId: config.hostId },
       });
       if (host?.password) {
         password = this.encryption.decrypt(host.password);
@@ -358,7 +358,7 @@ export class SshService implements OnModuleDestroy {
         if (pendingFingerprint) {
           this.prisma.host
             .update({
-              where: { id: hostId },
+              where: { hostId },
               data: { hostKeyFingerprint: pendingFingerprint },
             })
             .then(() => {

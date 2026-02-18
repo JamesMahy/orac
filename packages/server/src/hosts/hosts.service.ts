@@ -33,24 +33,28 @@ export class HostsService {
   }
 
   async create(dto: CreateHostDto): Promise<HostResponse> {
+    const {
+      name, type, hostname, port, username, password,
+      hostKeyFingerprint, endpoint, apiKey, provider, model,
+    } = dto;
     const data: Prisma.HostCreateInput = {
-      name: dto.name,
-      type: dto.type,
-      hostname: dto.hostname,
-      port: dto.port,
-      username: dto.username,
+      name,
+      type,
+      hostname,
+      port,
+      username,
       password:
-        dto.type === 'ssh' && dto.password
-          ? this.encryption.encrypt(dto.password)
+        type === 'ssh' && password
+          ? this.encryption.encrypt(password)
           : undefined,
-      hostKeyFingerprint: dto.hostKeyFingerprint,
-      endpoint: dto.endpoint,
+      hostKeyFingerprint,
+      endpoint,
       apiKey:
-        dto.type === 'api' && dto.apiKey
-          ? this.encryption.encrypt(dto.apiKey)
+        type === 'api' && apiKey
+          ? this.encryption.encrypt(apiKey)
           : undefined,
-      provider: dto.provider,
-      model: dto.model,
+      provider,
+      model,
     };
 
     const host = await this.prisma.host.create({ data });
@@ -63,26 +67,30 @@ export class HostsService {
       throw new NotFoundException('host_not_found');
     }
 
+    const {
+      name, type, hostname, port, username, password,
+      hostKeyFingerprint, endpoint, apiKey, provider, model,
+    } = dto;
     const data: Prisma.HostUpdateInput = {
-      name: dto.name,
-      type: dto.type,
-      hostname: dto.hostname,
-      port: dto.port,
-      username: dto.username,
+      name,
+      type,
+      hostname,
+      port,
+      username,
       password:
-        dto.password !== undefined
-          ? dto.password === ''
+        password !== undefined
+          ? password === ''
             ? null
-            : this.encryption.encrypt(dto.password)
+            : this.encryption.encrypt(password)
           : undefined,
-      hostKeyFingerprint: dto.hostKeyFingerprint,
-      endpoint: dto.endpoint,
+      hostKeyFingerprint,
+      endpoint,
       apiKey:
-        dto.apiKey !== undefined
-          ? this.encryption.encrypt(dto.apiKey)
+        apiKey !== undefined
+          ? this.encryption.encrypt(apiKey)
           : undefined,
-      provider: dto.provider,
-      model: dto.model,
+      provider,
+      model,
     };
 
     const host = await this.prisma.host.update({ where: { hostId }, data });
@@ -95,7 +103,7 @@ export class HostsService {
       throw new NotFoundException('host_not_found');
     }
     this.sshService?.disconnect(hostId);
-    await this.prisma.host.delete({ where: { hostId } });
+    return this.prisma.host.delete({ where: { hostId } });
   }
 
   private toResponse(host: Host): HostResponse {

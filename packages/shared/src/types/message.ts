@@ -3,7 +3,7 @@ export type MessageRole = 'user' | 'assistant';
 export type MessageStatus = 'pending' | 'streaming' | 'complete' | 'error';
 
 export type Message = {
-  id: string;
+  messageId: string;
   workspaceId: string;
   role: MessageRole;
   content: string;

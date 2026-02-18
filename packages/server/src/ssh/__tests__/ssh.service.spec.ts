@@ -113,7 +113,7 @@ const { __mockClient } = require('ssh2') as {
 const mockClient: MockClient = __mockClient;
 
 const mockSshHost = {
-  id: '550e8400-e29b-41d4-a716-446655440000',
+  hostId: '550e8400-e29b-41d4-a716-446655440000',
   name: 'Test SSH Host',
   type: 'ssh',
   hostname: '192.168.1.1',
@@ -131,7 +131,7 @@ const mockSshHost = {
 
 const mockApiHost = {
   ...mockSshHost,
-  id: '550e8400-e29b-41d4-a716-446655440001',
+  hostId: '550e8400-e29b-41d4-a716-446655440001',
   type: 'api',
   hostname: null,
   port: null,
@@ -149,7 +149,7 @@ async function connectHost(
   prisma: { host: Record<string, jest.Mock> },
 ): Promise<void> {
   prisma.host.findUnique.mockResolvedValue(mockSshHost);
-  const connectPromise = service.connect(mockSshHost.id);
+  const connectPromise = service.connect(mockSshHost.hostId);
   await new Promise(resolve => setTimeout(resolve, 0));
   mockClient.__trigger('ready');
   await connectPromise;
@@ -207,7 +207,7 @@ describe('SshService', () => {
     it('should throw BadRequestException for non-SSH host', async () => {
       prisma.host.findUnique.mockResolvedValue(mockApiHost);
 
-      await expect(service.connect(mockApiHost.id)).rejects.toThrow(
+      await expect(service.connect(mockApiHost.hostId)).rejects.toThrow(
         BadRequestException,
       );
     });
@@ -237,7 +237,7 @@ describe('SshService', () => {
         password: null,
       });
 
-      const connectPromise = service.connect(mockSshHost.id);
+      const connectPromise = service.connect(mockSshHost.hostId);
       await new Promise(resolve => setTimeout(resolve, 0));
       mockClient.__trigger('ready');
       await connectPromise;
@@ -253,7 +253,7 @@ describe('SshService', () => {
     it('should reject when SSH error occurs', async () => {
       prisma.host.findUnique.mockResolvedValue(mockSshHost);
 
-      const connectPromise = service.connect(mockSshHost.id);
+      const connectPromise = service.connect(mockSshHost.hostId);
       await new Promise(resolve => setTimeout(resolve, 0));
       mockClient.__trigger('error', new Error('Connection refused'));
 
@@ -279,7 +279,7 @@ describe('SshService', () => {
 
       prisma.host.findUnique.mockResolvedValue({
         ...mockSshHost,
-        id: 'one-too-many',
+        hostId: 'one-too-many',
       });
 
       await expect(service.connect('one-too-many')).rejects.toThrow(
@@ -292,10 +292,10 @@ describe('SshService', () => {
     it('should close connection and remove from pool', async () => {
       await connectHost(service, prisma);
 
-      service.disconnect(mockSshHost.id);
+      service.disconnect(mockSshHost.hostId);
 
       expect(mockClient.end).toHaveBeenCalled();
-      expect(service.getStatus(mockSshHost.id)).toEqual({
+      expect(service.getStatus(mockSshHost.hostId)).toEqual({
         status: 'disconnected',
       });
     });
@@ -309,7 +309,7 @@ describe('SshService', () => {
       jest.useFakeTimers();
 
       mockClient.__trigger('close');
-      service.disconnect(mockSshHost.id);
+      service.disconnect(mockSshHost.hostId);
 
       jest.advanceTimersByTime(10_000);
       // Only the initial connect call, no reconnect
@@ -322,7 +322,7 @@ describe('SshService', () => {
     it('should return existing client when already connected', async () => {
       await connectHost(service, prisma);
 
-      const client = await service.getConnection(mockSshHost.id);
+      const client = await service.getConnection(mockSshHost.hostId);
 
       expect(client).toBe(mockClient);
       // Only one findUnique call from initial connect
@@ -332,7 +332,7 @@ describe('SshService', () => {
     it('should establish new connection when not connected', async () => {
       prisma.host.findUnique.mockResolvedValue(mockSshHost);
 
-      const clientPromise = service.getConnection(mockSshHost.id);
+      const clientPromise = service.getConnection(mockSshHost.hostId);
       await new Promise(resolve => setTimeout(resolve, 0));
       mockClient.__trigger('ready');
       const client = await clientPromise;
@@ -352,7 +352,7 @@ describe('SshService', () => {
     it('should return connected after successful connect', async () => {
       await connectHost(service, prisma);
 
-      expect(service.getStatus(mockSshHost.id)).toEqual({
+      expect(service.getStatus(mockSshHost.hostId)).toEqual({
         status: 'connected',
         message: undefined,
       });
@@ -360,13 +360,13 @@ describe('SshService', () => {
 
     it('should return error status after connection error', async () => {
       prisma.host.findUnique.mockResolvedValue(mockSshHost);
-      const connectPromise = service.connect(mockSshHost.id);
+      const connectPromise = service.connect(mockSshHost.hostId);
       await new Promise(resolve => setTimeout(resolve, 0));
       mockClient.__trigger('error', new Error('Auth failed'));
 
       await connectPromise.catch(() => {});
 
-      const status = service.getStatus(mockSshHost.id);
+      const status = service.getStatus(mockSshHost.hostId);
       expect(status.status).toBe('error');
       expect(status.message).toBe('Auth failed');
     });
@@ -484,7 +484,7 @@ describe('SshService', () => {
       const resultPromise = service.testConnection({
         hostname: '192.168.1.1',
         username: 'root',
-        hostId: mockSshHost.id,
+        hostId: mockSshHost.hostId,
       });
 
       await new Promise(resolve => setTimeout(resolve, 0));
@@ -505,7 +505,7 @@ describe('SshService', () => {
         hostname: '192.168.1.1',
         username: 'root',
         password: 'explicit_password',
-        hostId: mockSshHost.id,
+        hostId: mockSshHost.hostId,
       });
 
       await new Promise(resolve => setTimeout(resolve, 0));
@@ -555,7 +555,7 @@ describe('SshService', () => {
         },
       );
 
-      const result = await service.exec(mockSshHost.id, 'echo hello');
+      const result = await service.exec(mockSshHost.hostId, 'echo hello');
 
       expect(result).toEqual({
         stdout: 'hello world',
@@ -583,7 +583,7 @@ describe('SshService', () => {
         },
       );
 
-      const result = await service.exec(mockSshHost.id, 'bad-command');
+      const result = await service.exec(mockSshHost.hostId, 'bad-command');
 
       expect(result.stderr).toBe('error output');
       expect(result.exitCode).toBe(1);
@@ -601,7 +601,7 @@ describe('SshService', () => {
         },
       );
 
-      await expect(service.exec(mockSshHost.id, 'ls')).rejects.toThrow(
+      await expect(service.exec(mockSshHost.hostId, 'ls')).rejects.toThrow(
         'exec failed',
       );
     });
@@ -620,7 +620,7 @@ describe('SshService', () => {
         },
       );
 
-      const result = await service.exec(mockSshHost.id, 'ls');
+      const result = await service.exec(mockSshHost.hostId, 'ls');
 
       expect(result.exitCode).toBe(0);
     });
@@ -640,7 +640,7 @@ describe('SshService', () => {
         },
       );
 
-      await expect(service.exec(mockSshHost.id, 'ls')).rejects.toThrow(
+      await expect(service.exec(mockSshHost.hostId, 'ls')).rejects.toThrow(
         'Command output too large',
       );
       expect(stream.close).toHaveBeenCalled();
@@ -660,7 +660,7 @@ describe('SshService', () => {
         },
       );
 
-      await expect(service.exec(mockSshHost.id, 'ls')).rejects.toThrow(
+      await expect(service.exec(mockSshHost.hostId, 'ls')).rejects.toThrow(
         'Command error output too large',
       );
       expect(stream.close).toHaveBeenCalled();
@@ -681,7 +681,7 @@ describe('SshService', () => {
         },
       );
 
-      const execPromise = service.exec(mockSshHost.id, 'sleep 999');
+      const execPromise = service.exec(mockSshHost.hostId, 'sleep 999');
 
       // Set up rejection handler before advancing timers
       const expectation = expect(execPromise).rejects.toThrow(
@@ -701,7 +701,7 @@ describe('SshService', () => {
       prisma.host.findUnique.mockResolvedValue(mockSshHost);
       prisma.host.update.mockResolvedValue(mockSshHost);
 
-      const connectPromise = service.connect(mockSshHost.id);
+      const connectPromise = service.connect(mockSshHost.hostId);
       await new Promise(resolve => setTimeout(resolve, 0));
 
       const connectConfig = getHostVerifier();
@@ -713,7 +713,7 @@ describe('SshService', () => {
 
       // DB write now completes before connect resolves
       expect(prisma.host.update).toHaveBeenCalledWith({
-        where: { id: mockSshHost.id },
+        where: { hostId: mockSshHost.hostId },
         data: {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           hostKeyFingerprint: expect.stringContaining('SHA256:'),
@@ -730,7 +730,7 @@ describe('SshService', () => {
         hostKeyFingerprint: fingerprint,
       });
 
-      const connectPromise = service.connect(mockSshHost.id);
+      const connectPromise = service.connect(mockSshHost.hostId);
       await new Promise(resolve => setTimeout(resolve, 0));
 
       const connectConfig = getHostVerifier();
@@ -747,7 +747,7 @@ describe('SshService', () => {
         hostKeyFingerprint: 'SHA256:wrong-fingerprint',
       });
 
-      void service.connect(mockSshHost.id);
+      void service.connect(mockSshHost.hostId);
       await new Promise(resolve => setTimeout(resolve, 0));
 
       const connectConfig = getHostVerifier();
@@ -759,7 +759,7 @@ describe('SshService', () => {
       prisma.host.findUnique.mockResolvedValue(mockSshHost);
       prisma.host.update.mockRejectedValue(new Error('DB error'));
 
-      const connectPromise = service.connect(mockSshHost.id);
+      const connectPromise = service.connect(mockSshHost.hostId);
       await new Promise(resolve => setTimeout(resolve, 0));
 
       const connectConfig = getHostVerifier();
@@ -817,7 +817,7 @@ describe('SshService', () => {
         await jest.advanceTimersByTimeAsync(0);
       }
 
-      const status = service.getStatus(mockSshHost.id);
+      const status = service.getStatus(mockSshHost.hostId);
       expect(status.status).toBe('error');
       expect(status.message).toBe('Max reconnection attempts reached');
     });
@@ -826,7 +826,7 @@ describe('SshService', () => {
       await connectHost(service, prisma);
       jest.useFakeTimers();
 
-      service.disconnect(mockSshHost.id);
+      service.disconnect(mockSshHost.hostId);
       // Triggering close on disconnected host should not throw
       mockClient.__trigger('close');
 
@@ -839,7 +839,7 @@ describe('SshService', () => {
   describe('sanitizeErrorMessage', () => {
     it('should sanitize error with ECONNREFUSED', async () => {
       prisma.host.findUnique.mockResolvedValue(mockSshHost);
-      const connectPromise = service.connect(mockSshHost.id);
+      const connectPromise = service.connect(mockSshHost.hostId);
       await new Promise(resolve => setTimeout(resolve, 0));
       mockClient.__trigger(
         'error',
@@ -848,13 +848,13 @@ describe('SshService', () => {
 
       await connectPromise.catch(() => {});
 
-      const status = service.getStatus(mockSshHost.id);
+      const status = service.getStatus(mockSshHost.hostId);
       expect(status.message).toBe('Connection refused');
     });
 
     it('should sanitize error with ENOTFOUND', async () => {
       prisma.host.findUnique.mockResolvedValue(mockSshHost);
-      const connectPromise = service.connect(mockSshHost.id);
+      const connectPromise = service.connect(mockSshHost.hostId);
       await new Promise(resolve => setTimeout(resolve, 0));
       mockClient.__trigger(
         'error',
@@ -863,7 +863,7 @@ describe('SshService', () => {
 
       await connectPromise.catch(() => {});
 
-      const status = service.getStatus(mockSshHost.id);
+      const status = service.getStatus(mockSshHost.hostId);
       expect(status.message).toBe('Host not found');
     });
   });
@@ -895,7 +895,7 @@ describe('SshService', () => {
       service.onModuleDestroy();
 
       expect(mockClient.end).toHaveBeenCalled();
-      expect(service.getStatus(mockSshHost.id)).toEqual({
+      expect(service.getStatus(mockSshHost.hostId)).toEqual({
         status: 'disconnected',
       });
     });
@@ -948,7 +948,7 @@ describe('SshService', () => {
       );
 
       const result = await service.browse(
-        mockSshHost.id,
+        mockSshHost.hostId,
         '/home/james/Development',
       );
 
@@ -966,7 +966,7 @@ describe('SshService', () => {
       );
 
       await expect(
-        service.browse(mockSshHost.id, '/nonexistent'),
+        service.browse(mockSshHost.hostId, '/nonexistent'),
       ).rejects.toThrow('path_not_found');
     });
 
@@ -978,7 +978,7 @@ describe('SshService', () => {
       );
 
       await expect(
-        service.browse(mockSshHost.id, '/root/secret'),
+        service.browse(mockSshHost.hostId, '/root/secret'),
       ).rejects.toThrow('permission_denied');
     });
 
@@ -986,7 +986,7 @@ describe('SshService', () => {
       await connectHost(service, prisma);
       setupBrowse({ stdout: '/\n' }, { stdout: '/bin/\n/etc/\n' });
 
-      const result = await service.browse(mockSshHost.id, '/');
+      const result = await service.browse(mockSshHost.hostId, '/');
 
       expect(result.parentPath).toBeNull();
     });
@@ -998,7 +998,7 @@ describe('SshService', () => {
         { stdout: '/home/james/Dev/\n' },
       );
 
-      await service.browse(mockSshHost.id);
+      await service.browse(mockSshHost.hostId);
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const executedCommand = mockClient.exec.mock.calls[0][0] as string;
@@ -1009,7 +1009,7 @@ describe('SshService', () => {
       await connectHost(service, prisma);
       setupBrowse({ stdout: '/home/james/empty\n' }, { stdout: '' });
 
-      const result = await service.browse(mockSshHost.id, '/home/james/empty');
+      const result = await service.browse(mockSshHost.hostId, '/home/james/empty');
 
       expect(result.entries).toHaveLength(0);
       expect(result.path).toBe('/home/james/empty');
@@ -1019,7 +1019,7 @@ describe('SshService', () => {
       await connectHost(service, prisma);
       setupBrowse({ stdout: '/home/james\n' }, { stdout: '', exitCode: 2 });
 
-      const result = await service.browse(mockSshHost.id, '/home/james');
+      const result = await service.browse(mockSshHost.hostId, '/home/james');
 
       expect(result.entries).toHaveLength(0);
       expect(result.path).toBe('/home/james');

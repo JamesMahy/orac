@@ -27,7 +27,7 @@ export const SshDocs = {
 
   getStatus: applyDecorators(
     ApiOperation({ summary: 'Get connection status for a host' }),
-    ApiParam({ name: 'id', description: 'Host UUID', format: 'uuid' }),
+    ApiParam({ name: 'hostId', description: 'Host UUID', format: 'uuid' }),
     ApiResponse({
       status: 200,
       description: 'Connection status',
@@ -38,7 +38,7 @@ export const SshDocs = {
 
   browse: applyDecorators(
     ApiOperation({ summary: 'Browse directories on a remote SSH host' }),
-    ApiParam({ name: 'id', description: 'Host UUID', format: 'uuid' }),
+    ApiParam({ name: 'hostId', description: 'Host UUID', format: 'uuid' }),
     ApiQuery({
       name: 'path',
       required: false,

@@ -25,18 +25,18 @@ export class SshController {
     return this.sshService.testConnection(testConnectionDto);
   }
 
-  @Get(':id/status')
+  @Get(':hostId/status')
   @SshDocs.getStatus
-  getStatus(@Param('id', ParseUUIDPipe) id: string) {
-    return { hostId: id, ...this.sshService.getStatus(id) };
+  getStatus(@Param('hostId', ParseUUIDPipe) hostId: string) {
+    return { hostId, ...this.sshService.getStatus(hostId) };
   }
 
-  @Get(':id/browse')
+  @Get(':hostId/browse')
   @SshDocs.browse
   browse(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('hostId', ParseUUIDPipe) hostId: string,
     @Query() query: BrowseQueryDto,
   ) {
-    return this.sshService.browse(id, query.path);
+    return this.sshService.browse(hostId, query.path);
   }
 }

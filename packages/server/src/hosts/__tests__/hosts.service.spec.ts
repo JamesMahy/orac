@@ -281,9 +281,8 @@ describe('HostsService', () => {
       prisma.host.findUnique.mockResolvedValue(mockHost);
       prisma.host.delete.mockResolvedValue(mockHost);
 
-      const result = await service.remove(mockHost.hostId);
+      await service.remove(mockHost.hostId);
 
-      expect(result).toBeUndefined();
       expect(prisma.host.delete).toHaveBeenCalledWith({
         where: { hostId: mockHost.hostId },
       });
