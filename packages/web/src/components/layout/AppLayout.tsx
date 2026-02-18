@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { HostModals } from '@components/HostModals';
+import { ClankerModals } from '@components/ClankerModals';
 import { ProjectModal } from '@components/ProjectModal';
 import { Sidebar } from './Sidebar';
 
@@ -25,6 +26,7 @@ export function AppLayout() {
 
       <ProjectModal />
       <HostModals />
+      <ClankerModals />
 
       <div className="flex h-screen bg-surface">
         <Sidebar

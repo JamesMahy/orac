@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Dropdown, type DropdownChangeEvent } from 'primereact/dropdown';
 import clsx from 'clsx';
 
@@ -18,6 +19,7 @@ type SelectProps = {
   required?: boolean;
   disabled?: boolean;
   dirty?: boolean;
+  itemTemplate?: (option: SelectOption) => ReactNode;
 };
 
 export function Select({
@@ -32,6 +34,7 @@ export function Select({
   required,
   disabled,
   dirty,
+  itemTemplate,
 }: SelectProps) {
   const errorId = error ? `${id}-error` : undefined;
 
@@ -65,6 +68,7 @@ export function Select({
         optionValue="value"
         placeholder={placeholder}
         disabled={disabled}
+        itemTemplate={itemTemplate}
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={errorId}
         className={clsx(

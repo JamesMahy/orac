@@ -19,7 +19,11 @@
     "addSshHost": "Add SSH host",
     "addApiHost": "Add API host",
     "manageHosts": "Manage hosts",
-    "editHost": "Edit {{name}}"
+    "editHost": "Edit {{name}}",
+    "clankers": "Clankers",
+    "addClanker": "Add clanker",
+    "manageClankers": "Manage clankers",
+    "editClanker": "Edit {{name}}"
   },
   "a11y": {
     "skipToMain": "Skip to main content",

@@ -13,9 +13,7 @@ describe('TextArea', () => {
   });
 
   it('shows error message', () => {
-    render(
-      <TextArea id="description" label="Description" error="Too long" />,
-    );
+    render(<TextArea id="description" label="Description" error="Too long" />);
     expect(screen.getByText('Too long')).toBeInTheDocument();
   });
 

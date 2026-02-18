@@ -1,14 +1,11 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { Menu } from 'primereact/menu';
 import { useAuthStore } from '@stores/authStore';
 import { useProjectModalStore } from '@stores/projectModalStore';
-import { useHostModalStore } from '@stores/hostModalStore';
 import { authApi } from '@api/auth';
 import { useProjects } from '@hooks/useProjects';
-import { useHosts } from '@hooks/useHosts';
 
 type SidebarProps = {
   open: boolean;
@@ -19,6 +16,7 @@ type SidebarProps = {
 
 const navItems = [
   { to: '/hosts', labelKey: 'hosts', icon: 'pi pi-server' },
+  { to: '/clankers', labelKey: 'clankers', icon: 'pi pi-android' },
   { to: '/projects', labelKey: 'projects', icon: 'pi pi-folder' },
   { to: '/chat', labelKey: 'chat', icon: 'pi pi-comments' },
 ] as const;
@@ -35,33 +33,9 @@ export function Sidebar({
   const { pathname } = useLocation();
 
   const { data: projects } = useProjects();
-  const { data: hosts } = useHosts();
 
   const { openCreate: openCreateProject, openEdit: openEditProject } =
     useProjectModalStore();
-  const {
-    openCreateSsh,
-    openCreateApi,
-    openEdit: openEditHost,
-  } = useHostModalStore();
-
-  const addHostMenuRef = useRef<Menu>(null);
-
-  const addHostMenuItems = useMemo(
-    () => [
-      {
-        label: t('nav.addSshHost'),
-        icon: 'pi pi-server',
-        command: () => openCreateSsh(),
-      },
-      {
-        label: t('nav.addApiHost'),
-        icon: 'pi pi-cloud',
-        command: () => openCreateApi(),
-      },
-    ],
-    [t, openCreateSsh, openCreateApi],
-  );
 
   useEffect(() => {
     if (!open) {
@@ -149,95 +123,34 @@ export function Sidebar({
 
         <nav aria-label={t('nav.sidebar')} className="flex-1 space-y-1 p-3">
           {navItems.map(item => {
-            if (item.labelKey === 'hosts') {
+            if (item.labelKey === 'hosts' || item.labelKey === 'clankers') {
               return (
-                <div key={item.to}>
-                  <div
+                <div
+                  key={item.to}
+                  className={clsx(
+                    'flex items-center rounded-lg pb-1 text-base font-medium',
+                    collapsed ? 'justify-center' : 'gap-0',
+                    pathname === item.to
+                      ? 'bg-primary/10 text-primary'
+                      : 'border-b border-border text-text-muted',
+                  )}>
+                  <NavLink
+                    to={item.to}
+                    onClick={onClose}
+                    title={collapsed ? t(`nav.${item.labelKey}`) : undefined}
                     className={clsx(
-                      'flex items-center rounded-lg border-b border-border pb-1 text-base font-medium',
-                      collapsed ? 'justify-center' : 'gap-0',
-                      pathname === '/hosts'
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-text-muted',
+                      'flex flex-1 cursor-pointer items-center rounded-lg text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                      collapsed
+                        ? 'justify-center px-2 py-2'
+                        : 'gap-3 px-3 py-2',
+                      pathname !== item.to && 'hover:text-text',
                     )}>
-                    <NavLink
-                      to={item.to}
-                      onClick={onClose}
-                      title={
-                        collapsed ? t(`nav.${item.labelKey}`) : undefined
-                      }
-                      className={clsx(
-                        'flex flex-1 cursor-pointer items-center rounded-lg text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
-                        collapsed
-                          ? 'justify-center px-2 py-2'
-                          : 'gap-3 px-3 py-2',
-                        pathname !== '/hosts' && 'hover:text-text',
-                      )}>
-                      <i className={clsx(item.icon, 'text-lg')} aria-hidden="true" />
-                      {!collapsed && t(`nav.${item.labelKey}`)}
-                    </NavLink>
-                    {!collapsed && pathname !== '/hosts' && (
-                      <div className="flex">
-                        <Menu
-                          ref={addHostMenuRef}
-                          model={addHostMenuItems}
-                          popup
-                        />
-                        <button
-                          onClick={event =>
-                            addHostMenuRef.current?.toggle(event)
-                          }
-                          className="cursor-pointer rounded-lg px-2 py-1.5 text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                          aria-label={t('nav.addHost')}
-                          aria-haspopup="true">
-                          <i
-                            className="pi pi-plus text-sm"
-                            aria-hidden="true"
-                          />
-                        </button>
-                        <NavLink
-                          to="/hosts"
-                          onClick={onClose}
-                          className="cursor-pointer rounded-lg px-2 py-1.5 text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                          aria-label={t('nav.manageHosts')}>
-                          <i
-                            className="pi pi-cog text-sm"
-                            aria-hidden="true"
-                          />
-                        </NavLink>
-                      </div>
-                    )}
-                  </div>
-
-                  {!collapsed && hosts && hosts.length > 0 && (
-                    <ul className="mt-1 space-y-0.5 pl-6">
-                      {hosts.map(host => (
-                        <li key={host.id}>
-                          <button
-                            onClick={() => openEditHost(host.id, host.type)}
-                            className="group flex w-full cursor-pointer items-center gap-2 truncate rounded-md px-3 py-2 text-base text-text-muted transition-colors hover:text-text"
-                            aria-label={t('nav.editHost', { name: host.name })}>
-                            <i
-                              className={clsx(
-                                'text-sm',
-                                host.type === 'ssh'
-                                  ? 'pi pi-server'
-                                  : 'pi pi-cloud',
-                              )}
-                              aria-hidden="true"
-                            />
-                            <span className="flex-1 truncate text-left group-hover:underline">
-                              {host.name}
-                            </span>
-                            <i
-                              className="pi pi-pencil text-sm opacity-0 transition-opacity group-hover:opacity-100"
-                              aria-hidden="true"
-                            />
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                    <i
+                      className={clsx(item.icon, 'text-lg')}
+                      aria-hidden="true"
+                    />
+                    {!collapsed && t(`nav.${item.labelKey}`)}
+                  </NavLink>
                 </div>
               );
             }
@@ -247,18 +160,16 @@ export function Sidebar({
                 <div key={item.to}>
                   <div
                     className={clsx(
-                      'flex items-center rounded-lg border-b border-border pb-1 text-base font-medium',
+                      'flex items-center rounded-lg pb-1 text-base font-medium',
                       collapsed ? 'justify-center' : 'gap-0',
                       pathname === '/projects'
                         ? 'bg-primary/10 text-primary'
-                        : 'text-text-muted',
+                        : 'border-b border-border text-text-muted',
                     )}>
                     <NavLink
                       to={item.to}
                       onClick={onClose}
-                      title={
-                        collapsed ? t(`nav.${item.labelKey}`) : undefined
-                      }
+                      title={collapsed ? t(`nav.${item.labelKey}`) : undefined}
                       className={clsx(
                         'flex flex-1 cursor-pointer items-center rounded-lg text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
                         collapsed
@@ -266,7 +177,10 @@ export function Sidebar({
                           : 'gap-3 px-3 py-2',
                         pathname !== '/projects' && 'hover:text-text',
                       )}>
-                      <i className={clsx(item.icon, 'text-lg')} aria-hidden="true" />
+                      <i
+                        className={clsx(item.icon, 'text-lg')}
+                        aria-hidden="true"
+                      />
                       {!collapsed && t(`nav.${item.labelKey}`)}
                     </NavLink>
                     {!collapsed && pathname !== '/projects' && (
@@ -285,10 +199,7 @@ export function Sidebar({
                           onClick={onClose}
                           className="cursor-pointer rounded-lg px-2 py-1.5 text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                           aria-label={t('nav.manageProjects')}>
-                          <i
-                            className="pi pi-cog text-sm"
-                            aria-hidden="true"
-                          />
+                          <i className="pi pi-cog text-sm" aria-hidden="true" />
                         </NavLink>
                       </div>
                     )}
@@ -298,7 +209,7 @@ export function Sidebar({
                     <ul className="mt-1 space-y-0.5 pl-6">
                       {projects.map(project => (
                         <li
-                          key={project.id}
+                          key={project.projectId}
                           className="group flex items-center">
                           <NavLink
                             to="/projects"
@@ -311,9 +222,11 @@ export function Sidebar({
                             {project.name}
                           </NavLink>
                           <button
-                            onClick={() => openEditProject(project.id)}
+                            onClick={() => openEditProject(project.projectId)}
                             className="rounded-lg p-1 text-text-muted opacity-0 transition-opacity hover:bg-border/50 hover:text-text focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group-hover:opacity-100"
-                            aria-label={t('nav.editProject', { name: project.name })}>
+                            aria-label={t('nav.editProject', {
+                              name: project.name,
+                            })}>
                             <i
                               className="pi pi-pencil text-sm"
                               aria-hidden="true"
@@ -336,9 +249,7 @@ export function Sidebar({
                 className={({ isActive }) =>
                   clsx(
                     'flex cursor-pointer items-center rounded-lg text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
-                    collapsed
-                      ? 'justify-center px-2 py-2'
-                      : 'gap-3 px-3 py-2',
+                    collapsed ? 'justify-center px-2 py-2' : 'gap-3 px-3 py-2',
                     isActive
                       ? 'bg-primary/10 text-primary'
                       : 'text-text-muted hover:bg-border/50 hover:text-text',

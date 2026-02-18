@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from '@components/layout/AppLayout';
 import { Login } from '@features/Login';
 import { HostsRoute } from '@routes/HostsRoute';
+import { ClankersRoute } from '@routes/ClankersRoute';
 import { ProjectsRoute } from '@routes/ProjectsRoute';
 import { ChatRoute } from '@routes/ChatRoute';
 import { NotFoundRoute } from '@routes/NotFoundRoute';
@@ -42,6 +43,7 @@ export function App() {
       <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/hosts" replace />} />
         <Route path="hosts" element={<HostsRoute />} />
+        <Route path="clankers" element={<ClankersRoute />} />
         <Route path="projects" element={<ProjectsRoute />} />
         <Route path="chat" element={<ChatRoute />} />
         <Route path="*" element={<NotFoundRoute />} />

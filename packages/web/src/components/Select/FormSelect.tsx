@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   Controller,
   type Control,
@@ -24,6 +25,7 @@ type FormSelectProps<T extends FieldValues> = {
   showDirtyState?: boolean;
   required?: boolean;
   disabled?: boolean;
+  itemTemplate?: (option: SelectOption) => ReactNode;
 };
 
 export function FormSelect<T extends FieldValues>({
@@ -38,6 +40,7 @@ export function FormSelect<T extends FieldValues>({
   showDirtyState = false,
   required,
   disabled,
+  itemTemplate,
 }: FormSelectProps<T>) {
   return (
     <Controller
@@ -57,6 +60,7 @@ export function FormSelect<T extends FieldValues>({
           required={required}
           disabled={disabled}
           dirty={showDirtyState && fieldState.isDirty}
+          itemTemplate={itemTemplate}
         />
       )}
     />
