@@ -8,91 +8,84 @@ datasource db {
 }
 
 model Host {
-  id        String    @id @default(uuid())
-  name      String    @db.VarChar(255)
-  type      String    @db.VarChar(50) // 'ssh' | 'api'
+  hostId String @id @default(uuid())
+  name   String @db.VarChar(255)
+  type   String @db.VarChar(50) // 'ssh' | 'api'
 
   // SSH fields
-  hostname  String?   @db.VarChar(255)
-  port      Int?      @default(22)
-  username  String?   @db.VarChar(255)
-  password  String?   @db.Text
-  hostKeyFingerprint String? @map("host_key_fingerprint") @db.VarChar(255)
+  hostname           String? @db.VarChar(255)
+  port               Int?    @default(22)
+  username           String? @db.VarChar(255)
+  password           String? @db.Text
+  hostKeyFingerprint String? @db.VarChar(255)
 
   // API fields
-  endpoint  String?   @db.VarChar(255)
-  apiKey    String?   @map("api_key") @db.Text
-  provider  String?   @db.VarChar(100)
-  model     String?   @db.VarChar(100)
+  endpoint String? @db.VarChar(255)
+  apiKey   String? @db.Text
+  provider String? @db.VarChar(100)
+  model    String? @db.VarChar(100)
 
-  createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @updatedAt @map("updated_at")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
   workspaces Workspace[]
   clankers   Clanker[]
-
-  @@map("hosts")
 }
 
 model Project {
-  id          String      @id @default(uuid())
+  projectId   String      @id @default(uuid())
   name        String      @db.VarChar(255)
   description String?     @db.Text
-  createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @updatedAt @map("updated_at")
-  workspaces Workspace[]
-
-  @@map("projects")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  workspaces  Workspace[]
 }
 
 model Workspace {
   workspaceId String    @id @default(uuid())
-  projectId   String    @map("project_id")
+  projectId   String
   project     Project   @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
-  hostId      String    @map("host_id")
+  hostId      String
   host        Host      @relation(fields: [hostId], references: [hostId], onDelete: Cascade)
   name        String    @db.VarChar(255)
   path        String?   @db.Text
-  sessionId   String?   @map("session_id") @db.VarChar(255)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  sessionId   String?   @db.VarChar(255)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   messages    Message[]
 
-  @@map("workspaces")
   @@index([projectId])
   @@index([hostId])
 }
 
 model Message {
-  id          String    @id @default(uuid())
-  workspaceId String    @map("workspace_id")
+  messageId   String    @id @default(uuid())
+  workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [workspaceId], onDelete: Cascade)
   role        String    @db.VarChar(50)
   content     String    @db.Text
-  toolCalls   Json?     @map("tool_calls")
-  rawEvents   Json?     @map("raw_events")
+  toolCalls   Json?
+  rawEvents   Json?
   status      String    @default("pending") @db.VarChar(50)
-  createdAt   DateTime  @default(now()) @map("created_at")
+  createdAt   DateTime  @default(now())
 
-  @@map("messages")
   @@index([workspaceId])
 }
 
 model Clanker {
-  id        String   @id @default(uuid())
-  name      String   @db.VarChar(255)
-  adapterId String   @map("adapter_id") @db.VarChar(100)
+  clankerId String @id @default(uuid())
+  name      String @db.VarChar(255)
+  adapterId String @db.VarChar(100)
 
   // Console adapters only — which SSH host runs this CLI tool
-  hostId    String?  @map("host_id")
-  host      Host?    @relation(fields: [hostId], references: [id], onDelete: SetNull)
+  hostId String?
+  host   Host?   @relation(fields: [hostId], references: [hostId], onDelete: SetNull)
 
   // Adapter-specific config — driven by adapter.fields
-  config    Json     @default("{}")
+  config Json @default("{}")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@map("clankers")
   @@index([hostId])
   @@index([adapterId])
 }
