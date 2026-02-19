@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
@@ -54,7 +54,7 @@ export function FormModal({
 
   const resolvedSaveLabel = saveLabel ?? (isBusy ? t('Saving...') : t('Save'));
 
-  const footer = (
+  const footer = useMemo(() => (
     <div className="flex items-center justify-between">
       <div className="flex gap-2">
         {isExisting && hasUnsavedChanges && onReset && (
@@ -85,7 +85,7 @@ export function FormModal({
         />
       </div>
     </div>
-  );
+  ), [isExisting, hasUnsavedChanges, onReset, t, isBusy, extraActions, handleClose, resolvedSaveLabel, onSave, saveSeverity]);
 
   return (
     <Dialog
@@ -95,11 +95,11 @@ export function FormModal({
       footer={footer}
       dismissableMask={false}
       className="w-full max-w-2xl">
-      <div className="min-h-[300px]">
+      <div className="min-h-75">
         {isLoading ? (
           <LoadingSpinner
             isLoading
-            className="flex min-h-[300px] items-center justify-center"
+            className="flex min-h-75 items-center justify-center"
           />
         ) : errorMessage ? (
           <FormError message={errorMessage} />

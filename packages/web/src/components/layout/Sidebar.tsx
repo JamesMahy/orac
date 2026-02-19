@@ -1,11 +1,91 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
+import type { Project } from '@orac/shared';
 import { useAuthStore } from '@stores/authStore';
 import { useProjectModalStore } from '@stores/projectModalStore';
+import { useWorkspaceModalStore } from '@stores/workspaceModalStore';
 import { authApi } from '@api/auth';
 import { useProjects } from '@hooks/useProjects';
+import { useWorkspaces } from '@hooks/useWorkspaces';
+
+type SidebarProjectProps = {
+  project: Project;
+  onClose: () => void;
+};
+
+function SidebarProject({ project, onClose }: SidebarProjectProps) {
+  const { t } = useTranslation('common');
+  const [expanded, setExpanded] = useState(false);
+
+  const { data: workspaces } = useWorkspaces(
+    expanded ? project.projectId : null,
+  );
+  const { openEdit: openEditProject } = useProjectModalStore();
+  const {
+    openCreate: openCreateWorkspace,
+    openEdit: openEditWorkspace,
+  } = useWorkspaceModalStore();
+
+  return (
+    <li>
+      <div className="group flex items-center">
+        <button
+          onClick={() => setExpanded(previous => !previous)}
+          className="flex flex-1 cursor-pointer items-center gap-2 truncate rounded-md px-2 py-1.5 text-base text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
+          aria-expanded={expanded}
+          aria-label={t('nav.toggleProject', { name: project.name })}>
+          <i
+            className={clsx(
+              'pi shrink-0 text-xs',
+              expanded ? 'pi-chevron-down' : 'pi-chevron-right',
+            )}
+            aria-hidden="true"
+          />
+          <i className="pi pi-folder shrink-0 text-sm" aria-hidden="true" />
+          <span className="truncate">{project.name}</span>
+        </button>
+        <button
+          onClick={() => openEditProject(project.projectId)}
+          className="cursor-pointer rounded-lg p-1 text-text-muted opacity-0 transition-opacity hover:bg-border/50 hover:text-text focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 group-hover:opacity-100"
+          aria-label={t('nav.editProject', { name: project.name })}>
+          <i className="pi pi-pencil text-xs" aria-hidden="true" />
+        </button>
+      </div>
+
+      {expanded && (
+        <ul className="ml-4 mt-0.5 space-y-0.5 border-l border-border pl-2">
+          {workspaces?.map(workspace => (
+            <li key={workspace.workspaceId} className="group flex items-center">
+              <NavLink
+                to="/chat"
+                onClick={onClose}
+                className="flex flex-1 items-center gap-2 truncate rounded-md px-2 py-1 text-base text-text-muted transition-colors hover:bg-border/50 hover:text-text">
+                <i className="pi pi-desktop text-xs" aria-hidden="true" />
+                <span className="truncate">{workspace.name}</span>
+              </NavLink>
+              <button
+                onClick={() => openEditWorkspace(workspace)}
+                className="cursor-pointer rounded-lg p-1 text-text-muted opacity-0 transition-opacity hover:bg-border/50 hover:text-text focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 group-hover:opacity-100"
+                aria-label={t('nav.editWorkspace', { name: workspace.name })}>
+                <i className="pi pi-pencil text-xs" aria-hidden="true" />
+              </button>
+            </li>
+          ))}
+          <li className={clsx('py-2', workspaces && workspaces.length > 0 && 'mt-2 border-t border-border')}>
+            <button
+              onClick={() => openCreateWorkspace(project.projectId)}
+              className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1">
+              <i className="pi pi-plus text-xs" aria-hidden="true" />
+              {t('nav.addWorkspace')}
+            </button>
+          </li>
+        </ul>
+      )}
+    </li>
+  );
+}
 
 type SidebarProps = {
   open: boolean;
@@ -34,8 +114,7 @@ export function Sidebar({
 
   const { data: projects } = useProjects();
 
-  const { openCreate: openCreateProject, openEdit: openEditProject } =
-    useProjectModalStore();
+  const { openCreate: openCreateProject } = useProjectModalStore();
 
   useEffect(() => {
     if (!open) {
@@ -121,7 +200,7 @@ export function Sidebar({
           </button>
         </div>
 
-        <nav aria-label={t('nav.sidebar')} className="flex-1 space-y-1 p-3">
+        <nav aria-label={t('nav.sidebar')} className="flex-1 space-y-1 overflow-y-auto p-3">
           {navItems.map(item => {
             if (item.labelKey === 'hosts' || item.labelKey === 'clankers') {
               return (
@@ -206,33 +285,13 @@ export function Sidebar({
                   </div>
 
                   {!collapsed && projects && projects.length > 0 && (
-                    <ul className="mt-1 space-y-0.5 pl-6">
+                    <ul className="mt-1 space-y-0.5 pl-2">
                       {projects.map(project => (
-                        <li
+                        <SidebarProject
                           key={project.projectId}
-                          className="group flex items-center">
-                          <NavLink
-                            to="/projects"
-                            onClick={onClose}
-                            className="flex flex-1 items-center gap-2 truncate rounded-md px-3 py-2 text-base text-text-muted transition-colors hover:bg-border/50 hover:text-text">
-                            <i
-                              className="pi pi-folder text-sm"
-                              aria-hidden="true"
-                            />
-                            {project.name}
-                          </NavLink>
-                          <button
-                            onClick={() => openEditProject(project.projectId)}
-                            className="rounded-lg p-1 text-text-muted opacity-0 transition-opacity hover:bg-border/50 hover:text-text focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group-hover:opacity-100"
-                            aria-label={t('nav.editProject', {
-                              name: project.name,
-                            })}>
-                            <i
-                              className="pi pi-pencil text-sm"
-                              aria-hidden="true"
-                            />
-                          </button>
-                        </li>
+                          project={project}
+                          onClose={onClose}
+                        />
                       ))}
                     </ul>
                   )}

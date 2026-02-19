@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { HostModals } from '@components/HostModals';
 import { ClankerModals } from '@components/ClankerModals';
 import { ProjectModal } from '@components/ProjectModal';
+import { WorkspaceModals } from '@components/WorkspaceModals';
 import { Sidebar } from './Sidebar';
 
 export type LayoutContext = {
@@ -27,6 +28,7 @@ export function AppLayout() {
       <ProjectModal />
       <HostModals />
       <ClankerModals />
+      <WorkspaceModals />
 
       <div className="flex h-screen bg-surface">
         <Sidebar
