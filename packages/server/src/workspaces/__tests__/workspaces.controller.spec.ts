@@ -1,17 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, ConflictException } from '@nestjs/common';
 import { WorkspacesController } from '../workspaces.controller';
 import { WorkspacesService } from '../workspaces.service';
 
 const projectId = '550e8400-e29b-41d4-a716-446655440000';
-const hostId = '660e8400-e29b-41d4-a716-446655440000';
+const clankerId = '880e8400-e29b-41d4-a716-446655440000';
 
 const mockWorkspace = {
   workspaceId: '770e8400-e29b-41d4-a716-446655440000',
   projectId,
-  hostId,
+  hostId: null,
   name: 'exercise-service',
   path: '/home/james/bearly-fit/exercise-service',
+  primaryClankerId: clankerId,
+  primaryClanker: { clankerId, name: 'Claude Code' },
+  clankers: [],
   sessionId: null,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -28,6 +31,8 @@ describe('WorkspacesController', () => {
       create: jest.fn(),
       update: jest.fn(),
       remove: jest.fn(),
+      addClanker: jest.fn(),
+      removeClanker: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -78,7 +83,7 @@ describe('WorkspacesController', () => {
     it('should call create with dto', async () => {
       const dto = {
         projectId,
-        hostId,
+        primaryClankerId: clankerId,
         name: 'exercise-service',
         path: '/home/james/bearly-fit/exercise-service',
       };
@@ -138,6 +143,62 @@ describe('WorkspacesController', () => {
       await expect(controller.remove('nonexistent')).rejects.toThrow(
         NotFoundException,
       );
+    });
+  });
+
+  describe('POST /:workspaceId/clankers', () => {
+    it('should call addClanker with workspaceId and clankerId', async () => {
+      mockWorkspacesService.addClanker.mockResolvedValue(undefined);
+
+      await controller.addClanker(mockWorkspace.workspaceId, { clankerId });
+
+      expect(mockWorkspacesService.addClanker).toHaveBeenCalledWith(
+        mockWorkspace.workspaceId,
+        { clankerId },
+      );
+    });
+
+    it('should propagate ConflictException from service', async () => {
+      mockWorkspacesService.addClanker.mockRejectedValue(
+        new ConflictException('clanker_already_added'),
+      );
+
+      await expect(
+        controller.addClanker(mockWorkspace.workspaceId, { clankerId }),
+      ).rejects.toThrow(ConflictException);
+    });
+
+    it('should propagate NotFoundException from service', async () => {
+      mockWorkspacesService.addClanker.mockRejectedValue(
+        new NotFoundException('workspace_not_found'),
+      );
+
+      await expect(
+        controller.addClanker('nonexistent', { clankerId }),
+      ).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('DELETE /:workspaceId/clankers/:clankerId', () => {
+    it('should call removeClanker with workspaceId and clankerId', async () => {
+      mockWorkspacesService.removeClanker.mockResolvedValue(undefined);
+
+      await controller.removeClanker(mockWorkspace.workspaceId, clankerId);
+
+      expect(mockWorkspacesService.removeClanker).toHaveBeenCalledWith(
+        mockWorkspace.workspaceId,
+        clankerId,
+      );
+    });
+
+    it('should propagate NotFoundException from service', async () => {
+      mockWorkspacesService.removeClanker.mockRejectedValue(
+        new NotFoundException('workspace_clanker_not_found'),
+      );
+
+      await expect(
+        controller.removeClanker(mockWorkspace.workspaceId, clankerId),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });

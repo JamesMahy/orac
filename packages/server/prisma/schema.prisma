@@ -41,20 +41,42 @@ model Project {
 }
 
 model Workspace {
-  workspaceId String    @id @default(uuid())
-  projectId   String
-  project     Project   @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
-  hostId      String
-  host        Host      @relation(fields: [hostId], references: [hostId], onDelete: Cascade)
-  name        String    @db.VarChar(255)
-  path        String?   @db.Text
-  sessionId   String?   @db.VarChar(255)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  messages    Message[]
+  workspaceId      String    @id @default(uuid())
+  projectId        String
+  project          Project   @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
+  name             String    @db.VarChar(255)
+  hostId           String?
+  host             Host?     @relation(fields: [hostId], references: [hostId], onDelete: SetNull)
+  path             String?   @db.Text
+  primaryClankerId String?
+  primaryClanker   Clanker?  @relation("PrimaryClanker", fields: [primaryClankerId], references: [clankerId], onDelete: SetNull)
+  currentClankerId String?
+  currentClanker   Clanker?  @relation("CurrentClanker", fields: [currentClankerId], references: [clankerId], onDelete: SetNull)
+  sessionId        String?   @db.VarChar(255)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  messages         Message[]
+  clankers         WorkspaceClanker[]
 
   @@index([projectId])
   @@index([hostId])
+  @@index([primaryClankerId])
+  @@index([currentClankerId])
+}
+
+model WorkspaceClanker {
+  workspaceClankerId  String    @id @default(uuid())
+  workspaceId         String
+  workspace           Workspace @relation(fields: [workspaceId], references: [workspaceId], onDelete: Cascade)
+  clankerId           String
+  clanker             Clanker   @relation(fields: [clankerId], references: [clankerId], onDelete: Cascade)
+  modelOverride       String?   @db.VarChar(100)
+  temperatureOverride Float?
+  createdAt           DateTime  @default(now())
+
+  @@unique([workspaceId, clankerId])
+  @@index([workspaceId])
+  @@index([clankerId])
 }
 
 model Message {
@@ -85,6 +107,10 @@ model Clanker {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  primaryWorkspaces  Workspace[]        @relation("PrimaryClanker")
+  currentWorkspaces  Workspace[]        @relation("CurrentClanker")
+  workspaceClankers  WorkspaceClanker[]
 
   @@index([hostId])
   @@index([adapterId])

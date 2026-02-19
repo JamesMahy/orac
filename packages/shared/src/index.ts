@@ -11,6 +11,7 @@ export type {
   CreateProjectDto,
   UpdateProjectDto,
   Workspace,
+  WorkspaceClanker,
   CreateWorkspaceDto,
   UpdateWorkspaceDto,
   Message,

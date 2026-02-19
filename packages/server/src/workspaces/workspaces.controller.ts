@@ -16,6 +16,7 @@ import {
   CreateWorkspaceDto,
   UpdateWorkspaceDto,
   ListWorkspacesQueryDto,
+  AddWorkspaceClankerDto,
 } from './workspaces.dto';
 import { WorkspacesDocs } from './workspaces.docs';
 
@@ -58,5 +59,25 @@ export class WorkspacesController {
   @WorkspacesDocs.remove
   remove(@Param('workspaceId', ParseUUIDPipe) workspaceId: string) {
     return this.workspacesService.remove(workspaceId);
+  }
+
+  @Post(':workspaceId/clankers')
+  @HttpCode(204)
+  @WorkspacesDocs.addClanker
+  addClanker(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Body() dto: AddWorkspaceClankerDto,
+  ) {
+    return this.workspacesService.addClanker(workspaceId, dto);
+  }
+
+  @Delete(':workspaceId/clankers/:clankerId')
+  @HttpCode(204)
+  @WorkspacesDocs.removeClanker
+  removeClanker(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('clankerId', ParseUUIDPipe) clankerId: string,
+  ) {
+    return this.workspacesService.removeClanker(workspaceId, clankerId);
   }
 }

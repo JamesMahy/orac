@@ -13,6 +13,7 @@ export type {
 export type { Project, CreateProjectDto, UpdateProjectDto } from './project';
 export type {
   Workspace,
+  WorkspaceClanker,
   CreateWorkspaceDto,
   UpdateWorkspaceDto,
 } from './workspace';

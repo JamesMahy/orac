@@ -1,6 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { WorkspaceResponseDto } from './workspaces.dto';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiBody,
+} from '@nestjs/swagger';
+import { WorkspaceResponseDto, AddWorkspaceClankerDto } from './workspaces.dto';
 
 export const WorkspacesDocs = {
   findAll: applyDecorators(
@@ -41,7 +47,7 @@ export const WorkspacesDocs = {
       type: WorkspaceResponseDto,
     }),
     ApiResponse({ status: 400, description: 'Validation error' }),
-    ApiResponse({ status: 404, description: 'Project or host not found' }),
+    ApiResponse({ status: 404, description: 'Project, clanker, or host not found' }),
   ),
 
   update: applyDecorators(
@@ -57,7 +63,7 @@ export const WorkspacesDocs = {
       type: WorkspaceResponseDto,
     }),
     ApiResponse({ status: 400, description: 'Validation error' }),
-    ApiResponse({ status: 404, description: 'Workspace not found' }),
+    ApiResponse({ status: 404, description: 'Workspace, clanker, or host not found' }),
   ),
 
   remove: applyDecorators(
@@ -69,5 +75,34 @@ export const WorkspacesDocs = {
     }),
     ApiResponse({ status: 204, description: 'Workspace deleted' }),
     ApiResponse({ status: 404, description: 'Workspace not found' }),
+  ),
+
+  addClanker: applyDecorators(
+    ApiOperation({ summary: 'Associate a clanker with a workspace' }),
+    ApiParam({
+      name: 'workspaceId',
+      description: 'Workspace UUID',
+      format: 'uuid',
+    }),
+    ApiBody({ type: AddWorkspaceClankerDto }),
+    ApiResponse({ status: 204, description: 'Clanker associated' }),
+    ApiResponse({ status: 404, description: 'Workspace or clanker not found' }),
+    ApiResponse({ status: 409, description: 'Clanker already associated' }),
+  ),
+
+  removeClanker: applyDecorators(
+    ApiOperation({ summary: 'Remove a clanker association from a workspace' }),
+    ApiParam({
+      name: 'workspaceId',
+      description: 'Workspace UUID',
+      format: 'uuid',
+    }),
+    ApiParam({
+      name: 'clankerId',
+      description: 'Clanker UUID',
+      format: 'uuid',
+    }),
+    ApiResponse({ status: 204, description: 'Clanker association removed' }),
+    ApiResponse({ status: 404, description: 'Workspace or association not found' }),
   ),
 };
