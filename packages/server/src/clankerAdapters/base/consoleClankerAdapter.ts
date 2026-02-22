@@ -1,4 +1,4 @@
-import { BaseAdapter } from './base.adapter';
+import { BaseClankerAdapter } from './baseClankerAdapter';
 import type {
   AdapterField,
   AdapterSessionStrategy,
@@ -12,7 +12,7 @@ export type ConsoleConnection = {
   workspacePath: string;
 };
 
-export abstract class ConsoleAdapter extends BaseAdapter {
+export abstract class ConsoleClankerAdapter extends BaseClankerAdapter {
   readonly type = 'console' as const;
   readonly fields: AdapterField[] = [];
   readonly sessionStrategy: AdapterSessionStrategy = 'managed';

@@ -1,4 +1,4 @@
-import { ConsoleAdapter } from '../base';
+import { ConsoleClankerAdapter } from '../base';
 import type { ConsoleConnection } from '../base';
 import type {
   AdapterCapability,
@@ -7,8 +7,8 @@ import type {
   SendMessageOptions,
 } from '@orac/shared';
 
-export class ClaudeCodeAdapter extends ConsoleAdapter {
-  readonly adapterId = 'claude-code';
+export class ClaudeCodeAdapter extends ConsoleClankerAdapter {
+  readonly clankerAdapterId = 'claude-code';
   readonly name = 'Claude Code';
   readonly command = 'claude';
 

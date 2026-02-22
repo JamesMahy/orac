@@ -10,7 +10,7 @@ import { HostsModule } from '@hosts/hosts.module';
 import { ProjectsModule } from '@projects/projects.module';
 import { WorkspacesModule } from '@workspaces/workspaces.module';
 import { SshModule } from '@ssh/ssh.module';
-import { AdaptersModule } from '@adapters/adapters.module';
+import { ClankerAdaptersModule } from '@clankerAdapters/clankerAdapters.module';
 import { ClankersModule } from '@clankers/clankers.module';
 
 @Module({
@@ -25,7 +25,7 @@ import { ClankersModule } from '@clankers/clankers.module';
     ProjectsModule,
     WorkspacesModule,
     SshModule,
-    AdaptersModule,
+    ClankerAdaptersModule,
     ClankersModule,
   ],
   controllers: [AppController],

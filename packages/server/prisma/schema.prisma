@@ -94,9 +94,9 @@ model Message {
 }
 
 model Clanker {
-  clankerId String @id @default(uuid())
-  name      String @db.VarChar(255)
-  adapterId String @db.VarChar(100)
+  clankerId        String @id @default(uuid())
+  name             String @db.VarChar(255)
+  clankerAdapterId String @db.VarChar(100)
 
   // Console adapters only — which SSH host runs this CLI tool
   hostId String?
@@ -113,5 +113,5 @@ model Clanker {
   workspaceClankers  WorkspaceClanker[]
 
   @@index([hostId])
-  @@index([adapterId])
+  @@index([clankerAdapterId])
 }

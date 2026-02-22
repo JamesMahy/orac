@@ -1,4 +1,4 @@
-import { BaseAdapter } from './base.adapter';
+import { BaseClankerAdapter } from './baseClankerAdapter';
 import type {
   AdapterSessionStrategy,
   AdapterStreamEvent,
@@ -12,7 +12,7 @@ export type ApiConnection = {
   model: string;
 };
 
-export abstract class ApiAdapter extends BaseAdapter {
+export abstract class ApiClankerAdapter extends BaseClankerAdapter {
   readonly type = 'api' as const;
   readonly sessionStrategy: AdapterSessionStrategy = 'unmanaged';
   abstract override readonly defaultEndpoint: string | null;

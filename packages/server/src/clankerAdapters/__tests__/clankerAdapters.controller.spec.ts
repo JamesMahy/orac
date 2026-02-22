@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
-import { AdaptersController } from '../adapters.controller';
-import { AdaptersService } from '../adapters.service';
+import { ClankerAdaptersController } from '../clankerAdapters.controller';
+import { ClankerAdaptersService } from '../clankerAdapters.service';
 
 const claudeCodeDefinition = {
-  adapterId: 'claude-code',
+  clankerAdapterId: 'claude-code',
   name: 'Claude Code',
   type: 'console' as const,
   command: 'claude',
@@ -19,54 +19,59 @@ const claudeCodeDefinition = {
   sessionStrategy: 'managed' as const,
 };
 
-describe('AdaptersController', () => {
-  let controller: AdaptersController;
-  let mockAdaptersService: Record<string, jest.Mock>;
+describe('ClankerAdaptersController', () => {
+  let controller: ClankerAdaptersController;
+  let mockClankerAdaptersService: Record<string, jest.Mock>;
 
   beforeEach(async () => {
-    mockAdaptersService = {
+    mockClankerAdaptersService = {
       findAll: jest.fn(),
       findOne: jest.fn(),
       getAdapter: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AdaptersController],
-      providers: [{ provide: AdaptersService, useValue: mockAdaptersService }],
+      controllers: [ClankerAdaptersController],
+      providers: [
+        {
+          provide: ClankerAdaptersService,
+          useValue: mockClankerAdaptersService,
+        },
+      ],
     }).compile();
 
-    controller = module.get(AdaptersController);
+    controller = module.get(ClankerAdaptersController);
   });
 
-  describe('GET /adapters', () => {
+  describe('GET /clanker-adapters', () => {
     it('should return all adapter definitions', () => {
-      mockAdaptersService.findAll.mockReturnValue([claudeCodeDefinition]);
+      mockClankerAdaptersService.findAll.mockReturnValue([claudeCodeDefinition]);
 
       const result = controller.findAll();
 
-      expect(mockAdaptersService.findAll).toHaveBeenCalledTimes(1);
+      expect(mockClankerAdaptersService.findAll).toHaveBeenCalledTimes(1);
       expect(result).toEqual([claudeCodeDefinition]);
     });
   });
 
-  describe('GET /adapters/:adapterId', () => {
+  describe('GET /clanker-adapters/:clankerAdapterId', () => {
     it('should return a single adapter definition', () => {
-      mockAdaptersService.findOne.mockReturnValue(claudeCodeDefinition);
+      mockClankerAdaptersService.findOne.mockReturnValue(claudeCodeDefinition);
 
       const result = controller.findOne('claude-code');
 
-      expect(mockAdaptersService.findOne).toHaveBeenCalledWith('claude-code');
+      expect(mockClankerAdaptersService.findOne).toHaveBeenCalledWith(
+        'claude-code',
+      );
       expect(result).toEqual(claudeCodeDefinition);
     });
 
     it('should propagate NotFoundException from service', () => {
-      mockAdaptersService.findOne.mockImplementation(() => {
+      mockClankerAdaptersService.findOne.mockImplementation(() => {
         throw new NotFoundException('adapter_not_found');
       });
 
-      expect(() => controller.findOne('nonexistent')).toThrow(
-        NotFoundException,
-      );
+      expect(() => controller.findOne('nonexistent')).toThrow(NotFoundException);
     });
   });
 });

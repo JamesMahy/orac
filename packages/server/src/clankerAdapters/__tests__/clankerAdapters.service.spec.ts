@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
-import { AdaptersService } from '../adapters.service';
+import { ClankerAdaptersService } from '../clankerAdapters.service';
 
-describe('AdaptersService', () => {
-  let service: AdaptersService;
+describe('ClankerAdaptersService', () => {
+  let service: ClankerAdaptersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AdaptersService],
+      providers: [ClankerAdaptersService],
     }).compile();
 
-    service = module.get(AdaptersService);
+    service = module.get(ClankerAdaptersService);
   });
 
   describe('findAll', () => {
@@ -18,7 +18,7 @@ describe('AdaptersService', () => {
       const result = service.findAll();
 
       expect(result).toHaveLength(1);
-      expect(result[0].adapterId).toBe('claude-code');
+      expect(result[0].clankerAdapterId).toBe('claude-code');
     });
   });
 
@@ -27,7 +27,7 @@ describe('AdaptersService', () => {
       const result = service.findOne('claude-code');
 
       expect(result).toEqual({
-        adapterId: 'claude-code',
+        clankerAdapterId: 'claude-code',
         name: 'Claude Code',
         type: 'console',
         command: 'claude',
@@ -59,15 +59,13 @@ describe('AdaptersService', () => {
     it('should return the adapter instance', () => {
       const adapter = service.getAdapter('claude-code');
 
-      expect(adapter.adapterId).toBe('claude-code');
+      expect(adapter.clankerAdapterId).toBe('claude-code');
       expect(adapter.name).toBe('Claude Code');
       expect(adapter.command).toBe('claude');
     });
 
     it('should throw NotFoundException for nonexistent adapter', () => {
-      expect(() => service.getAdapter('nonexistent')).toThrow(
-        NotFoundException,
-      );
+      expect(() => service.getAdapter('nonexistent')).toThrow(NotFoundException);
     });
   });
 });

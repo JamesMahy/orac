@@ -27,7 +27,7 @@ export type AdapterField = {
 };
 
 export type AdapterDefinition = {
-  adapterId: string;
+  clankerAdapterId: string;
   name: string;
   type: AdapterType;
   command: string | null;

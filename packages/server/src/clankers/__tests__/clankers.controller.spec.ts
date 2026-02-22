@@ -7,7 +7,7 @@ import { CreateClankerDto } from '../clankers.dto';
 const strippedClanker = {
   clankerId: '660e8400-e29b-41d4-a716-446655440000',
   name: 'Claude on prod',
-  adapter: { adapterId: 'claude-code', name: 'Claude Code' },
+  adapter: { clankerAdapterId: 'claude-code', name: 'Claude Code' },
   host: { hostId: '550e8400-e29b-41d4-a716-446655440000', name: 'Test Host' },
   config: {},
   createdAt: new Date(),
@@ -73,7 +73,7 @@ describe('ClankersController', () => {
     it('should call create with dto', async () => {
       const dto: CreateClankerDto = {
         name: 'Claude on prod',
-        adapterId: 'claude-code',
+        clankerAdapterId: 'claude-code',
         hostId: '550e8400-e29b-41d4-a716-446655440000',
       };
       mockClankersService.create.mockResolvedValue(strippedClanker);

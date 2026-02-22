@@ -20,14 +20,14 @@ export class CreateClankerDto {
   name!: string;
 
   @ApiProperty({
-    description: 'Adapter ID this clanker uses',
+    description: 'Clanker adapter ID this clanker uses',
     example: 'claude-code',
     maxLength: 100,
   })
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
-  adapterId!: string;
+  clankerAdapterId!: string;
 
   @ApiProperty({
     description: 'Host ID for console adapters',
@@ -82,8 +82,11 @@ export class UpdateClankerDto {
 }
 
 class ClankerAdapterDto {
-  @ApiProperty({ description: 'Adapter identifier', example: 'claude-code' })
-  adapterId!: string;
+  @ApiProperty({
+    description: 'Clanker adapter identifier',
+    example: 'claude-code',
+  })
+  clankerAdapterId!: string;
 
   @ApiProperty({ description: 'Adapter display name', example: 'Claude Code' })
   name!: string;
@@ -114,7 +117,7 @@ export class ClankerResponseDto {
   name!: string;
 
   @ApiProperty({
-    description: 'Adapter this clanker uses',
+    description: 'Clanker adapter this clanker uses',
     type: ClankerAdapterDto,
   })
   adapter!: ClankerAdapterDto;

@@ -10,8 +10,8 @@ import type {
   HandleCommandOptions,
 } from '@orac/shared';
 
-export abstract class BaseAdapter {
-  abstract readonly adapterId: string;
+export abstract class BaseClankerAdapter {
+  abstract readonly clankerAdapterId: string;
   abstract readonly name: string;
   abstract readonly type: AdapterType;
   abstract readonly capabilities: AdapterCapability[];
@@ -24,7 +24,7 @@ export abstract class BaseAdapter {
 
   toDefinition(): AdapterDefinition {
     return {
-      adapterId: this.adapterId,
+      clankerAdapterId: this.clankerAdapterId,
       name: this.name,
       type: this.type,
       command: this.command,

@@ -6,15 +6,15 @@ import {
 import { Host, Prisma } from '@prisma/client';
 import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '@common/crypto/encryption.service';
-import { AdaptersService } from '@adapters/adapters.service';
-import { BaseAdapter } from '@adapters/base';
+import { ClankerAdaptersService } from '@clankerAdapters/clankerAdapters.service';
+import { BaseClankerAdapter } from '@clankerAdapters/base';
 import { sanitizeObject } from '../helpers';
 import { CreateClankerDto, UpdateClankerDto } from './clankers.dto';
 
 type ClankerResponse = {
   clankerId: string;
   name: string;
-  adapter: { adapterId: string; name: string };
+  adapter: { clankerAdapterId: string; name: string };
   host: { hostId: string; name: string } | null;
   config: Record<string, unknown>;
   createdAt: Date;
@@ -26,7 +26,7 @@ export class ClankersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly encryption: EncryptionService,
-    private readonly adapters: AdaptersService,
+    private readonly adapters: ClankerAdaptersService,
   ) {}
 
   async findAll(): Promise<ClankerResponse[]> {
@@ -35,7 +35,7 @@ export class ClankersService {
       orderBy: { createdAt: 'desc' },
     });
     return clankers.map(clanker => {
-      const adapter = this.adapters.getAdapter(clanker.adapterId);
+      const adapter = this.adapters.getAdapter(clanker.clankerAdapterId);
       return this.toResponse(clanker, adapter);
     });
   }
@@ -48,13 +48,13 @@ export class ClankersService {
     if (!clanker) {
       throw new NotFoundException('clanker_not_found');
     }
-    const adapter = this.adapters.getAdapter(clanker.adapterId);
+    const adapter = this.adapters.getAdapter(clanker.clankerAdapterId);
     return this.toResponse(clanker, adapter);
   }
 
   async create(dto: CreateClankerDto): Promise<ClankerResponse> {
-    const { name, adapterId, hostId, config: rawConfig } = dto;
-    const adapter = this.adapters.getAdapter(adapterId);
+    const { name, clankerAdapterId, hostId, config: rawConfig } = dto;
+    const adapter = this.adapters.getAdapter(clankerAdapterId);
 
     if (adapter.type === 'console' && !hostId) {
       throw new BadRequestException('host_id_required');
@@ -76,7 +76,7 @@ export class ClankersService {
     const clanker = await this.prisma.clanker.create({
       data: {
         name,
-        adapterId,
+        clankerAdapterId,
         hostId: hostId ?? null,
         config: encryptedConfig as Prisma.InputJsonValue,
       },
@@ -108,7 +108,7 @@ export class ClankersService {
       }
     }
 
-    const adapter = this.adapters.getAdapter(existing.adapterId);
+    const adapter = this.adapters.getAdapter(existing.clankerAdapterId);
 
     let config: Record<string, unknown> | undefined;
     if (rawConfig !== undefined) {
@@ -143,7 +143,7 @@ export class ClankersService {
   }
 
   private validateConfig(
-    adapter: BaseAdapter,
+    adapter: BaseClankerAdapter,
     config: Record<string, unknown>,
   ) {
     for (const field of adapter.fields) {
@@ -173,7 +173,7 @@ export class ClankersService {
   }
 
   private encryptConfig(
-    adapter: BaseAdapter,
+    adapter: BaseClankerAdapter,
     config: Record<string, unknown>,
   ): Record<string, unknown> {
     const encrypted: Record<string, unknown> = {};
@@ -196,7 +196,7 @@ export class ClankersService {
   }
 
   private maskSecureFields(
-    adapter: BaseAdapter,
+    adapter: BaseClankerAdapter,
     config: Record<string, unknown>,
   ): Record<string, unknown> {
     const stripped = { ...config };
@@ -210,13 +210,16 @@ export class ClankersService {
 
   private toResponse(
     clanker: { host: Host | null } & Prisma.ClankerGetPayload<object>,
-    adapter: BaseAdapter,
+    adapter: BaseClankerAdapter,
   ): ClankerResponse {
     const { host } = clanker;
     return {
       clankerId: clanker.clankerId,
       name: clanker.name,
-      adapter: { adapterId: adapter.adapterId, name: adapter.name },
+      adapter: {
+        clankerAdapterId: adapter.clankerAdapterId,
+        name: adapter.name,
+      },
       host: host ? { hostId: host.hostId, name: host.name } : null,
       config: this.maskSecureFields(
         adapter,

@@ -1,5 +1,5 @@
 export type ClankerAdapter = {
-  adapterId: string;
+  clankerAdapterId: string;
   name: string;
 };
 
@@ -20,7 +20,7 @@ export type Clanker = {
 
 export type CreateClankerDto = {
   name: string;
-  adapterId: string;
+  clankerAdapterId: string;
   hostId?: string;
   config?: Record<string, unknown>;
 };

@@ -30,13 +30,13 @@ async function expectInvalid(data: Record<string, unknown>, property?: string) {
 
 const validConsole = {
   name: 'Claude on prod',
-  adapterId: 'claude-code',
+  clankerAdapterId: 'claude-code',
   hostId: '550e8400-e29b-41d4-a716-446655440000',
 };
 
 const validApi = {
   name: 'OpenAI GPT-4',
-  adapterId: 'openai-api',
+  clankerAdapterId: 'openai-api',
   config: { apiKey: 'sk-test', model: 'gpt-4' },
 };
 
@@ -73,20 +73,26 @@ describe('CreateClankerDto', () => {
     });
   });
 
-  describe('adapterId validation', () => {
-    it('should reject empty adapterId', async () => {
-      await expectInvalid({ ...validConsole, adapterId: '' }, 'adapterId');
-    });
-
-    it('should reject adapterId exceeding 100 characters', async () => {
+  describe('clankerAdapterId validation', () => {
+    it('should reject empty clankerAdapterId', async () => {
       await expectInvalid(
-        { ...validConsole, adapterId: 'a'.repeat(101) },
-        'adapterId',
+        { ...validConsole, clankerAdapterId: '' },
+        'clankerAdapterId',
       );
     });
 
-    it('should reject missing adapterId', async () => {
-      await expectInvalid(omit(validConsole, 'adapterId'), 'adapterId');
+    it('should reject clankerAdapterId exceeding 100 characters', async () => {
+      await expectInvalid(
+        { ...validConsole, clankerAdapterId: 'a'.repeat(101) },
+        'clankerAdapterId',
+      );
+    });
+
+    it('should reject missing clankerAdapterId', async () => {
+      await expectInvalid(
+        omit(validConsole, 'clankerAdapterId'),
+        'clankerAdapterId',
+      );
     });
   });
 

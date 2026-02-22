@@ -3,10 +3,10 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ClankersService } from '../clankers.service';
 import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '@common/crypto/encryption.service';
-import { AdaptersService } from '@adapters/adapters.service';
+import { ClankerAdaptersService } from '@clankerAdapters/clankerAdapters.service';
 
 const mockConsoleAdapter = {
-  adapterId: 'claude-code',
+  clankerAdapterId: 'claude-code',
   name: 'Claude Code',
   type: 'console' as const,
   fields: [],
@@ -22,7 +22,7 @@ const mockConsoleAdapter = {
 };
 
 const mockApiAdapter = {
-  adapterId: 'openai-api',
+  clankerAdapterId: 'openai-api',
   name: 'OpenAI API',
   type: 'api' as const,
   fields: [
@@ -74,7 +74,7 @@ const mockHost = {
 const mockConsoleClanker = {
   clankerId: '660e8400-e29b-41d4-a716-446655440000',
   name: 'Claude on prod',
-  adapterId: 'claude-code',
+  clankerAdapterId: 'claude-code',
   hostId: mockHost.hostId,
   host: mockHost,
   config: {},
@@ -85,7 +85,7 @@ const mockConsoleClanker = {
 const mockApiClanker = {
   clankerId: '660e8400-e29b-41d4-a716-446655440001',
   name: 'OpenAI GPT-4',
-  adapterId: 'openai-api',
+  clankerAdapterId: 'openai-api',
   hostId: null,
   host: null,
   config: { apiKey: 'encrypted_key', model: 'gpt-4' },
@@ -129,7 +129,7 @@ describe('ClankersService', () => {
         ClankersService,
         { provide: PrismaService, useValue: prisma },
         { provide: EncryptionService, useValue: encryption },
-        { provide: AdaptersService, useValue: adaptersService },
+        { provide: ClankerAdaptersService, useValue: adaptersService },
       ],
     }).compile();
 
@@ -210,7 +210,7 @@ describe('ClankersService', () => {
 
       const result = await service.create({
         name: 'Claude on prod',
-        adapterId: 'claude-code',
+        clankerAdapterId: 'claude-code',
         hostId: mockHost.hostId,
       });
 
@@ -218,7 +218,7 @@ describe('ClankersService', () => {
       expect(prisma.clanker.create).toHaveBeenCalledWith({
         data: {
           name: 'Claude on prod',
-          adapterId: 'claude-code',
+          clankerAdapterId: 'claude-code',
           hostId: mockHost.hostId,
           config: {},
         },
@@ -232,7 +232,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'Claude',
-          adapterId: 'claude-code',
+          clankerAdapterId: 'claude-code',
         }),
       ).rejects.toThrow(BadRequestException);
     });
@@ -243,7 +243,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'Claude',
-          adapterId: 'claude-code',
+          clankerAdapterId: 'claude-code',
         }),
       ).rejects.toThrow('host_id_required');
     });
@@ -255,7 +255,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'Claude',
-          adapterId: 'claude-code',
+          clankerAdapterId: 'claude-code',
           hostId: 'nonexistent-uuid',
         }),
       ).rejects.toThrow(NotFoundException);
@@ -268,7 +268,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'Claude',
-          adapterId: 'claude-code',
+          clankerAdapterId: 'claude-code',
           hostId: 'nonexistent-uuid',
         }),
       ).rejects.toThrow('host_not_found');
@@ -280,7 +280,7 @@ describe('ClankersService', () => {
 
       await service.create({
         name: 'OpenAI GPT-4',
-        adapterId: 'openai-api',
+        clankerAdapterId: 'openai-api',
         config: { apiKey: 'sk-test', model: 'gpt-4' },
       });
 
@@ -304,7 +304,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
           config: { apiKey: 'sk-test' },
         }),
       ).rejects.toThrow(BadRequestException);
@@ -316,13 +316,13 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
           config: { apiKey: 'sk-test' },
         }),
       ).rejects.toThrow('field_required:model');
     });
 
-    it('should throw adapter_not_found for invalid adapterId', async () => {
+    it('should throw adapter_not_found for invalid clankerAdapterId', async () => {
       adaptersService.getAdapter.mockImplementation(() => {
         throw new NotFoundException('adapter_not_found');
       });
@@ -330,7 +330,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'Test',
-          adapterId: 'nonexistent',
+          clankerAdapterId: 'nonexistent',
         }),
       ).rejects.toThrow(NotFoundException);
     });
@@ -341,7 +341,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
           config: { apiKey: 'sk-test', model: 'gpt-4', temperature: 5 },
         }),
       ).rejects.toThrow(BadRequestException);
@@ -353,7 +353,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
           config: { apiKey: 'sk-test', model: 'gpt-4', temperature: 5 },
         }),
       ).rejects.toThrow('field_invalid:temperature');
@@ -365,7 +365,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
           config: {
             apiKey: 'sk-test',
             model: 'gpt-4',
@@ -381,7 +381,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
           config: {
             apiKey: 'sk-test',
             model: 'gpt-4',
@@ -397,7 +397,7 @@ describe('ClankersService', () => {
 
       await service.create({
         name: 'OpenAI',
-        adapterId: 'openai-api',
+        clankerAdapterId: 'openai-api',
         config: { apiKey: 'sk-test', model: 'gpt-4', temperature: 0 },
       });
 
@@ -410,7 +410,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
           config: { apiKey: 'sk-test', model: 'gpt-4', temperature: -1 },
         }),
       ).rejects.toThrow('field_invalid:temperature');
@@ -422,7 +422,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
         }),
       ).rejects.toThrow(BadRequestException);
     });
@@ -433,7 +433,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
         }),
       ).rejects.toThrow('field_required:apiKey');
     });
@@ -501,7 +501,7 @@ describe('ClankersService', () => {
       ).rejects.toThrow('host_not_found');
     });
 
-    it('should use existing adapterId when dto does not provide one', async () => {
+    it('should use existing clankerAdapterId when dto does not provide one', async () => {
       prisma.clanker.findUnique.mockResolvedValue(mockApiClanker);
       adaptersService.getAdapter.mockReturnValue(mockApiAdapter);
       prisma.clanker.update.mockResolvedValue(mockApiClanker);
@@ -566,7 +566,7 @@ describe('ClankersService', () => {
 
       await service.create({
         name: 'OpenAI',
-        adapterId: 'openai-api',
+        clankerAdapterId: 'openai-api',
         config: {
           __proto__: { polluted: true },
           constructor: { polluted: true },
@@ -626,7 +626,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
           config: { apiKey: 12345, model: 'gpt-4' },
         }),
       ).rejects.toThrow(BadRequestException);
@@ -638,7 +638,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
           config: { apiKey: 12345, model: 'gpt-4' },
         }),
       ).rejects.toThrow('field_invalid:apiKey');
@@ -650,7 +650,7 @@ describe('ClankersService', () => {
       await expect(
         service.create({
           name: 'OpenAI',
-          adapterId: 'openai-api',
+          clankerAdapterId: 'openai-api',
           config: { apiKey: ['part1', 'part2'], model: 'gpt-4' },
         }),
       ).rejects.toThrow('field_invalid:apiKey');

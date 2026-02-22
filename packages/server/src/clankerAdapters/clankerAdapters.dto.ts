@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AdapterCommandDto {
+export class ClankerAdapterCommandDto {
   @ApiProperty({
     description: 'Command string',
     example: '/review',
@@ -14,7 +14,7 @@ export class AdapterCommandDto {
   description!: string;
 }
 
-export class AdapterFieldDto {
+export class ClankerAdapterFieldDto {
   @ApiProperty({ description: 'Field key', example: 'apiKey' })
   key!: string;
 
@@ -70,12 +70,12 @@ export class AdapterFieldDto {
   step?: number;
 }
 
-export class AdapterDefinitionDto {
+export class ClankerAdapterDefinitionDto {
   @ApiProperty({
-    description: 'Unique adapter identifier',
+    description: 'Unique clanker adapter identifier',
     example: 'claude-code',
   })
-  adapterId!: string;
+  clankerAdapterId!: string;
 
   @ApiProperty({
     description: 'Display name',
@@ -106,15 +106,15 @@ export class AdapterDefinitionDto {
 
   @ApiProperty({
     description: 'Supported commands',
-    type: [AdapterCommandDto],
+    type: [ClankerAdapterCommandDto],
   })
-  commands!: AdapterCommandDto[];
+  commands!: ClankerAdapterCommandDto[];
 
   @ApiProperty({
     description: 'Configuration fields for API adapters',
-    type: [AdapterFieldDto],
+    type: [ClankerAdapterFieldDto],
   })
-  fields!: AdapterFieldDto[];
+  fields!: ClankerAdapterFieldDto[];
 
   @ApiProperty({
     description: 'Default API endpoint for API adapters',
