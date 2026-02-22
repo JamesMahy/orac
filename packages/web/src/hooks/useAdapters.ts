@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { adaptersApi } from '@api/adapters';
+import { adaptersApi } from '@api/clankerAdapters';
 
 export function useAdapters() {
   return useQuery({

@@ -17,14 +17,14 @@ import { extractErrorCode, translateError } from '@utils/translateError';
 
 type ClankerFormData = {
   name: string;
-  adapterId: string;
+  clankerAdapterId: string;
   hostId: string;
   config: Record<string, string>;
 };
 
 const DEFAULT_VALUES: ClankerFormData = {
   name: '',
-  adapterId: '',
+  clankerAdapterId: '',
   hostId: '',
   config: {},
 };
@@ -51,7 +51,7 @@ function transformClankerToFormData(
   }
   return {
     name: clanker.name,
-    adapterId: clanker.adapter.adapterId,
+    clankerAdapterId: clanker.adapter.clankerAdapterId,
     hostId: clanker.host?.hostId ?? '',
     config,
   };
@@ -94,19 +94,19 @@ export function ClankerModal({
     defaultValues: DEFAULT_VALUES,
   });
 
-  const adapterId = watch('adapterId');
+  const clankerAdapterId = watch('clankerAdapterId');
   const name = watch('name');
 
   const selectedAdapter = useMemo(
-    () => adapters?.find(adapter => adapter.adapterId === adapterId),
-    [adapters, adapterId],
+    () => adapters?.find(adapter => adapter.clankerAdapterId === clankerAdapterId),
+    [adapters, clankerAdapterId],
   );
 
   const adapterOptions = useMemo(
     () =>
       adapters?.map(adapter => ({
         label: adapter.name,
-        value: adapter.adapterId,
+        value: adapter.clankerAdapterId,
       })) ?? [],
     [adapters],
   );
@@ -193,7 +193,7 @@ export function ClankerModal({
 
       return clankersApi.create({
         name: data.name,
-        adapterId: data.adapterId,
+        clankerAdapterId: data.clankerAdapterId,
         hostId: data.hostId || undefined,
         config: Object.keys(config).length > 0 ? config : undefined,
       });
@@ -201,7 +201,7 @@ export function ClankerModal({
     onSuccess: response => {
       onComplete(response, !isEditing);
 
-      const adapter = resolveAdapter(response.adapter.adapterId);
+      const adapter = resolveAdapter(response.adapter.clankerAdapterId);
       if (isEditing && adapter) {
         secureFieldsSetRef.current = new Set(
           adapter.fields
@@ -233,8 +233,8 @@ export function ClankerModal({
   }, [clearErrors, handleSubmit, saveMutation]);
 
   const resolveAdapter = useCallback(
-    (adapterId: string) =>
-      adapters?.find(adapter => adapter.adapterId === adapterId),
+    (clankerAdapterId: string) =>
+      adapters?.find(adapter => adapter.clankerAdapterId === clankerAdapterId),
     [adapters],
   );
 
@@ -243,7 +243,7 @@ export function ClankerModal({
       reset(DEFAULT_VALUES);
       return;
     }
-    const adapter = resolveAdapter(clankerData.adapter.adapterId);
+    const adapter = resolveAdapter(clankerData.adapter.clankerAdapterId);
     if (!adapter) return;
     secureFieldsSetRef.current = new Set(
       adapter.fields
@@ -255,7 +255,7 @@ export function ClankerModal({
 
   useEffect(() => {
     if (visible && existingClankerId && clankerData && adapters) {
-      const adapter = resolveAdapter(clankerData.adapter.adapterId);
+      const adapter = resolveAdapter(clankerData.adapter.clankerAdapterId);
       if (!adapter) return;
       secureFieldsSetRef.current = new Set(
         adapter.fields
@@ -313,11 +313,11 @@ export function ClankerModal({
       />
 
       <FormSelect
-        name="adapterId"
+        name="clankerAdapterId"
         control={control}
         label={t('Adapter')}
         options={adapterOptions}
-        error={errors.adapterId?.message}
+        error={errors.clankerAdapterId?.message}
         showError={isSubmitted}
         required
         disabled={isEditing}
