@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ClankerAdaptersModule } from '@clankerAdapters/clankerAdapters.module';
+import { ClankerAdaptersController } from './clankerAdapters.controller';
+import { ClankerAdaptersService } from './clankerAdapters.service';
 import { ClankersController } from './clankers.controller';
 import { ClankersService } from './clankers.service';
 
 @Module({
-  imports: [ClankerAdaptersModule],
-  controllers: [ClankersController],
-  providers: [ClankersService],
-  exports: [ClankersService],
+  controllers: [ClankerAdaptersController, ClankersController],
+  providers: [ClankerAdaptersService, ClankersService],
+  exports: [ClankersService, ClankerAdaptersService],
 })
 export class ClankersModule {}

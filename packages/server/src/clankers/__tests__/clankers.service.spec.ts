@@ -3,7 +3,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ClankersService } from '../clankers.service';
 import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '@common/crypto/encryption.service';
-import { ClankerAdaptersService } from '@clankerAdapters/clankerAdapters.service';
+import { ClankerAdaptersService } from '@clankers/clankerAdapters.service';
 
 const mockConsoleAdapter = {
   clankerAdapterId: 'claude-code',

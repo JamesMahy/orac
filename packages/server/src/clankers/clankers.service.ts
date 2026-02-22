@@ -6,8 +6,8 @@ import {
 import { Host, Prisma } from '@prisma/client';
 import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '@common/crypto/encryption.service';
-import { ClankerAdaptersService } from '@clankerAdapters/clankerAdapters.service';
-import { BaseClankerAdapter } from '@clankerAdapters/base';
+import { ClankerAdaptersService } from '@clankers/clankerAdapters.service';
+import { BaseClankerAdapter } from '@clankers/base';
 import { sanitizeObject } from '../helpers';
 import { CreateClankerDto, UpdateClankerDto } from './clankers.dto';
 

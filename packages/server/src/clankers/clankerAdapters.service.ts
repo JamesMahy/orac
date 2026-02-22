@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { AdapterDefinition } from '@orac/shared';
-import { BaseClankerAdapter } from '@clankerAdapters/base';
-import { ClaudeCodeAdapter } from '@clankerAdapters/implementations';
+import { BaseClankerAdapter } from '@clankers/base';
+import { ClaudeCodeAdapter } from '@clankers/implementations';
 
 @Injectable()
 export class ClankerAdaptersService {

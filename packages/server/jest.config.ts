@@ -17,7 +17,6 @@ const config: Config = {
     '^@projects/(.*)$': '<rootDir>/projects/$1',
     '^@workspaces/(.*)$': '<rootDir>/workspaces/$1',
     '^@ssh/(.*)$': '<rootDir>/ssh/$1',
-    '^@clankerAdapters/(.*)$': '<rootDir>/clankerAdapters/$1',
     '^@clankers/(.*)$': '<rootDir>/clankers/$1',
   },
 };
