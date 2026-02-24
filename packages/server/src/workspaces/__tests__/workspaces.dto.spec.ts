@@ -19,7 +19,9 @@ function toQueryDto(data: Record<string, unknown>): ListWorkspacesQueryDto {
   return plainToInstance(ListWorkspacesQueryDto, data);
 }
 
-function toAddClankerDto(data: Record<string, unknown>): AddWorkspaceClankerDto {
+function toAddClankerDto(
+  data: Record<string, unknown>,
+): AddWorkspaceClankerDto {
   return plainToInstance(AddWorkspaceClankerDto, data);
 }
 
@@ -192,7 +194,6 @@ describe('CreateWorkspaceDto', () => {
     });
   });
 });
-
 
 describe('UpdateWorkspaceDto', () => {
   it('should accept name only', async () => {

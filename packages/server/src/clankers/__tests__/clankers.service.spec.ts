@@ -133,7 +133,7 @@ describe('ClankersService', () => {
       ],
     }).compile();
 
-    service = module.get(ClankersService);
+    service = module.get<ClankersService>(ClankersService);
   });
 
   describe('findAll', () => {
@@ -456,6 +456,7 @@ describe('ClankersService', () => {
       expect(result.name).toBe('Renamed');
       expect(prisma.clanker.update).toHaveBeenCalledWith({
         where: { clankerId: mockConsoleClanker.clankerId },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data: expect.objectContaining({ name: 'Renamed' }),
         include: { host: true },
       });
@@ -577,9 +578,10 @@ describe('ClankersService', () => {
       });
 
       // Dangerous keys should not appear in the stored config
-      const createCall = prisma.clanker.create.mock.calls[0][0] as {
-        data: { config: Record<string, unknown> };
-      };
+      const createCalls = prisma.clanker.create.mock.calls as [
+        { data: { config: Record<string, unknown> } },
+      ][];
+      const createCall = createCalls[0][0];
       expect(
         Object.prototype.hasOwnProperty.call(
           createCall.data.config,
@@ -607,9 +609,10 @@ describe('ClankersService', () => {
         } as Record<string, unknown>,
       });
 
-      const updateCall = prisma.clanker.update.mock.calls[0][0] as {
-        data: { config: Record<string, unknown> };
-      };
+      const updateCalls = prisma.clanker.update.mock.calls as [
+        { data: { config: Record<string, unknown> } },
+      ][];
+      const updateCall = updateCalls[0][0];
       expect(
         Object.prototype.hasOwnProperty.call(
           updateCall.data.config,

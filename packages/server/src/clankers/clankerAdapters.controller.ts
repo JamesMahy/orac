@@ -8,7 +8,9 @@ import { ClankerAdaptersDocs } from './clankerAdapters.docs';
 @ApiResponse({ status: 401, description: 'Unauthorized' })
 @Controller('clanker-adapters')
 export class ClankerAdaptersController {
-  constructor(private readonly clankerAdaptersService: ClankerAdaptersService) {}
+  constructor(
+    private readonly clankerAdaptersService: ClankerAdaptersService,
+  ) {}
 
   @Get()
   @ClankerAdaptersDocs.findAll

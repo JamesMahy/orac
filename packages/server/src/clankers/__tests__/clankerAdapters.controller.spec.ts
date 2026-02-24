@@ -11,7 +11,10 @@ const claudeCodeDefinition = {
   capabilities: ['filesystem', 'code_execution', 'tool_use', 'streaming'],
   commands: [
     { command: 'review', description: 'Review uncommitted code changes' },
-    { command: 'init', description: 'Create a CLAUDE.md project configuration' },
+    {
+      command: 'init',
+      description: 'Create a CLAUDE.md project configuration',
+    },
     { command: 'bug', description: 'Report an issue to Anthropic' },
   ],
   fields: [],
@@ -45,7 +48,9 @@ describe('ClankerAdaptersController', () => {
 
   describe('GET /clanker-adapters', () => {
     it('should return all adapter definitions', () => {
-      mockClankerAdaptersService.findAll.mockReturnValue([claudeCodeDefinition]);
+      mockClankerAdaptersService.findAll.mockReturnValue([
+        claudeCodeDefinition,
+      ]);
 
       const result = controller.findAll();
 
@@ -71,7 +76,9 @@ describe('ClankerAdaptersController', () => {
         throw new NotFoundException('adapter_not_found');
       });
 
-      expect(() => controller.findOne('nonexistent')).toThrow(NotFoundException);
+      expect(() => controller.findOne('nonexistent')).toThrow(
+        NotFoundException,
+      );
     });
   });
 });

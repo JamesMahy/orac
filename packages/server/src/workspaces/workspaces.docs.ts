@@ -47,7 +47,10 @@ export const WorkspacesDocs = {
       type: WorkspaceResponseDto,
     }),
     ApiResponse({ status: 400, description: 'Validation error' }),
-    ApiResponse({ status: 404, description: 'Project, clanker, or host not found' }),
+    ApiResponse({
+      status: 404,
+      description: 'Project, clanker, or host not found',
+    }),
   ),
 
   update: applyDecorators(
@@ -63,7 +66,10 @@ export const WorkspacesDocs = {
       type: WorkspaceResponseDto,
     }),
     ApiResponse({ status: 400, description: 'Validation error' }),
-    ApiResponse({ status: 404, description: 'Workspace, clanker, or host not found' }),
+    ApiResponse({
+      status: 404,
+      description: 'Workspace, clanker, or host not found',
+    }),
   ),
 
   remove: applyDecorators(
@@ -103,6 +109,9 @@ export const WorkspacesDocs = {
       format: 'uuid',
     }),
     ApiResponse({ status: 204, description: 'Clanker association removed' }),
-    ApiResponse({ status: 404, description: 'Workspace or association not found' }),
+    ApiResponse({
+      status: 404,
+      description: 'Workspace or association not found',
+    }),
   ),
 };

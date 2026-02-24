@@ -1009,7 +1009,10 @@ describe('SshService', () => {
       await connectHost(service, prisma);
       setupBrowse({ stdout: '/home/james/empty\n' }, { stdout: '' });
 
-      const result = await service.browse(mockSshHost.hostId, '/home/james/empty');
+      const result = await service.browse(
+        mockSshHost.hostId,
+        '/home/james/empty',
+      );
 
       expect(result.entries).toHaveLength(0);
       expect(result.path).toBe('/home/james/empty');

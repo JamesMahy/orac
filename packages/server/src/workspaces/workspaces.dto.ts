@@ -115,8 +115,7 @@ export class UpdateWorkspaceDto {
   primaryClankerId?: string;
 
   @ApiProperty({
-    description:
-      'Currently active clanker ID (null to reset to primary)',
+    description: 'Currently active clanker ID (null to reset to primary)',
     required: false,
     nullable: true,
     example: '550e8400-e29b-41d4-a716-446655440002',
@@ -149,7 +148,8 @@ class WorkspaceClankerDto {
   name!: string;
 
   @ApiProperty({
-    description: 'Model override for this workspace (null = use clanker default)',
+    description:
+      'Model override for this workspace (null = use clanker default)',
     nullable: true,
     example: 'claude-opus-4-6',
   })
@@ -246,7 +246,8 @@ export class AddWorkspaceClankerDto {
   clankerId!: string;
 
   @ApiProperty({
-    description: 'Model override for this workspace (null = use clanker default)',
+    description:
+      'Model override for this workspace (null = use clanker default)',
     required: false,
     example: 'claude-opus-4-6',
   })

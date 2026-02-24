@@ -139,7 +139,7 @@ export class ClankersService {
     if (!existing) {
       throw new NotFoundException('clanker_not_found');
     }
-    return this.prisma.clanker.delete({ where: { clankerId } });
+    await this.prisma.clanker.delete({ where: { clankerId } });
   }
 
   private validateConfig(

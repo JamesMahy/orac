@@ -20,7 +20,10 @@ export class ClaudeCodeAdapter extends ConsoleClankerAdapter {
   ];
 
   readonly commands: AdapterCommand[] = [
-    { command: 'init', description: 'Create a CLAUDE.md project configuration' },
+    {
+      command: 'init',
+      description: 'Create a CLAUDE.md project configuration',
+    },
     { command: 'review', description: 'Review uncommitted code changes' },
     { command: 'compact', description: 'Compress conversation history' },
     { command: 'clear', description: 'Clear conversation history' },
@@ -36,7 +39,10 @@ export class ClaudeCodeAdapter extends ConsoleClankerAdapter {
     { command: 'mcp', description: 'Manage MCP server connections' },
     { command: 'add-dir', description: 'Add directories to context' },
     { command: 'context', description: 'Visualise context window usage' },
-    { command: 'export', description: 'Save conversation to file or clipboard' },
+    {
+      command: 'export',
+      description: 'Save conversation to file or clipboard',
+    },
     { command: 'vim', description: 'Toggle Vim-style editing' },
     { command: 'theme', description: 'Change colour theme' },
     { command: 'hooks', description: 'Configure automated action triggers' },

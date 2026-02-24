@@ -79,7 +79,10 @@ describe('WorkspacesService', () => {
       const result = await service.findAll(projectId);
 
       expect(result).toHaveLength(1);
-      expect(result[0]).toHaveProperty('workspaceId', mockWorkspace.workspaceId);
+      expect(result[0]).toHaveProperty(
+        'workspaceId',
+        mockWorkspace.workspaceId,
+      );
       expect(result[0]).toHaveProperty('name', 'exercise-service');
       expect(result[0]).toHaveProperty('primaryClanker', mockClanker);
       expect(result[0]).toHaveProperty('clankers', []);
@@ -237,7 +240,11 @@ describe('WorkspacesService', () => {
         primaryClankerId: clankerId,
         name: 'exercise-service',
         clankers: [
-          { clankerId: secondClankerId, modelOverride: 'claude-opus-4-6', temperatureOverride: 0.9 },
+          {
+            clankerId: secondClankerId,
+            modelOverride: 'claude-opus-4-6',
+            temperatureOverride: 0.9,
+          },
         ],
       });
 
@@ -474,10 +481,14 @@ describe('WorkspacesService', () => {
       prisma.host.findUnique.mockResolvedValue(mockHost);
       prisma.workspace.update.mockResolvedValue(updated);
 
-      const result = await service.update(mockWorkspace.workspaceId, { hostId });
+      const result = await service.update(mockWorkspace.workspaceId, {
+        hostId,
+      });
 
       expect(result).toHaveProperty('hostId', hostId);
-      expect(prisma.host.findUnique).toHaveBeenCalledWith({ where: { hostId } });
+      expect(prisma.host.findUnique).toHaveBeenCalledWith({
+        where: { hostId },
+      });
     });
   });
 
@@ -570,7 +581,9 @@ describe('WorkspacesService', () => {
       prisma.clanker.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.addClanker(mockWorkspace.workspaceId, { clankerId: 'nonexistent' }),
+        service.addClanker(mockWorkspace.workspaceId, {
+          clankerId: 'nonexistent',
+        }),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -579,7 +592,9 @@ describe('WorkspacesService', () => {
       prisma.clanker.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.addClanker(mockWorkspace.workspaceId, { clankerId: 'nonexistent' }),
+        service.addClanker(mockWorkspace.workspaceId, {
+          clankerId: 'nonexistent',
+        }),
       ).rejects.toThrow('clanker_not_found');
     });
 
@@ -632,7 +647,9 @@ describe('WorkspacesService', () => {
 
     it('should delete the WorkspaceClanker association', async () => {
       prisma.workspace.findUnique.mockResolvedValue(mockWorkspace);
-      prisma.workspaceClanker.findUnique.mockResolvedValue(mockWorkspaceClanker);
+      prisma.workspaceClanker.findUnique.mockResolvedValue(
+        mockWorkspaceClanker,
+      );
       prisma.workspaceClanker.delete.mockResolvedValue(mockWorkspaceClanker);
 
       await service.removeClanker(mockWorkspace.workspaceId, clankerId);

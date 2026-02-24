@@ -10,7 +10,7 @@ describe('ClankerAdaptersService', () => {
       providers: [ClankerAdaptersService],
     }).compile();
 
-    service = module.get(ClankerAdaptersService);
+    service = module.get<ClankerAdaptersService>(ClankerAdaptersService);
   });
 
   describe('findAll', () => {
@@ -32,6 +32,7 @@ describe('ClankerAdaptersService', () => {
         type: 'console',
         command: 'claude',
         capabilities: ['filesystem', 'code_execution', 'tool_use', 'streaming'],
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         commands: expect.arrayContaining([
           expect.objectContaining({ command: 'init' }),
           expect.objectContaining({ command: 'review' }),
@@ -65,7 +66,15 @@ describe('ClankerAdaptersService', () => {
     });
 
     it('should throw NotFoundException for nonexistent adapter', () => {
-      expect(() => service.getAdapter('nonexistent')).toThrow(NotFoundException);
+      expect(() => service.getAdapter('nonexistent')).toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should throw with snake_case error code', () => {
+      expect(() => service.getAdapter('nonexistent')).toThrow(
+        'adapter_not_found',
+      );
     });
   });
 });
