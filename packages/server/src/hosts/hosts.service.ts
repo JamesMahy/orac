@@ -34,8 +34,17 @@ export class HostsService {
 
   async create(dto: CreateHostDto): Promise<HostResponse> {
     const {
-      name, type, hostname, port, username, password,
-      hostKeyFingerprint, endpoint, apiKey, provider, model,
+      name,
+      type,
+      hostname,
+      port,
+      username,
+      password,
+      hostKeyFingerprint,
+      endpoint,
+      apiKey,
+      provider,
+      model,
     } = dto;
     const data: Prisma.HostCreateInput = {
       name,
@@ -50,9 +59,7 @@ export class HostsService {
       hostKeyFingerprint,
       endpoint,
       apiKey:
-        type === 'api' && apiKey
-          ? this.encryption.encrypt(apiKey)
-          : undefined,
+        type === 'api' && apiKey ? this.encryption.encrypt(apiKey) : undefined,
       provider,
       model,
     };
@@ -68,8 +75,17 @@ export class HostsService {
     }
 
     const {
-      name, type, hostname, port, username, password,
-      hostKeyFingerprint, endpoint, apiKey, provider, model,
+      name,
+      type,
+      hostname,
+      port,
+      username,
+      password,
+      hostKeyFingerprint,
+      endpoint,
+      apiKey,
+      provider,
+      model,
     } = dto;
     const data: Prisma.HostUpdateInput = {
       name,
@@ -86,9 +102,7 @@ export class HostsService {
       hostKeyFingerprint,
       endpoint,
       apiKey:
-        apiKey !== undefined
-          ? this.encryption.encrypt(apiKey)
-          : undefined,
+        apiKey !== undefined ? this.encryption.encrypt(apiKey) : undefined,
       provider,
       model,
     };

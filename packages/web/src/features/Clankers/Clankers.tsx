@@ -150,11 +150,7 @@ export function Clankers() {
           body={dateTemplate}
           sortable
         />
-        <Column
-          header={t('Actions')}
-          body={actionsTemplate}
-          className="w-32"
-        />
+        <Column header={t('Actions')} body={actionsTemplate} className="w-32" />
       </DataTable>
     </div>
   );

@@ -18,10 +18,7 @@ export const hostsApi = {
   },
 
   update: async (hostId: string, hostData: UpdateHostDto): Promise<Host> => {
-    const { data } = await api.patch<Host>(
-      `/api/hosts/${hostId}`,
-      hostData,
-    );
+    const { data } = await api.patch<Host>(`/api/hosts/${hostId}`, hostData);
     return data;
   },
 

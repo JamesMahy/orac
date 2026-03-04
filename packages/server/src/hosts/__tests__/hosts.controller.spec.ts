@@ -127,9 +127,7 @@ describe('HostsController', () => {
 
       await controller.remove(strippedHost.hostId);
 
-      expect(mockHostsService.remove).toHaveBeenCalledWith(
-        strippedHost.hostId,
-      );
+      expect(mockHostsService.remove).toHaveBeenCalledWith(strippedHost.hostId);
     });
 
     it('should propagate NotFoundException from service', async () => {

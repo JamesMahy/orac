@@ -1,8 +1,4 @@
-import type {
-  Clanker,
-  CreateClankerDto,
-  UpdateClankerDto,
-} from '@orac/shared';
+import type { Clanker, CreateClankerDto, UpdateClankerDto } from '@orac/shared';
 import { api } from './client';
 
 export const clankersApi = {

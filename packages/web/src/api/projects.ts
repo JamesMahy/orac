@@ -1,8 +1,4 @@
-import type {
-  Project,
-  CreateProjectDto,
-  UpdateProjectDto,
-} from '@orac/shared';
+import type { Project, CreateProjectDto, UpdateProjectDto } from '@orac/shared';
 import { api } from './client';
 
 export const projectsApi = {

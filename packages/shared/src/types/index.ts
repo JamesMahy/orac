@@ -44,3 +44,10 @@ export type {
   HandleCommandOptions,
 } from './adapter';
 export type { Clanker, CreateClankerDto, UpdateClankerDto } from './clanker';
+export type {
+  VaultAdapterField,
+  VaultAdapterDefinition,
+  Vault,
+  CreateVaultDto,
+  UpdateVaultDto,
+} from './storage';

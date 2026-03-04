@@ -33,10 +33,8 @@ export function Projects() {
 
   const { openCreate, openEdit } = useProjectModalStore();
   const { removeProject } = useProjectCache();
-  const {
-    openCreate: openCreateWorkspace,
-    openEdit: openEditWorkspace,
-  } = useWorkspaceModalStore();
+  const { openCreate: openCreateWorkspace, openEdit: openEditWorkspace } =
+    useWorkspaceModalStore();
 
   const { data: projects, isLoading } = useProjects();
   const { data: workspaces, isLoading: isLoadingWorkspaces } = useWorkspaces(
@@ -84,9 +82,12 @@ export function Projects() {
   const handleDeleteWorkspace = useCallback(
     (workspace: Workspace) => {
       confirmDialog({
-        message: tWorkspaces('Are you sure you want to delete this workspace?', {
-          name: workspace.name,
-        }),
+        message: tWorkspaces(
+          'Are you sure you want to delete this workspace?',
+          {
+            name: workspace.name,
+          },
+        ),
         header: tWorkspaces('Delete Workspace'),
         icon: 'pi pi-exclamation-triangle',
         acceptClassName: 'p-button-danger',
@@ -96,7 +97,9 @@ export function Projects() {
             removeWorkspace(workspace.workspaceId);
             toast.current?.show({
               severity: 'success',
-              summary: tWorkspaces('Workspace deleted', { name: workspace.name }),
+              summary: tWorkspaces('Workspace deleted', {
+                name: workspace.name,
+              }),
               life: 3000,
             });
           } catch {
@@ -114,15 +117,12 @@ export function Projects() {
     [removeWorkspace, tWorkspaces],
   );
 
-  const handleOpenWorkspacesPanel = useCallback(
-    (project: Project) => {
-      setWorkspacesPanel({
-        projectId: project.projectId,
-        projectName: project.name,
-      });
-    },
-    [],
-  );
+  const handleOpenWorkspacesPanel = useCallback((project: Project) => {
+    setWorkspacesPanel({
+      projectId: project.projectId,
+      projectName: project.name,
+    });
+  }, []);
 
   const handleCloseWorkspacesPanel = useCallback(() => {
     setWorkspacesPanel(null);

@@ -98,7 +98,8 @@ export function ClankerModal({
   const name = watch('name');
 
   const selectedAdapter = useMemo(
-    () => adapters?.find(adapter => adapter.clankerAdapterId === clankerAdapterId),
+    () =>
+      adapters?.find(adapter => adapter.clankerAdapterId === clankerAdapterId),
     [adapters, clankerAdapterId],
   );
 
@@ -123,10 +124,7 @@ export function ClankerModal({
   const hostSubtitleMap = useMemo(
     () =>
       new Map(
-        hosts?.map(host => [
-          host.hostId,
-          host.hostname ?? host.endpoint ?? '',
-        ]),
+        hosts?.map(host => [host.hostId, host.hostname ?? host.endpoint ?? '']),
       ),
     [hosts],
   );
@@ -162,9 +160,7 @@ export function ClankerModal({
           for (const field of selectedAdapter.fields) {
             if (field.secure) {
               if (
-                configDirtyFields[
-                  field.key as keyof typeof configDirtyFields
-                ]
+                configDirtyFields[field.key as keyof typeof configDirtyFields]
               ) {
                 config[field.key] = data.config[field.key];
                 hasConfigChanges = true;
@@ -205,7 +201,9 @@ export function ClankerModal({
       if (isEditing && adapter) {
         secureFieldsSetRef.current = new Set(
           adapter.fields
-            .filter(field => field.secure && response.config[field.key] === true)
+            .filter(
+              field => field.secure && response.config[field.key] === true,
+            )
             .map(field => field.key),
         );
         reset(transformClankerToFormData(response, adapter.fields));
@@ -266,7 +264,14 @@ export function ClankerModal({
       );
       reset(transformClankerToFormData(clankerData, adapter.fields));
     }
-  }, [visible, existingClankerId, clankerData, adapters, resolveAdapter, reset]);
+  }, [
+    visible,
+    existingClankerId,
+    clankerData,
+    adapters,
+    resolveAdapter,
+    reset,
+  ]);
 
   useEffect(() => {
     if (visible && !existingClankerId && previousEditingIdRef.current) {
@@ -378,10 +383,10 @@ function ConfigField({
   t,
   configErrors,
 }: ConfigFieldProps) {
-  const fieldName =
-    `config.${field.key}` as `config.${string}`;
+  const fieldName = `config.${field.key}` as `config.${string}`;
   const error = configErrors?.[field.key]?.message;
-  const placeholder = isEditing && isSecureFieldSet ? t('Unchanged') : undefined;
+  const placeholder =
+    isEditing && isSecureFieldSet ? t('Unchanged') : undefined;
 
   const rules = {
     ...(field.required &&
@@ -389,8 +394,18 @@ function ConfigField({
         required: t('error-field_required', { field: field.label }),
       }),
     ...(field.type === 'number' && {
-      ...(field.min != null && { min: { value: field.min, message: t('error-field_invalid', { field: field.label }) } }),
-      ...(field.max != null && { max: { value: field.max, message: t('error-field_invalid', { field: field.label }) } }),
+      ...(field.min != null && {
+        min: {
+          value: field.min,
+          message: t('error-field_invalid', { field: field.label }),
+        },
+      }),
+      ...(field.max != null && {
+        max: {
+          value: field.max,
+          message: t('error-field_invalid', { field: field.label }),
+        },
+      }),
     }),
   };
 

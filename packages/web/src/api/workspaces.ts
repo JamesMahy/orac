@@ -14,14 +14,15 @@ export const workspacesApi = {
   },
 
   getById: async (workspaceId: string): Promise<Workspace> => {
-    const { data } = await api.get<Workspace>(
-      `/api/workspaces/${workspaceId}`,
-    );
+    const { data } = await api.get<Workspace>(`/api/workspaces/${workspaceId}`);
     return data;
   },
 
   create: async (workspaceData: CreateWorkspaceDto): Promise<Workspace> => {
-    const { data } = await api.post<Workspace>('/api/workspaces', workspaceData);
+    const { data } = await api.post<Workspace>(
+      '/api/workspaces',
+      workspaceData,
+    );
     return data;
   },
 
@@ -40,10 +41,7 @@ export const workspacesApi = {
     await api.delete(`/api/workspaces/${workspaceId}`);
   },
 
-  addClanker: async (
-    workspaceId: string,
-    clankerId: string,
-  ): Promise<void> => {
+  addClanker: async (workspaceId: string, clankerId: string): Promise<void> => {
     await api.post(`/api/workspaces/${workspaceId}/clankers`, { clankerId });
   },
 
@@ -51,8 +49,6 @@ export const workspacesApi = {
     workspaceId: string,
     clankerId: string,
   ): Promise<void> => {
-    await api.delete(
-      `/api/workspaces/${workspaceId}/clankers/${clankerId}`,
-    );
+    await api.delete(`/api/workspaces/${workspaceId}/clankers/${clankerId}`);
   },
 };

@@ -24,7 +24,9 @@ export function WorkspaceModals() {
             return oldData ? [workspace, ...oldData] : [workspace];
           }
           return oldData?.map(existing =>
-            existing.workspaceId === workspace.workspaceId ? workspace : existing,
+            existing.workspaceId === workspace.workspaceId
+              ? workspace
+              : existing,
           );
         },
       );

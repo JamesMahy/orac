@@ -14,6 +14,7 @@ export type Workspace = {
   primaryClankerId: string | null;
   primaryClanker: { clankerId: string; name: string } | null;
   currentClankerId: string | null;
+  primaryVaultId: string | null;
   clankers: WorkspaceClanker[];
   sessionId: string | null;
   createdAt: Date;
@@ -26,7 +27,11 @@ export type CreateWorkspaceDto = {
   primaryClankerId: string;
   hostId?: string;
   path?: string;
-  clankers?: { clankerId: string; modelOverride?: string; temperatureOverride?: number }[];
+  clankers?: {
+    clankerId: string;
+    modelOverride?: string;
+    temperatureOverride?: number;
+  }[];
 };
 
 export type UpdateWorkspaceDto = {

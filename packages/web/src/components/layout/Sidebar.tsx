@@ -23,10 +23,8 @@ function SidebarProject({ project, onClose }: SidebarProjectProps) {
     expanded ? project.projectId : null,
   );
   const { openEdit: openEditProject } = useProjectModalStore();
-  const {
-    openCreate: openCreateWorkspace,
-    openEdit: openEditWorkspace,
-  } = useWorkspaceModalStore();
+  const { openCreate: openCreateWorkspace, openEdit: openEditWorkspace } =
+    useWorkspaceModalStore();
 
   return (
     <li>
@@ -73,7 +71,13 @@ function SidebarProject({ project, onClose }: SidebarProjectProps) {
               </button>
             </li>
           ))}
-          <li className={clsx('py-2', workspaces && workspaces.length > 0 && 'mt-2 border-t border-border')}>
+          <li
+            className={clsx(
+              'py-2',
+              workspaces &&
+                workspaces.length > 0 &&
+                'mt-2 border-t border-border',
+            )}>
             <button
               onClick={() => openCreateWorkspace(project.projectId)}
               className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1">
@@ -200,7 +204,9 @@ export function Sidebar({
           </button>
         </div>
 
-        <nav aria-label={t('nav.sidebar')} className="flex-1 space-y-1 overflow-y-auto p-3">
+        <nav
+          aria-label={t('nav.sidebar')}
+          className="flex-1 space-y-1 overflow-y-auto p-3">
           {navItems.map(item => {
             if (item.labelKey === 'hosts' || item.labelKey === 'clankers') {
               return (

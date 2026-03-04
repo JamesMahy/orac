@@ -54,38 +54,52 @@ export function FormModal({
 
   const resolvedSaveLabel = saveLabel ?? (isBusy ? t('Saving...') : t('Save'));
 
-  const footer = useMemo(() => (
-    <div className="flex items-center justify-between">
-      <div className="flex gap-2">
-        {isExisting && hasUnsavedChanges && onReset && (
+  const footer = useMemo(
+    () => (
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2">
+          {isExisting && hasUnsavedChanges && onReset && (
+            <Button
+              label={t('Reset Form')}
+              onClick={onReset}
+              severity="warning"
+              disabled={isBusy}
+              text
+            />
+          )}
+          {extraActions}
+        </div>
+        <div className="flex gap-2">
           <Button
-            label={t('Reset Form')}
-            onClick={onReset}
-            severity="warning"
+            label={hasUnsavedChanges ? t('Cancel') : t('Close')}
+            onClick={handleClose}
+            severity="secondary"
+            outlined
             disabled={isBusy}
-            text
           />
-        )}
-        {extraActions}
+          <Button
+            label={resolvedSaveLabel}
+            onClick={onSave}
+            severity={saveSeverity}
+            loading={isBusy}
+            disabled={isExisting && !hasUnsavedChanges}
+          />
+        </div>
       </div>
-      <div className="flex gap-2">
-        <Button
-          label={hasUnsavedChanges ? t('Cancel') : t('Close')}
-          onClick={handleClose}
-          severity="secondary"
-          outlined
-          disabled={isBusy}
-        />
-        <Button
-          label={resolvedSaveLabel}
-          onClick={onSave}
-          severity={saveSeverity}
-          loading={isBusy}
-          disabled={isExisting && !hasUnsavedChanges}
-        />
-      </div>
-    </div>
-  ), [isExisting, hasUnsavedChanges, onReset, t, isBusy, extraActions, handleClose, resolvedSaveLabel, onSave, saveSeverity]);
+    ),
+    [
+      isExisting,
+      hasUnsavedChanges,
+      onReset,
+      t,
+      isBusy,
+      extraActions,
+      handleClose,
+      resolvedSaveLabel,
+      onSave,
+      saveSeverity,
+    ],
+  );
 
   return (
     <Dialog
