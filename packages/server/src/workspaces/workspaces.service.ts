@@ -251,6 +251,17 @@ export class WorkspacesService {
     }
   }
 
+  async findPrimaryVaultId(workspaceId: string): Promise<string | null> {
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { workspaceId },
+      select: { primaryVaultId: true },
+    });
+    if (!workspace) {
+      throw new NotFoundException('workspace_not_found');
+    }
+    return workspace.primaryVaultId;
+  }
+
   async removeClanker(workspaceId: string, clankerId: string) {
     const workspace = await this.prisma.workspace.findUnique({
       where: { workspaceId },

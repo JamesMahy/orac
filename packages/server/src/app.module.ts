@@ -10,8 +10,9 @@ import { HostsModule } from '@hosts/hosts.module';
 import { ProjectsModule } from '@projects/projects.module';
 import { WorkspacesModule } from '@workspaces/workspaces.module';
 import { SshModule } from '@ssh/ssh.module';
-import { ClankerAdaptersModule } from '@clankerAdapters/clankerAdapters.module';
 import { ClankersModule } from '@clankers/clankers.module';
+import { VaultsModule } from '@vaults/vaults.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -25,8 +26,9 @@ import { ClankersModule } from '@clankers/clankers.module';
     ProjectsModule,
     WorkspacesModule,
     SshModule,
-    ClankerAdaptersModule,
     ClankersModule,
+    VaultsModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [

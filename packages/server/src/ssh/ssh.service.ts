@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { Client } from 'ssh2';
 import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '@common/crypto/encryption.service';
-import { shellEscape } from '../helpers';
+import { shellEscape } from '@helpers/shell';
 import type { TestConnectionDto } from './ssh.dto';
 
 type ConnectionStatus = 'connected' | 'connecting' | 'disconnected' | 'error';

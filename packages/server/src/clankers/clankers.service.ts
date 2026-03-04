@@ -8,7 +8,12 @@ import { PrismaService } from '@database/prisma.service';
 import { EncryptionService } from '@common/crypto/encryption.service';
 import { ClankerAdaptersService } from '@clankers/clankerAdapters.service';
 import { BaseClankerAdapter } from '@clankers/base';
-import { sanitizeObject } from '../helpers';
+import {
+  sanitizeObject,
+  validateConfig,
+  encryptSecureFields,
+  maskSecureFields,
+} from '@helpers/config';
 import { CreateClankerDto, UpdateClankerDto } from './clankers.dto';
 
 type ClankerResponse = {
@@ -48,6 +53,7 @@ export class ClankersService {
     if (!clanker) {
       throw new NotFoundException('clanker_not_found');
     }
+
     const adapter = this.adapters.getAdapter(clanker.clankerAdapterId);
     return this.toResponse(clanker, adapter);
   }
@@ -70,8 +76,13 @@ export class ClankersService {
     }
 
     const config = sanitizeObject(rawConfig ?? {});
-    this.validateConfig(adapter, config);
-    const encryptedConfig = this.encryptConfig(adapter, config);
+
+    validateConfig(adapter.fields, config);
+    const encryptedConfig = encryptSecureFields(
+      adapter.fields,
+      config,
+      this.encryption,
+    );
 
     const clanker = await this.prisma.clanker.create({
       data: {
@@ -113,8 +124,14 @@ export class ClankersService {
     let config: Record<string, unknown> | undefined;
     if (rawConfig !== undefined) {
       const sanitizedConfig = sanitizeObject(rawConfig);
-      this.validateConfig(adapter, sanitizedConfig);
-      config = this.encryptConfig(adapter, sanitizedConfig);
+
+      validateConfig(adapter.fields, sanitizedConfig);
+
+      config = encryptSecureFields(
+        adapter.fields,
+        sanitizedConfig,
+        this.encryption,
+      );
     }
 
     const data: Prisma.ClankerUncheckedUpdateInput = {
@@ -139,73 +156,8 @@ export class ClankersService {
     if (!existing) {
       throw new NotFoundException('clanker_not_found');
     }
+
     await this.prisma.clanker.delete({ where: { clankerId } });
-  }
-
-  private validateConfig(
-    adapter: BaseClankerAdapter,
-    config: Record<string, unknown>,
-  ) {
-    for (const field of adapter.fields) {
-      if (field.required && !(field.key in config)) {
-        throw new BadRequestException(`field_required:${field.key}`);
-      }
-      if (
-        field.type === 'number' &&
-        field.key in config &&
-        config[field.key] !== undefined
-      ) {
-        const value = Number(config[field.key]);
-
-        if (isNaN(value)) {
-          throw new BadRequestException(`field_invalid:${field.key}`);
-        }
-
-        if (field.min !== undefined && value < field.min) {
-          throw new BadRequestException(`field_invalid:${field.key}`);
-        }
-
-        if (field.max !== undefined && value > field.max) {
-          throw new BadRequestException(`field_invalid:${field.key}`);
-        }
-      }
-    }
-  }
-
-  private encryptConfig(
-    adapter: BaseClankerAdapter,
-    config: Record<string, unknown>,
-  ): Record<string, unknown> {
-    const encrypted: Record<string, unknown> = {};
-    for (const field of adapter.fields) {
-      if (!(field.key in config)) continue;
-
-      const value = config[field.key];
-
-      if (!field.secure) {
-        encrypted[field.key] = value;
-        continue;
-      }
-
-      if (typeof value !== 'string') {
-        throw new BadRequestException(`field_invalid:${field.key}`);
-      }
-      encrypted[field.key] = this.encryption.encrypt(value);
-    }
-    return encrypted;
-  }
-
-  private maskSecureFields(
-    adapter: BaseClankerAdapter,
-    config: Record<string, unknown>,
-  ): Record<string, unknown> {
-    const stripped = { ...config };
-    for (const field of adapter.fields) {
-      if (field.secure && field.key in stripped) {
-        stripped[field.key] = true;
-      }
-    }
-    return stripped;
   }
 
   private toResponse(
@@ -221,8 +173,8 @@ export class ClankersService {
         name: adapter.name,
       },
       host: host ? { hostId: host.hostId, name: host.name } : null,
-      config: this.maskSecureFields(
-        adapter,
+      config: maskSecureFields(
+        adapter.fields,
         clanker.config as Record<string, unknown>,
       ),
       createdAt: clanker.createdAt,

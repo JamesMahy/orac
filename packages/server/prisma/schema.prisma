@@ -41,20 +41,22 @@ model Project {
 }
 
 model Workspace {
-  workspaceId      String    @id @default(uuid())
-  projectId        String
-  project          Project   @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
-  name             String    @db.VarChar(255)
-  hostId           String?
-  host             Host?     @relation(fields: [hostId], references: [hostId], onDelete: SetNull)
-  path             String?   @db.Text
-  primaryClankerId String?
-  primaryClanker   Clanker?  @relation("PrimaryClanker", fields: [primaryClankerId], references: [clankerId], onDelete: SetNull)
-  currentClankerId String?
-  currentClanker   Clanker?  @relation("CurrentClanker", fields: [currentClankerId], references: [clankerId], onDelete: SetNull)
-  sessionId        String?   @db.VarChar(255)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  workspaceId              String           @id @default(uuid())
+  projectId                String
+  project                  Project          @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
+  name                     String           @db.VarChar(255)
+  hostId                   String?
+  host                     Host?            @relation(fields: [hostId], references: [hostId], onDelete: SetNull)
+  path                     String?          @db.Text
+  primaryClankerId         String?
+  primaryClanker           Clanker?         @relation("PrimaryClanker", fields: [primaryClankerId], references: [clankerId], onDelete: SetNull)
+  currentClankerId         String?
+  currentClanker           Clanker?         @relation("CurrentClanker", fields: [currentClankerId], references: [clankerId], onDelete: SetNull)
+  primaryVaultId   String?
+  primaryVault     Vault?           @relation(fields: [primaryVaultId], references: [vaultId], onDelete: SetNull)
+  sessionId        String?          @db.VarChar(255)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
   messages         Message[]
   clankers         WorkspaceClanker[]
 
@@ -62,6 +64,7 @@ model Workspace {
   @@index([hostId])
   @@index([primaryClankerId])
   @@index([currentClankerId])
+  @@index([primaryVaultId])
 }
 
 model WorkspaceClanker {
@@ -91,6 +94,18 @@ model Message {
   createdAt   DateTime  @default(now())
 
   @@index([workspaceId])
+}
+
+model Vault {
+  vaultId        String      @id @default(uuid())
+  name           String      @db.VarChar(255)
+  vaultAdapterId String      @db.VarChar(50)
+  config         Json        @default("{}")
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  workspaces     Workspace[]
+
+  @@index([vaultAdapterId])
 }
 
 model Clanker {

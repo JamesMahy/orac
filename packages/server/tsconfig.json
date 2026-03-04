@@ -14,7 +14,10 @@
       "@workspaces/*": ["src/workspaces/*"],
       "@ssh/*": ["src/ssh/*"],
       "@clankers/*": ["src/clankers/*"],
-      "@storage/*": ["src/storage/*"]
+      "@vaults/*": ["src/vaults/*"],
+      "@files/*": ["src/files/*"],
+      "@helpers/config": ["src/helpers/config.helpers"],
+      "@helpers/shell": ["src/helpers/shell.helpers"]
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true

@@ -18,6 +18,10 @@ const config: Config = {
     '^@workspaces/(.*)$': '<rootDir>/workspaces/$1',
     '^@ssh/(.*)$': '<rootDir>/ssh/$1',
     '^@clankers/(.*)$': '<rootDir>/clankers/$1',
+    '^@vaults/(.*)$': '<rootDir>/vaults/$1',
+    '^@files/(.*)$': '<rootDir>/files/$1',
+    '^@helpers/config$': '<rootDir>/helpers/config.helpers',
+    '^@helpers/shell$': '<rootDir>/helpers/shell.helpers',
   },
 };
 
