@@ -18,12 +18,18 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors({
-    origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
-    credentials: true,
-  });
+  const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:5173';
+  if (corsOrigin === '*') {
+    throw new Error(
+      'CORS_ORIGIN must not be wildcard (*) when credentials are enabled',
+    );
+  }
+  app.enableCors({ origin: corsOrigin, credentials: true });
 
-  if (process.env.NODE_ENV !== 'production') {
+  const isDev = process.env.NODE_ENV !== 'production';
+  const swaggerExplicitlyEnabled = process.env.SWAGGER_ENABLED === 'true';
+
+  if (isDev || swaggerExplicitlyEnabled) {
     const config = new DocumentBuilder()
       .setTitle('ORAC API')
       .setDescription('ORAC backend API')

@@ -20,6 +20,12 @@ export class EncryptionService {
     }
 
     this.key = Buffer.from(hex, 'hex');
+
+    if (this.key.every(byte => byte === this.key[0])) {
+      throw new Error(
+        'ENCRYPTION_KEY appears to be a placeholder (all identical bytes). Generate a real key with: openssl rand -hex 32',
+      );
+    }
   }
 
   encrypt(plaintext: string): string {

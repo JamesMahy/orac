@@ -6,22 +6,26 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
-import type { CookieOptions, Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { AuthService } from '../../auth/auth.service';
-import { COOKIE_NAME, cookieOptions } from '../../auth/auth.constants';
+import {
+  COOKIE_NAME,
+  cookieOptions,
+  resolveAuthMode,
+} from '../../auth/auth.constants';
 
 @Injectable()
 export class UserContextGuard implements CanActivate {
-  private readonly authMode: string;
-  private readonly cookieOptions: CookieOptions;
+  private readonly authMode: 'single' | 'multi';
+  private readonly cookieOptions: ReturnType<typeof cookieOptions>;
 
   constructor(
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
     configService: ConfigService,
   ) {
-    this.authMode = configService.getOrThrow<string>('AUTH_MODE');
+    this.authMode = resolveAuthMode(configService);
     this.cookieOptions = cookieOptions(configService);
   }
 
@@ -36,15 +40,17 @@ export class UserContextGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
 
     if (!request.user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('auth_required');
     }
 
     if (this.authMode === 'multi') {
       const token = request.cookies?.[COOKIE_NAME] as string | undefined;
       if (token) {
         const response = context.switchToHttp().getResponse<Response>();
-        const payload = this.authService.verifyToken(token);
-        const freshToken = this.authService.extendToken(payload);
+        const freshToken = this.authService.extendToken({
+          userId: request.user.userId,
+          sub: request.user.sub ?? request.user.userId,
+        });
 
         response.cookie(COOKIE_NAME, freshToken, this.cookieOptions);
       }

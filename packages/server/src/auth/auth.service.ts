@@ -25,10 +25,9 @@ export class AuthService {
   }
 
   validateCredentials(username: string, password: string): boolean {
-    return (
-      this.safeEqual(username, this.expectedUser) &&
-      this.safeEqual(password, this.expectedPass)
-    );
+    const usernameMatch = this.safeEqual(username, this.expectedUser);
+    const passwordMatch = this.safeEqual(password, this.expectedPass);
+    return usernameMatch && passwordMatch;
   }
 
   login(username: string, password: string): string {
@@ -47,21 +46,23 @@ export class AuthService {
     return this.jwtService.verify<JwtPayload>(token);
   }
 
-  extendToken(payload: JwtPayload): string {
+  extendToken(identity: { userId: string; sub: string }): string {
     return this.jwtService.sign({
-      sub: payload.sub,
-      userId: payload.userId,
+      sub: identity.sub,
+      userId: identity.userId,
       jti: randomUUID(),
     });
   }
 
   private safeEqual(a: string, b: string): boolean {
-    const bufferA = Buffer.from(a);
-    const bufferB = Buffer.from(b);
-    if (bufferA.length !== bufferB.length) {
-      timingSafeEqual(bufferA, bufferA);
-      return false;
-    }
-    return timingSafeEqual(bufferA, bufferB);
+    // Fixed-length buffers prevent length-based timing side-channels.
+    // Inputs longer than 256 UTF-8 bytes are silently truncated — intentional,
+    // as env-var credentials will never approach this limit in practice.
+    const fixedLength = 256;
+    const bufA = Buffer.alloc(fixedLength);
+    const bufB = Buffer.alloc(fixedLength);
+    Buffer.from(a, 'utf8').copy(bufA, 0, 0, fixedLength);
+    Buffer.from(b, 'utf8').copy(bufB, 0, 0, fixedLength);
+    return timingSafeEqual(bufA, bufB);
   }
 }

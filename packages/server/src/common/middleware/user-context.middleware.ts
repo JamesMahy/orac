@@ -2,7 +2,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../../auth/auth.service';
-import { COOKIE_NAME } from '../../auth/auth.constants';
+import { COOKIE_NAME, resolveAuthMode } from '../../auth/auth.constants';
 
 @Injectable()
 export class UserContextMiddleware implements NestMiddleware {
@@ -12,15 +12,7 @@ export class UserContextMiddleware implements NestMiddleware {
     private readonly authService: AuthService,
     configService: ConfigService,
   ) {
-    const raw = configService.getOrThrow<string>('AUTH_MODE').trim().toLowerCase();
-
-    if (raw !== 'single' && raw !== 'multi') {
-      throw new Error(
-        `AUTH_MODE must be explicitly set to 'single' or 'multi'. Got: ${JSON.stringify(raw)}`,
-      );
-    }
-
-    this.authMode = raw;
+    this.authMode = resolveAuthMode(configService);
   }
 
   use(req: Request, _res: Response, next: NextFunction) {
@@ -33,7 +25,7 @@ export class UserContextMiddleware implements NestMiddleware {
     if (token) {
       try {
         const payload = this.authService.verifyToken(token);
-        req.user = { userId: payload.userId };
+        req.user = { userId: payload.userId, sub: payload.sub };
       } catch {
         // invalid token — leave req.user unset, guard will throw 401
       }

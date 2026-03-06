@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { resolveJwtConfig } from './auth.constants';
 
 @Module({
   imports: [
@@ -10,12 +11,9 @@ import { AuthService } from './auth.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const timeoutMinutes = parseInt(
-          configService.get('SESSION_TIMEOUT_MINUTES', '15'),
-          10,
-        );
+        const { secret, timeoutMinutes } = resolveJwtConfig(configService);
         return {
-          secret: configService.getOrThrow<string>('JWT_SECRET'),
+          secret,
           signOptions: { expiresIn: `${timeoutMinutes}m` },
         };
       },

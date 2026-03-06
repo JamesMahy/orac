@@ -1,7 +1,7 @@
 import { EncryptionService } from './encryption.service';
 
-// 32 bytes = 64 hex chars
-const VALID_KEY = 'a'.repeat(64);
+// 32 bytes = 64 hex chars — must not be all-identical bytes
+const VALID_KEY = 'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2';
 
 function createService(hex: string): EncryptionService {
   const configService = {
@@ -65,9 +65,16 @@ describe('EncryptionService', () => {
     );
   });
 
+  it('should reject placeholder keys (all identical bytes)', () => {
+    expect(() => createService('0'.repeat(64))).toThrow(
+      'ENCRYPTION_KEY appears to be a placeholder',
+    );
+  });
+
   it('should not decrypt with a different key', () => {
     const encrypted = service.encrypt('secret');
-    const otherService = createService('b'.repeat(64));
+    const otherKey = 'b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2';
+    const otherService = createService(otherKey);
     expect(() => otherService.decrypt(encrypted)).toThrow();
   });
 });

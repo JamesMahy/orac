@@ -5,13 +5,12 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 
-export const UserId = createParamDecorator(
-  (_data: unknown, ctx: ExecutionContext): string => {
-    const request = ctx.switchToHttp().getRequest<Request>();
-    const userId = request.user?.userId;
-    if (!userId) {
-      throw new UnauthorizedException();
-    }
-    return userId;
-  },
-);
+export function extractUserId(_data: unknown, ctx: ExecutionContext): string {
+  const request = ctx.switchToHttp().getRequest<Request>();
+  const userId = request.user?.userId;
+
+  if (!userId) throw new UnauthorizedException('auth_required');
+  return userId;
+}
+
+export const UserId = createParamDecorator(extractUserId);
