@@ -5,6 +5,9 @@ describe('AppModule', () => {
   let module: TestingModule;
 
   beforeEach(async () => {
+    process.env.AUTH_MODE = 'single';
+    process.env.BASIC_AUTH_USER = 'admin';
+
     module = await Test.createTestingModule({
       imports: [AppModule],
     })

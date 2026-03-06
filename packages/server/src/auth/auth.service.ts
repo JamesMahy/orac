@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 
 export type JwtPayload = {
   sub: string;
+  userId: string;
   jti: string;
   iat: number;
   exp: number;
@@ -37,6 +38,7 @@ export class AuthService {
 
     return this.jwtService.sign({
       sub: username,
+      userId: 'admin',
       jti: randomUUID(),
     });
   }
@@ -48,6 +50,7 @@ export class AuthService {
   extendToken(payload: JwtPayload): string {
     return this.jwtService.sign({
       sub: payload.sub,
+      userId: payload.userId,
       jti: randomUUID(),
     });
   }

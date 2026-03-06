@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiCookieAuth, ApiResponse } from '@nestjs/swagger';
+import { UserId } from '@common/decorators/user-id.decorator';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto, UpdateProjectDto } from './projects.dto';
 import { ProjectsDocs } from './projects.docs';
@@ -35,8 +36,8 @@ export class ProjectsController {
 
   @Post()
   @ProjectsDocs.create
-  create(@Body() dto: CreateProjectDto) {
-    return this.projectsService.create(dto);
+  create(@UserId() userId: string, @Body() dto: CreateProjectDto) {
+    return this.projectsService.create(dto, userId);
   }
 
   @Patch(':projectId')

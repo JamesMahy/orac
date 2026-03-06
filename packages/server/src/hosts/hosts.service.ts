@@ -32,7 +32,7 @@ export class HostsService {
     return this.toResponse(host);
   }
 
-  async create(dto: CreateHostDto): Promise<HostResponse> {
+  async create(dto: CreateHostDto, userId: string): Promise<HostResponse> {
     const {
       name,
       type,
@@ -46,25 +46,30 @@ export class HostsService {
       provider,
       model,
     } = dto;
-    const data: Prisma.HostCreateInput = {
-      name,
-      type,
-      hostname,
-      port,
-      username,
-      password:
-        type === 'ssh' && password
-          ? this.encryption.encrypt(password)
-          : undefined,
-      hostKeyFingerprint,
-      endpoint,
-      apiKey:
-        type === 'api' && apiKey ? this.encryption.encrypt(apiKey) : undefined,
-      provider,
-      model,
-    };
 
-    const host = await this.prisma.host.create({ data });
+    const host = await this.prisma.host.create({
+      data: {
+        userId,
+        name,
+        type,
+        hostname,
+        port,
+        username,
+        password:
+          type === 'ssh' && password
+            ? this.encryption.encrypt(password)
+            : undefined,
+        hostKeyFingerprint,
+        endpoint,
+        apiKey:
+          type === 'api' && apiKey
+            ? this.encryption.encrypt(apiKey)
+            : undefined,
+        provider,
+        model,
+      },
+    });
+
     return this.toResponse(host);
   }
 

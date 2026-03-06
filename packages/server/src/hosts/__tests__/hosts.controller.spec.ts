@@ -86,9 +86,9 @@ describe('HostsController', () => {
       };
       mockHostsService.create.mockResolvedValue(strippedHost);
 
-      const result = await controller.create(dto);
+      const result = await controller.create('admin', dto);
 
-      expect(mockHostsService.create).toHaveBeenCalledWith(dto);
+      expect(mockHostsService.create).toHaveBeenCalledWith(dto, 'admin');
       expect(result).toEqual(strippedHost);
     });
   });

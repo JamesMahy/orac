@@ -109,12 +109,13 @@ describe('ProjectsService', () => {
       const result = await service.create({
         name: 'Bearly Fit',
         description: 'Fitness tracking application',
-      });
+      }, 'admin');
 
       expect(result).toHaveProperty('projectId', mockProject.projectId);
       expect(result).toHaveProperty('name', 'Bearly Fit');
       expect(prisma.project.create).toHaveBeenCalledWith({
         data: {
+          userId: 'admin',
           name: 'Bearly Fit',
           description: 'Fitness tracking application',
         },
@@ -128,12 +129,12 @@ describe('ProjectsService', () => {
       };
       prisma.project.create.mockResolvedValue(projectWithoutDescription);
 
-      const result = await service.create({ name: 'Bearly Fit' });
+      const result = await service.create({ name: 'Bearly Fit' }, 'admin');
 
       expect(result).toHaveProperty('projectId', mockProject.projectId);
       expect(result).toHaveProperty('description', null);
       expect(prisma.project.create).toHaveBeenCalledWith({
-        data: { name: 'Bearly Fit', description: undefined },
+        data: { userId: 'admin', name: 'Bearly Fit', description: undefined },
       });
     });
   });

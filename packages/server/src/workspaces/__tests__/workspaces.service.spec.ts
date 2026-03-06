@@ -188,7 +188,7 @@ describe('WorkspacesService', () => {
         primaryClankerId: clankerId,
         name: 'exercise-service',
         path: '/home/james/bearly-fit/exercise-service',
-      });
+      }, 'admin');
 
       expect(result).toHaveProperty('workspaceId', mockWorkspace.workspaceId);
       expect(result).toHaveProperty('name', 'exercise-service');
@@ -205,10 +205,11 @@ describe('WorkspacesService', () => {
         primaryClankerId: clankerId,
         name: 'exercise-service',
         path: '/home/james/bearly-fit/exercise-service',
-      });
+      }, 'admin');
 
       expect(prisma.workspace.create).toHaveBeenCalledWith({
         data: {
+          userId: 'admin',
           projectId,
           primaryClankerId: clankerId,
           hostId: undefined,
@@ -246,10 +247,11 @@ describe('WorkspacesService', () => {
             temperatureOverride: 0.9,
           },
         ],
-      });
+      }, 'admin');
 
       expect(prisma.workspace.create).toHaveBeenCalledWith({
         data: {
+          userId: 'admin',
           projectId,
           primaryClankerId: clankerId,
           hostId: undefined,
@@ -289,7 +291,7 @@ describe('WorkspacesService', () => {
           primaryClankerId: clankerId,
           hostId: 'nonexistent-host',
           name: 'test',
-        }),
+        }, 'admin'),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -304,7 +306,7 @@ describe('WorkspacesService', () => {
           primaryClankerId: clankerId,
           hostId: 'nonexistent-host',
           name: 'test',
-        }),
+        }, 'admin'),
       ).rejects.toThrow('host_not_found');
     });
 
@@ -316,7 +318,7 @@ describe('WorkspacesService', () => {
           projectId: 'nonexistent',
           primaryClankerId: clankerId,
           name: 'test',
-        }),
+        }, 'admin'),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -328,7 +330,7 @@ describe('WorkspacesService', () => {
           projectId: 'nonexistent',
           primaryClankerId: clankerId,
           name: 'test',
-        }),
+        }, 'admin'),
       ).rejects.toThrow('project_not_found');
     });
 
@@ -341,7 +343,7 @@ describe('WorkspacesService', () => {
           projectId,
           primaryClankerId: 'nonexistent',
           name: 'test',
-        }),
+        }, 'admin'),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -354,7 +356,7 @@ describe('WorkspacesService', () => {
           projectId,
           primaryClankerId: 'nonexistent',
           name: 'test',
-        }),
+        }, 'admin'),
       ).rejects.toThrow('clanker_not_found');
     });
   });

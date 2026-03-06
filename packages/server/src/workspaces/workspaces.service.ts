@@ -115,7 +115,7 @@ export class WorkspacesService {
     return toResponse(workspace);
   }
 
-  async create(dto: CreateWorkspaceDto) {
+  async create(dto: CreateWorkspaceDto, userId: string) {
     const { projectId, primaryClankerId, hostId, name, path, clankers } = dto;
 
     const project = await this.prisma.project.findUnique({
@@ -141,6 +141,7 @@ export class WorkspacesService {
 
     const workspace = await this.prisma.workspace.create({
       data: {
+        userId,
         projectId,
         primaryClankerId,
         hostId,

@@ -59,7 +59,7 @@ export class VaultsService {
     return this.toResponse(vault, adapter);
   }
 
-  async create(dto: CreateVaultDto): Promise<VaultResponse> {
+  async create(dto: CreateVaultDto, userId: string): Promise<VaultResponse> {
     const { name, vaultAdapterId, config: rawConfig } = dto;
     const adapter = this.vaultAdapters.getAdapter(vaultAdapterId);
 
@@ -73,6 +73,7 @@ export class VaultsService {
 
     const vault = await this.prisma.vault.create({
       data: {
+        userId,
         name,
         vaultAdapterId,
         config: encryptedConfig as Prisma.InputJsonValue,

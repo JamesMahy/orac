@@ -78,9 +78,9 @@ describe('ClankersController', () => {
       };
       mockClankersService.create.mockResolvedValue(strippedClanker);
 
-      const result = await controller.create(dto);
+      const result = await controller.create('admin', dto);
 
-      expect(mockClankersService.create).toHaveBeenCalledWith(dto);
+      expect(mockClankersService.create).toHaveBeenCalledWith(dto, 'admin');
       expect(result).toEqual(strippedClanker);
     });
   });

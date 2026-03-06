@@ -7,8 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  userId    String   @id @db.VarChar(255)
+  username  String   @unique @db.VarChar(255)
+  createdAt DateTime @default(now())
+
+  hosts      Host[]
+  projects   Project[]
+  workspaces Workspace[]
+  clankers   Clanker[]
+  vaults     Vault[]
+  messages   Message[]
+}
+
 model Host {
   hostId String @id @default(uuid())
+  userId String @db.VarChar(255)
+  user   User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   name   String @db.VarChar(255)
   type   String @db.VarChar(50) // 'ssh' | 'api'
 
@@ -29,20 +44,28 @@ model Host {
   updatedAt  DateTime    @updatedAt
   workspaces Workspace[]
   clankers   Clanker[]
+
+  @@index([userId])
 }
 
 model Project {
-  projectId   String      @id @default(uuid())
-  name        String      @db.VarChar(255)
+  projectId String   @id @default(uuid())
+  userId    String   @default("admin") @db.VarChar(255)
+  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  name      String   @db.VarChar(255)
   description String?     @db.Text
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   workspaces  Workspace[]
+
+  @@index([userId])
 }
 
 model Workspace {
-  workspaceId              String           @id @default(uuid())
-  projectId                String
+  workspaceId String    @id @default(uuid())
+  userId      String    @default("admin") @db.VarChar(255)
+  user        User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  projectId   String
   project                  Project          @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
   name                     String           @db.VarChar(255)
   hostId                   String?
@@ -60,6 +83,7 @@ model Workspace {
   messages         Message[]
   clankers         WorkspaceClanker[]
 
+  @@index([userId])
   @@index([projectId])
   @@index([hostId])
   @@index([primaryClankerId])
@@ -84,6 +108,8 @@ model WorkspaceClanker {
 
 model Message {
   messageId   String    @id @default(uuid())
+  userId      String    @default("admin") @db.VarChar(255)
+  user        User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [workspaceId], onDelete: Cascade)
   role        String    @db.VarChar(50)
@@ -93,23 +119,29 @@ model Message {
   status      String    @default("pending") @db.VarChar(50)
   createdAt   DateTime  @default(now())
 
+  @@index([userId])
   @@index([workspaceId])
 }
 
 model Vault {
-  vaultId        String      @id @default(uuid())
-  name           String      @db.VarChar(255)
+  vaultId        String   @id @default(uuid())
+  userId         String   @default("admin") @db.VarChar(255)
+  user           User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  name           String   @db.VarChar(255)
   vaultAdapterId String      @db.VarChar(50)
   config         Json        @default("{}")
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   workspaces     Workspace[]
 
+  @@index([userId])
   @@index([vaultAdapterId])
 }
 
 model Clanker {
   clankerId        String @id @default(uuid())
+  userId           String @default("admin") @db.VarChar(255)
+  user             User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   name             String @db.VarChar(255)
   clankerAdapterId String @db.VarChar(100)
 
@@ -127,6 +159,7 @@ model Clanker {
   currentWorkspaces  Workspace[]        @relation("CurrentClanker")
   workspaceClankers  WorkspaceClanker[]
 
+  @@index([userId])
   @@index([hostId])
   @@index([clankerAdapterId])
 }

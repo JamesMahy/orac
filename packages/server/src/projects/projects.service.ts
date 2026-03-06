@@ -23,10 +23,10 @@ export class ProjectsService {
     return project;
   }
 
-  async create(dto: CreateProjectDto) {
+  async create(dto: CreateProjectDto, userId: string) {
     const { name, description } = dto;
     return this.prisma.project.create({
-      data: { name, description },
+      data: { userId, name, description },
     });
   }
 

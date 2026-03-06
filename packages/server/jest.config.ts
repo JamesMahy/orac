@@ -22,6 +22,7 @@ const config: Config = {
     '^@files/(.*)$': '<rootDir>/files/$1',
     '^@helpers/config$': '<rootDir>/helpers/config.helpers',
     '^@helpers/shell$': '<rootDir>/helpers/shell.helpers',
+    '^@users/(.*)$': '<rootDir>/users/$1',
   },
 };
 

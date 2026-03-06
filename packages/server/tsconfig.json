@@ -17,7 +17,8 @@
       "@vaults/*": ["src/vaults/*"],
       "@files/*": ["src/files/*"],
       "@helpers/config": ["src/helpers/config.helpers"],
-      "@helpers/shell": ["src/helpers/shell.helpers"]
+      "@helpers/shell": ["src/helpers/shell.helpers"],
+      "@users/*": ["src/users/*"]
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true

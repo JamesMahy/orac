@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiCookieAuth, ApiResponse } from '@nestjs/swagger';
+import { UserId } from '@common/decorators/user-id.decorator';
 import { HostsService } from './hosts.service';
 import { CreateHostDto, UpdateHostDto } from './hosts.dto';
 import { HostsDocs } from './hosts.docs';
@@ -35,8 +36,8 @@ export class HostsController {
 
   @Post()
   @HostsDocs.create
-  create(@Body() dto: CreateHostDto) {
-    return this.hostsService.create(dto);
+  create(@UserId() userId: string, @Body() dto: CreateHostDto) {
+    return this.hostsService.create(dto, userId);
   }
 
   @Patch(':hostId')

@@ -212,11 +212,12 @@ describe('ClankersService', () => {
         name: 'Claude on prod',
         clankerAdapterId: 'claude-code',
         hostId: mockHost.hostId,
-      });
+      }, 'admin');
 
       expect(result.name).toBe('Claude on prod');
       expect(prisma.clanker.create).toHaveBeenCalledWith({
         data: {
+          userId: 'admin',
           name: 'Claude on prod',
           clankerAdapterId: 'claude-code',
           hostId: mockHost.hostId,
@@ -233,7 +234,7 @@ describe('ClankersService', () => {
         service.create({
           name: 'Claude',
           clankerAdapterId: 'claude-code',
-        }),
+        }, 'admin'),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -244,7 +245,7 @@ describe('ClankersService', () => {
         service.create({
           name: 'Claude',
           clankerAdapterId: 'claude-code',
-        }),
+        }, 'admin'),
       ).rejects.toThrow('host_id_required');
     });
 
@@ -257,7 +258,7 @@ describe('ClankersService', () => {
           name: 'Claude',
           clankerAdapterId: 'claude-code',
           hostId: 'nonexistent-uuid',
-        }),
+        }, 'admin'),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -270,7 +271,7 @@ describe('ClankersService', () => {
           name: 'Claude',
           clankerAdapterId: 'claude-code',
           hostId: 'nonexistent-uuid',
-        }),
+        }, 'admin'),
       ).rejects.toThrow('host_not_found');
     });
 
@@ -282,7 +283,7 @@ describe('ClankersService', () => {
         name: 'OpenAI GPT-4',
         clankerAdapterId: 'openai-api',
         config: { apiKey: 'sk-test', model: 'gpt-4' },
-      });
+      }, 'admin');
 
       expect(encryption.encrypt).toHaveBeenCalledWith('sk-test');
       expect(prisma.clanker.create).toHaveBeenCalledWith({
@@ -306,7 +307,7 @@ describe('ClankersService', () => {
           name: 'OpenAI',
           clankerAdapterId: 'openai-api',
           config: { apiKey: 'sk-test' },
-        }),
+        }, 'admin'),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -318,7 +319,7 @@ describe('ClankersService', () => {
           name: 'OpenAI',
           clankerAdapterId: 'openai-api',
           config: { apiKey: 'sk-test' },
-        }),
+        }, 'admin'),
       ).rejects.toThrow('field_required:model');
     });
 
@@ -331,7 +332,7 @@ describe('ClankersService', () => {
         service.create({
           name: 'Test',
           clankerAdapterId: 'nonexistent',
-        }),
+        }, 'admin'),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -343,7 +344,7 @@ describe('ClankersService', () => {
           name: 'OpenAI',
           clankerAdapterId: 'openai-api',
           config: { apiKey: 'sk-test', model: 'gpt-4', temperature: 5 },
-        }),
+        }, 'admin'),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -355,7 +356,7 @@ describe('ClankersService', () => {
           name: 'OpenAI',
           clankerAdapterId: 'openai-api',
           config: { apiKey: 'sk-test', model: 'gpt-4', temperature: 5 },
-        }),
+        }, 'admin'),
       ).rejects.toThrow('field_invalid:temperature');
     });
 
@@ -371,7 +372,7 @@ describe('ClankersService', () => {
             model: 'gpt-4',
             temperature: 'not-a-number',
           },
-        }),
+        }, 'admin'),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -387,7 +388,7 @@ describe('ClankersService', () => {
             model: 'gpt-4',
             temperature: 'not-a-number',
           },
-        }),
+        }, 'admin'),
       ).rejects.toThrow('field_invalid:temperature');
     });
 
@@ -399,7 +400,7 @@ describe('ClankersService', () => {
         name: 'OpenAI',
         clankerAdapterId: 'openai-api',
         config: { apiKey: 'sk-test', model: 'gpt-4', temperature: 0 },
-      });
+      }, 'admin');
 
       expect(prisma.clanker.create).toHaveBeenCalled();
     });
@@ -412,7 +413,7 @@ describe('ClankersService', () => {
           name: 'OpenAI',
           clankerAdapterId: 'openai-api',
           config: { apiKey: 'sk-test', model: 'gpt-4', temperature: -1 },
-        }),
+        }, 'admin'),
       ).rejects.toThrow('field_invalid:temperature');
     });
 
@@ -423,7 +424,7 @@ describe('ClankersService', () => {
         service.create({
           name: 'OpenAI',
           clankerAdapterId: 'openai-api',
-        }),
+        }, 'admin'),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -434,7 +435,7 @@ describe('ClankersService', () => {
         service.create({
           name: 'OpenAI',
           clankerAdapterId: 'openai-api',
-        }),
+        }, 'admin'),
       ).rejects.toThrow('field_required:apiKey');
     });
   });
@@ -575,7 +576,7 @@ describe('ClankersService', () => {
           apiKey: 'sk-test',
           model: 'gpt-4',
         } as Record<string, unknown>,
-      });
+      }, 'admin');
 
       // Dangerous keys should not appear in the stored config
       const createCalls = prisma.clanker.create.mock.calls as [
@@ -631,7 +632,7 @@ describe('ClankersService', () => {
           name: 'OpenAI',
           clankerAdapterId: 'openai-api',
           config: { apiKey: 12345, model: 'gpt-4' },
-        }),
+        }, 'admin'),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -643,7 +644,7 @@ describe('ClankersService', () => {
           name: 'OpenAI',
           clankerAdapterId: 'openai-api',
           config: { apiKey: 12345, model: 'gpt-4' },
-        }),
+        }, 'admin'),
       ).rejects.toThrow('field_invalid:apiKey');
     });
 
@@ -655,7 +656,7 @@ describe('ClankersService', () => {
           name: 'OpenAI',
           clankerAdapterId: 'openai-api',
           config: { apiKey: ['part1', 'part2'], model: 'gpt-4' },
-        }),
+        }, 'admin'),
       ).rejects.toThrow('field_invalid:apiKey');
     });
   });

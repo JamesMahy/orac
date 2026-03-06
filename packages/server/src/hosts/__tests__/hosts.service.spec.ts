@@ -145,7 +145,7 @@ describe('HostsService', () => {
         port: 22,
         username: 'root',
         password: 'secret',
-      });
+      }, 'admin');
 
       expect(encryption.encrypt).toHaveBeenCalledWith('secret');
       expect(prisma.host.create).toHaveBeenCalledWith(
@@ -164,7 +164,7 @@ describe('HostsService', () => {
         apiKey: 'sk-test',
         provider: 'openai',
         model: 'gpt-4',
-      });
+      }, 'admin');
 
       expect(encryption.encrypt).toHaveBeenCalledWith('sk-test');
       expect(prisma.host.create).toHaveBeenCalledWith(
@@ -182,7 +182,7 @@ describe('HostsService', () => {
         hostname: '192.168.1.1',
         username: 'root',
         password: 'secret',
-      });
+      }, 'admin');
 
       expect(encryption.encrypt).toHaveBeenCalledTimes(1);
       expect(encryption.encrypt).toHaveBeenCalledWith('secret');
@@ -198,7 +198,7 @@ describe('HostsService', () => {
         apiKey: 'sk-test',
         provider: 'openai',
         model: 'gpt-4',
-      });
+      }, 'admin');
 
       expect(encryption.encrypt).toHaveBeenCalledTimes(1);
       expect(encryption.encrypt).toHaveBeenCalledWith('sk-test');

@@ -11,6 +11,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiCookieAuth, ApiResponse } from '@nestjs/swagger';
+import { UserId } from '@common/decorators/user-id.decorator';
 import { WorkspacesService } from './workspaces.service';
 import {
   CreateWorkspaceDto,
@@ -41,8 +42,8 @@ export class WorkspacesController {
 
   @Post()
   @WorkspacesDocs.create
-  create(@Body() dto: CreateWorkspaceDto) {
-    return this.workspacesService.create(dto);
+  create(@UserId() userId: string, @Body() dto: CreateWorkspaceDto) {
+    return this.workspacesService.create(dto, userId);
   }
 
   @Patch(':workspaceId')

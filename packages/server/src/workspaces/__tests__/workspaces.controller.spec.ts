@@ -89,9 +89,9 @@ describe('WorkspacesController', () => {
       };
       mockWorkspacesService.create.mockResolvedValue(mockWorkspace);
 
-      const result = await controller.create(dto);
+      const result = await controller.create('admin', dto);
 
-      expect(mockWorkspacesService.create).toHaveBeenCalledWith(dto);
+      expect(mockWorkspacesService.create).toHaveBeenCalledWith(dto, 'admin');
       expect(result).toEqual(mockWorkspace);
     });
   });

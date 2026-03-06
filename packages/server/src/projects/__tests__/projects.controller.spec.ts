@@ -71,9 +71,9 @@ describe('ProjectsController', () => {
       const dto = { name: 'Bearly Fit' };
       mockProjectsService.create.mockResolvedValue(mockProject);
 
-      const result = await controller.create(dto);
+      const result = await controller.create('admin', dto);
 
-      expect(mockProjectsService.create).toHaveBeenCalledWith(dto);
+      expect(mockProjectsService.create).toHaveBeenCalledWith(dto, 'admin');
       expect(result).toEqual(mockProject);
     });
   });

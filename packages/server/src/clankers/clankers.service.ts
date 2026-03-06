@@ -58,7 +58,7 @@ export class ClankersService {
     return this.toResponse(clanker, adapter);
   }
 
-  async create(dto: CreateClankerDto): Promise<ClankerResponse> {
+  async create(dto: CreateClankerDto, userId: string): Promise<ClankerResponse> {
     const { name, clankerAdapterId, hostId, config: rawConfig } = dto;
     const adapter = this.adapters.getAdapter(clankerAdapterId);
 
@@ -86,6 +86,7 @@ export class ClankersService {
 
     const clanker = await this.prisma.clanker.create({
       data: {
+        userId,
         name,
         clankerAdapterId,
         hostId: hostId ?? null,

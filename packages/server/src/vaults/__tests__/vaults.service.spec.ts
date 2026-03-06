@@ -189,7 +189,7 @@ describe('VaultsService', () => {
           accessKeyId: 'mykey',
           secretAccessKey: 'mysecret',
         },
-      });
+      }, 'admin');
 
       expect(encryption.encrypt).toHaveBeenCalledWith('mykey');
       expect(encryption.encrypt).toHaveBeenCalledWith('mysecret');
@@ -213,7 +213,7 @@ describe('VaultsService', () => {
           name: 'RustFS',
           vaultAdapterId: 's3',
           config: { endpoint: 'http://localhost:9000' },
-        }),
+        }, 'admin'),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -223,7 +223,7 @@ describe('VaultsService', () => {
           name: 'RustFS',
           vaultAdapterId: 's3',
           config: { endpoint: 'http://localhost:9000' },
-        }),
+        }, 'admin'),
       ).rejects.toThrow('field_required:bucket');
     });
 
@@ -238,7 +238,7 @@ describe('VaultsService', () => {
             accessKeyId: 12345,
             secretAccessKey: 'secret',
           },
-        }),
+        }, 'admin'),
       ).rejects.toThrow('field_invalid:accessKeyId');
     });
 
@@ -248,7 +248,7 @@ describe('VaultsService', () => {
       });
 
       await expect(
-        service.create({ name: 'Test', vaultAdapterId: 'nonexistent' }),
+        service.create({ name: 'Test', vaultAdapterId: 'nonexistent' }, 'admin'),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -258,7 +258,7 @@ describe('VaultsService', () => {
       });
 
       await expect(
-        service.create({ name: 'Test', vaultAdapterId: 'nonexistent' }),
+        service.create({ name: 'Test', vaultAdapterId: 'nonexistent' }, 'admin'),
       ).rejects.toThrow('vault_adapter_not_found');
     });
 
@@ -275,7 +275,7 @@ describe('VaultsService', () => {
           accessKeyId: 'key',
           secretAccessKey: 'secret',
         } as Record<string, unknown>,
-      });
+      }, 'admin');
 
       const calls = prisma.vault.create.mock.calls as [
         { data: { config: Record<string, unknown> } },

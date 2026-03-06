@@ -12,7 +12,8 @@ import { AuthService } from '../../auth/auth.service';
 import { COOKIE_NAME, cookieOptions } from '../../auth/auth.constants';
 
 @Injectable()
-export class SessionAuthGuard implements CanActivate {
+export class UserContextGuard implements CanActivate {
+  private readonly authMode: string;
   private readonly cookieOptions: CookieOptions;
 
   constructor(
@@ -20,6 +21,7 @@ export class SessionAuthGuard implements CanActivate {
     private readonly authService: AuthService,
     configService: ConfigService,
   ) {
+    this.authMode = configService.getOrThrow<string>('AUTH_MODE');
     this.cookieOptions = cookieOptions(configService);
   }
 
@@ -29,27 +31,24 @@ export class SessionAuthGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    if (isPublic) {
-      return true;
-    }
+    if (isPublic) return true;
 
     const request = context.switchToHttp().getRequest<Request>();
-    const response = context.switchToHttp().getResponse<Response>();
 
-    const token = request.cookies?.[COOKIE_NAME] as string | undefined;
-    if (!token) {
+    if (!request.user) {
       throw new UnauthorizedException();
     }
 
-    let payload;
-    try {
-      payload = this.authService.verifyToken(token);
-    } catch {
-      throw new UnauthorizedException();
-    }
+    if (this.authMode === 'multi') {
+      const token = request.cookies?.[COOKIE_NAME] as string | undefined;
+      if (token) {
+        const response = context.switchToHttp().getResponse<Response>();
+        const payload = this.authService.verifyToken(token);
+        const freshToken = this.authService.extendToken(payload);
 
-    const freshToken = this.authService.extendToken(payload);
-    response.cookie(COOKIE_NAME, freshToken, this.cookieOptions);
+        response.cookie(COOKIE_NAME, freshToken, this.cookieOptions);
+      }
+    }
 
     return true;
   }

@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiCookieAuth, ApiResponse } from '@nestjs/swagger';
+import { UserId } from '@common/decorators/user-id.decorator';
 import { ClankersService } from './clankers.service';
 import { CreateClankerDto, UpdateClankerDto } from './clankers.dto';
 import { ClankersDocs } from './clankers.docs';
@@ -35,8 +36,8 @@ export class ClankersController {
 
   @Post()
   @ClankersDocs.create
-  create(@Body() dto: CreateClankerDto) {
-    return this.clankersService.create(dto);
+  create(@UserId() userId: string, @Body() dto: CreateClankerDto) {
+    return this.clankersService.create(dto, userId);
   }
 
   @Patch(':clankerId')
