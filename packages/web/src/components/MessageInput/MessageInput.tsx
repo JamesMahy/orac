@@ -1,17 +1,13 @@
-import { useState, useRef, useCallback, type ChangeEvent, type KeyboardEvent } from 'react';
+import { useState, useRef, useCallback, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AdapterCommand } from '@orac/shared';
 import { AttachmentPicker, type AttachmentPickerHandle } from '@components/AttachmentPicker';
 import { CommandAutocomplete } from '@components/CommandAutocomplete';
 import { ClankerSelect } from '@components/ClankerSelect';
-
-const MIN_HEIGHT = 42;
-const MAX_HEIGHT = 200;
-
-function resizeTextarea(textarea: HTMLTextAreaElement) {
-  textarea.style.height = `${MIN_HEIGHT}px`;
-  textarea.style.height = `${Math.min(textarea.scrollHeight, MAX_HEIGHT)}px`;
-}
+import {
+  MarkdownEditor,
+  type MarkdownEditorHandle,
+} from '@components/MarkdownEditor';
 
 type ClankerOption = {
   clankerId: string;
@@ -42,7 +38,7 @@ export function MessageInput({
   onSend,
 }: MessageInputProps) {
   const { t } = useTranslation('features', { keyPrefix: 'WorkspaceChat' });
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<MarkdownEditorHandle>(null);
   const attachmentPickerRef = useRef<AttachmentPickerHandle>(null);
 
   const [content, setContent] = useState('');
@@ -55,7 +51,8 @@ export function MessageInput({
   const canSend = hasContent && !isSending && !isUploading;
 
   const handleSend = useCallback(async () => {
-    const trimmed = content.trim();
+    const markdown = editorRef.current?.getMarkdown() ?? '';
+    const trimmed = markdown.trim();
     if (!trimmed && attachmentIds.length === 0) return;
 
     await onSend(trimmed, attachmentIds);
@@ -64,35 +61,27 @@ export function MessageInput({
     setAttachmentIds([]);
     setCommandFilter(null);
     attachmentPickerRef.current?.clear();
+    editorRef.current?.clear();
+    editorRef.current?.focus();
+  }, [attachmentIds, onSend]);
 
-    if (textareaRef.current) {
-      resizeTextarea(textareaRef.current);
-      textareaRef.current.focus();
-    }
-  }, [content, attachmentIds, onSend]);
+  const handleUpdate = useCallback((markdown: string) => {
+    setContent(markdown);
 
-  const handleChange = useCallback(
-    (event: ChangeEvent<HTMLTextAreaElement>) => {
-      const value = event.target.value;
-      setContent(value);
-      resizeTextarea(event.target);
-
-      const textBeforeCursor = value.slice(0, event.target.selectionStart);
-      const commandMatch = textBeforeCursor.match(/^\/(\w*)$/);
-      setCommandFilter(commandMatch ? commandMatch[1] : null);
-    },
-    [],
-  );
+    const commandMatch = markdown.match(/^\/(\w*)$/);
+    setCommandFilter(commandMatch ? commandMatch[1] : null);
+  }, []);
 
   const handleKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLTextAreaElement>) => {
-      if (event.key !== 'Enter') return;
+    (event: KeyboardEvent) => {
+      if (event.key !== 'Enter') return false;
 
       const shouldSend = enterToSend ? !event.shiftKey : event.shiftKey;
-      if (!shouldSend) return;
+      if (!shouldSend) return false;
 
       event.preventDefault();
       if (canSend) void handleSend();
+      return true;
     },
     [enterToSend, canSend, handleSend],
   );
@@ -108,16 +97,18 @@ export function MessageInput({
       setCommandFilter(null);
       const updated = `/${command.command} `;
       setContent(updated);
+      editorRef.current?.clear();
+      // Set new content after clearing - TipTap needs this via commands
       requestAnimationFrame(() => {
-        if (textareaRef.current) {
-          textareaRef.current.focus();
-          textareaRef.current.selectionStart = updated.length;
-          textareaRef.current.selectionEnd = updated.length;
-        }
+        editorRef.current?.focus();
       });
     },
     [],
   );
+
+  const handleSendClick = useCallback(() => {
+    void handleSend();
+  }, [handleSend]);
 
   const handleEnterToSendChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -144,17 +135,12 @@ export function MessageInput({
           />
         )}
 
-        <textarea
-          ref={textareaRef}
-          value={content}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
+        <MarkdownEditor
+          ref={editorRef}
           placeholder={placeholder}
-          rows={1}
           disabled={isSending}
-          aria-label={t('Message input')}
-          className="w-full max-h-50 resize-none overflow-y-auto bg-transparent px-2 py-2 text-base leading-normal text-text placeholder-text-muted focus:outline-none disabled:opacity-50"
-          style={{ minHeight: `${MIN_HEIGHT}px` }}
+          onUpdate={handleUpdate}
+          onKeyDown={handleKeyDown}
         />
 
         <AttachmentPicker
@@ -185,7 +171,7 @@ export function MessageInput({
 
             <button
               type="button"
-              onClick={() => void handleSend()}
+              onClick={handleSendClick}
               disabled={!canSend}
               title={isUploading ? t('Waiting for uploads to finish') : undefined}
               aria-label={t('Send message')}

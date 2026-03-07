@@ -3,6 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi } from 'vitest';
 import type { Workspace, Message, MessagesPage } from '@orac/shared';
+import {
+  mockEditorClear,
+  mockEditorGetMarkdown,
+  resetEditorMocks,
+  markdownEditorMock,
+} from '../../test/mocks/MarkdownEditor';
 import { WorkspaceChat } from './WorkspaceChat';
 import '../../i18n';
 
@@ -24,6 +30,14 @@ vi.mock('@api/clankerAdapters', () => ({
   adaptersApi: {
     getAll: vi.fn().mockResolvedValue([]),
   },
+}));
+
+vi.mock('@components/MarkdownEditor', () => markdownEditorMock);
+
+vi.mock('@components/MarkdownContent', () => ({
+  MarkdownContent: ({ content }: { content: string }) => (
+    <span>{content}</span>
+  ),
 }));
 
 const { workspacesApi } = await import('@api/workspaces');
@@ -87,6 +101,7 @@ function renderChat(workspaceId = 'ws-1') {
 describe('WorkspaceChat', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    resetEditorMocks();
   });
 
   it('shows loading spinner while workspace is loading', () => {
@@ -120,7 +135,7 @@ describe('WorkspaceChat', () => {
 
     expect(await screen.findByRole('log')).toBeInTheDocument();
     expect(
-      screen.getByRole('textbox', { name: 'Message input' }),
+      screen.getByRole('textbox', { name: 'Message...' }),
     ).toBeInTheDocument();
   });
 
@@ -141,10 +156,9 @@ describe('WorkspaceChat', () => {
 
     renderChat();
 
-    const textarea = await screen.findByRole('textbox', {
-      name: 'Message input',
-    });
-    await user.type(textarea, 'Test message');
+    const editor = await screen.findByRole('textbox', { name: 'Message...' });
+    mockEditorGetMarkdown.mockReturnValue('Test message');
+    await user.type(editor, 'Test message');
     await user.click(screen.getByRole('button', { name: 'Send message' }));
 
     await waitFor(() => {
@@ -164,14 +178,13 @@ describe('WorkspaceChat', () => {
 
     renderChat();
 
-    const textarea = await screen.findByRole('textbox', {
-      name: 'Message input',
-    });
-    await user.type(textarea, 'Test message');
+    const editor = await screen.findByRole('textbox', { name: 'Message...' });
+    mockEditorGetMarkdown.mockReturnValue('Test message');
+    await user.type(editor, 'Test message');
     await user.click(screen.getByRole('button', { name: 'Send message' }));
 
     await waitFor(() => {
-      expect(textarea).toHaveValue('');
+      expect(mockEditorClear).toHaveBeenCalled();
     });
   });
 });

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import type { Message } from '@orac/shared';
 import { AttachmentBubble } from '@components/AttachmentBubble';
+import { MarkdownContent } from '@components/MarkdownContent';
 
 type MessageGroupProps = {
   messages: Message[];
@@ -29,9 +30,9 @@ function formatTime(date: Date): string {
 export function MessageGroup({ messages }: MessageGroupProps) {
   const { t } = useTranslation('features', { keyPrefix: 'WorkspaceChat' });
 
-  const first = messages[0];
-  const last = messages[messages.length - 1];
-  const isUser = first.role === 'user';
+  const firstMessage = messages[0];
+  const lastMessage = messages[messages.length - 1];
+  const isUser = firstMessage.role === 'user';
 
   const allAttachments = messages.flatMap(message => message.attachments);
   const hasMultipleAttachments = allAttachments.length > 1;
@@ -46,7 +47,7 @@ export function MessageGroup({ messages }: MessageGroupProps) {
 
   return (
     <div className={clsx('flex flex-col gap-1', alignment)}>
-      {!isUser && <SenderHeader name={first.senderName} />}
+      {!isUser && <SenderHeader name={firstMessage.senderName} />}
 
       <div
         className={clsx(
@@ -54,18 +55,15 @@ export function MessageGroup({ messages }: MessageGroupProps) {
           bubbleColor,
         )}>
         {contentMessages.map((message, index) => (
-          <p
+          <div
             key={message.messageId}
-            className={clsx(
-              'whitespace-pre-wrap wrap-break-word',
-              index > 0 && 'mt-2',
-            )}>
-            {message.content}
-          </p>
+            className={clsx(index > 0 && 'mt-2')}>
+            <MarkdownContent content={message.content} />
+          </div>
         ))}
 
         <p className={clsx('mt-1 text-right text-xs', timestampColor)}>
-          {formatTime(last.createdAt)}
+          {formatTime(lastMessage.createdAt)}
         </p>
       </div>
 

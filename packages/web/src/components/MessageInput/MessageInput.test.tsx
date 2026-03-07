@@ -1,7 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi } from 'vitest';
+import {
+  mockEditorClear,
+  mockEditorGetMarkdown,
+  resetEditorMocks,
+  markdownEditorMock,
+} from '../../test/mocks/MarkdownEditor';
 import { MessageInput } from './MessageInput';
 import '../../i18n';
 
@@ -10,6 +16,8 @@ vi.mock('@api/messages', () => ({
     uploadAttachment: vi.fn(),
   },
 }));
+
+vi.mock('@components/MarkdownEditor', () => markdownEditorMock);
 
 function renderMessageInput(overrides: Partial<Parameters<typeof MessageInput>[0]> = {}) {
   const queryClient = new QueryClient({
@@ -37,8 +45,16 @@ function renderMessageInput(overrides: Partial<Parameters<typeof MessageInput>[0
   };
 }
 
+function getEditor() {
+  return screen.getByRole('textbox', { name: 'Message...' });
+}
+
 describe('MessageInput', () => {
-  it('send button is disabled when textarea is empty', () => {
+  beforeEach(() => {
+    resetEditorMocks();
+  });
+
+  it('send button is disabled when editor is empty', () => {
     renderMessageInput();
 
     expect(
@@ -50,7 +66,7 @@ describe('MessageInput', () => {
     const user = userEvent.setup();
     renderMessageInput();
 
-    await user.type(screen.getByRole('textbox', { name: 'Message input' }), 'Hello');
+    await user.type(getEditor(), 'Hello');
 
     expect(
       screen.getByRole('button', { name: 'Send message' }),
@@ -61,18 +77,20 @@ describe('MessageInput', () => {
     const user = userEvent.setup();
     const { onSend } = renderMessageInput();
 
-    await user.type(screen.getByRole('textbox', { name: 'Message input' }), '  Hello  ');
+    mockEditorGetMarkdown.mockReturnValue('  Hello  ');
+    await user.type(getEditor(), '  Hello  ');
     await user.click(screen.getByRole('button', { name: 'Send message' }));
 
-    expect(onSend).toHaveBeenCalledWith('Hello', []);
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith('Hello', []);
+    });
   });
 
   it('does not call onSend when Enter is pressed by default', async () => {
     const user = userEvent.setup();
     const { onSend } = renderMessageInput();
 
-    const textarea = screen.getByRole('textbox', { name: 'Message input' });
-    await user.type(textarea, 'Hello');
+    await user.type(getEditor(), 'Hello');
     await user.keyboard('{Enter}');
 
     expect(onSend).not.toHaveBeenCalled();
@@ -82,53 +100,57 @@ describe('MessageInput', () => {
     const user = userEvent.setup();
     const { onSend } = renderMessageInput();
 
-    const textarea = screen.getByRole('textbox', { name: 'Message input' });
-    await user.type(textarea, 'Hello');
+    mockEditorGetMarkdown.mockReturnValue('Hello');
+    await user.type(getEditor(), 'Hello');
     await user.keyboard('{Shift>}{Enter}{/Shift}');
 
-    expect(onSend).toHaveBeenCalledWith('Hello', []);
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith('Hello', []);
+    });
   });
 
   it('calls onSend when Enter is pressed with "Enter to send" enabled', async () => {
     const user = userEvent.setup();
     const { onSend } = renderMessageInput();
 
-    const textarea = screen.getByRole('textbox', { name: 'Message input' });
-    await user.type(textarea, 'Hello');
+    const editor = getEditor();
+    mockEditorGetMarkdown.mockReturnValue('Hello');
+    await user.type(editor, 'Hello');
 
-    // Enable "Enter to send"
     await user.click(screen.getByRole('checkbox', { name: 'Enter to send' }));
-
-    // Re-focus textarea and press Enter
-    await user.click(textarea);
+    await user.click(editor);
     await user.keyboard('{Enter}');
 
-    expect(onSend).toHaveBeenCalledWith('Hello', []);
+    await waitFor(() => {
+      expect(onSend).toHaveBeenCalledWith('Hello', []);
+    });
   });
 
-  it('clears textarea after successful send', async () => {
+  it('clears editor after successful send', async () => {
     const user = userEvent.setup();
     renderMessageInput();
 
-    const textarea = screen.getByRole('textbox', { name: 'Message input' });
-    await user.type(textarea, 'Hello');
+    mockEditorGetMarkdown.mockReturnValue('Hello');
+    await user.type(getEditor(), 'Hello');
     await user.click(screen.getByRole('button', { name: 'Send message' }));
 
-    expect(textarea).toHaveValue('');
+    await waitFor(() => {
+      expect(mockEditorClear).toHaveBeenCalled();
+    });
   });
 
-  it('shows placeholder text', () => {
+  it('renders the editor with placeholder', () => {
     renderMessageInput();
 
-    expect(screen.getByPlaceholderText('Message...')).toBeInTheDocument();
+    expect(
+      screen.getByRole('textbox', { name: 'Message...' }),
+    ).toBeInTheDocument();
   });
 
-  it('textarea is disabled while isSending', () => {
+  it('editor is disabled while isSending', () => {
     renderMessageInput({ isSending: true });
 
-    expect(
-      screen.getByRole('textbox', { name: 'Message input' }),
-    ).toBeDisabled();
+    expect(getEditor()).toBeDisabled();
   });
 
   it('send button is disabled while isSending', () => {

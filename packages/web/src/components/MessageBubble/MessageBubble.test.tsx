@@ -11,11 +11,16 @@ vi.mock('@api/messages', () => ({
   },
 }));
 
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: false } },
-});
+vi.mock('@components/MarkdownContent', () => ({
+  MarkdownContent: ({ content }: { content: string }) => (
+    <span>{content}</span>
+  ),
+}));
 
 function renderWithProviders(ui: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   return render(
     <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
   );
@@ -36,10 +41,6 @@ const baseMessage: Message = {
 };
 
 describe('MessageGroup', () => {
-  beforeEach(() => {
-    queryClient.clear();
-  });
-
   it('does not render sender name for user messages', () => {
     renderWithProviders(<MessageGroup messages={[baseMessage]} />);
 
@@ -74,8 +75,13 @@ describe('MessageGroup', () => {
 
     expect(screen.getByText('First')).toBeInTheDocument();
     expect(screen.getByText('Second')).toBeInTheDocument();
-    // Only one timestamp
     expect(screen.getAllByText(/\d{1,2}:\d{2}/)).toHaveLength(1);
+  });
+
+  it('renders markdown content for messages', () => {
+    renderWithProviders(<MessageGroup messages={[baseMessage]} />);
+
+    expect(screen.getByText('Hello world')).toBeInTheDocument();
   });
 
   it('renders attachment filenames when present', () => {

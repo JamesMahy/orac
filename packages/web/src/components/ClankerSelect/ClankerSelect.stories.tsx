@@ -48,19 +48,21 @@ export const NoOptions: Story = {
   },
 };
 
-export const Interactive: Story = {
-  render: () => {
-    const [selectedClankerId, setSelectedClankerId] = useState('cl-1');
-    const [temperatureOverride, setTemperatureOverride] = useState('');
+function InteractiveStory() {
+  const [selectedClankerId, setSelectedClankerId] = useState('cl-1');
+  const [temperatureOverride, setTemperatureOverride] = useState('');
 
-    return (
-      <ClankerSelect
-        options={options}
-        selectedClankerId={selectedClankerId}
-        temperatureOverride={temperatureOverride}
-        onSelect={setSelectedClankerId}
-        onTemperatureChange={setTemperatureOverride}
-      />
-    );
-  },
+  return (
+    <ClankerSelect
+      options={options}
+      selectedClankerId={selectedClankerId}
+      temperatureOverride={temperatureOverride}
+      onSelect={setSelectedClankerId}
+      onTemperatureChange={setTemperatureOverride}
+    />
+  );
+}
+
+export const Interactive: Story = {
+  render: () => <InteractiveStory />,
 };

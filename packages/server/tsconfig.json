@@ -21,6 +21,8 @@
       "@users/*": ["src/users/*"],
       "@messages/*": ["src/messages/*"]
     },
+    "declaration": true,
+    "declarationMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
   },

@@ -15,7 +15,8 @@
       "@stores/*": ["src/stores/*"],
       "@utils/*": ["src/utils/*"]
     },
-    "noEmit": true
+    "noEmit": true,
+    "allowArbitraryExtensions": true
   },
   "include": ["src", "vite-env.d.ts"],
   "exclude": ["src/**/*.test.tsx", "src/**/*.test.ts", "src/test"]

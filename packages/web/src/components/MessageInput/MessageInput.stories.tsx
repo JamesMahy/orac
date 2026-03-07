@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PrimeReactProvider } from 'primereact/api';
@@ -8,7 +8,7 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false, enabled: false } },
 });
 
-function Wrapper({ children }: { children: React.ReactNode }) {
+function Wrapper({ children }: { children: ReactNode }) {
   return (
     <PrimeReactProvider>
       <QueryClientProvider client={queryClient}>
@@ -74,25 +74,29 @@ export const NoClankers: Story = {
   },
 };
 
-export const Interactive: Story = {
-  render: () => {
-    const [selectedClankerId, setSelectedClankerId] = useState('cl-1');
-    const [temperatureOverride, setTemperatureOverride] = useState('');
+function InteractiveStory() {
+  const [selectedClankerId, setSelectedClankerId] = useState('cl-1');
+  const [temperatureOverride, setTemperatureOverride] = useState('');
 
-    return (
-      <MessageInput
-        workspaceId="ws-1"
-        clankerOptions={clankerOptions}
-        selectedClankerId={selectedClankerId}
-        temperatureOverride={temperatureOverride}
-        commands={[]}
-        isSending={false}
-        onClankerChange={setSelectedClankerId}
-        onTemperatureChange={setTemperatureOverride}
-        onSend={async content => {
-          alert(`Sent: ${content}`);
-        }}
-      />
-    );
-  },
+  const handleSend = async (content: string) => {
+    alert(`Sent: ${content}`);
+  };
+
+  return (
+    <MessageInput
+      workspaceId="ws-1"
+      clankerOptions={clankerOptions}
+      selectedClankerId={selectedClankerId}
+      temperatureOverride={temperatureOverride}
+      commands={[]}
+      isSending={false}
+      onClankerChange={setSelectedClankerId}
+      onTemperatureChange={setTemperatureOverride}
+      onSend={handleSend}
+    />
+  );
+}
+
+export const Interactive: Story = {
+  render: () => <InteractiveStory />,
 };
