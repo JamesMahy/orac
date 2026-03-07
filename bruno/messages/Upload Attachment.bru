@@ -1,0 +1,33 @@
+meta {
+  name: Upload Attachment
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/workspaces/{{workspaceId}}/attachments
+  body: multipart-form
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:multipart-form {
+  file: @file(/path/to/test-file.txt)
+}
+
+assert {
+  res.status: eq 201
+  res.body.attachmentId: isDefined
+  res.body.filename: isDefined
+  res.body.storageKey: isDefined
+}
+
+script:post-response {
+  if (res.status === 201) {
+    bru.setEnvVar("attachmentId", res.body.attachmentId);
+  }
+}

@@ -1,0 +1,33 @@
+meta {
+  name: List Messages
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/workspaces/{{workspaceId}}/messages
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+params:query {
+  limit: 50
+  ~before: {{messageId}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.messages: isDefined
+  res.body.hasMore: isDefined
+}
+
+script:post-response {
+  if (res.body.messages && res.body.messages.length > 0) {
+    bru.setVar("messageId", res.body.messages[res.body.messages.length - 1].messageId);
+  }
+}

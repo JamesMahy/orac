@@ -1,3 +1,5 @@
+import type { Attachment } from './messages';
+
 export type MessageRole = 'user' | 'assistant';
 
 export type MessageStatus = 'pending' | 'streaming' | 'complete' | 'error';
@@ -5,16 +7,27 @@ export type MessageStatus = 'pending' | 'streaming' | 'complete' | 'error';
 export type Message = {
   messageId: string;
   workspaceId: string;
-  role: MessageRole;
+  userId?: string;
+  clankerId?: string;
+  senderName: string;
+  role: string;
   content: string;
-  toolCalls: unknown[] | null;
-  rawEvents: unknown[] | null;
-  status: MessageStatus;
+  toolCalls: unknown;
+  rawEvents: unknown;
+  status: string;
   createdAt: Date;
+  attachments: Attachment[];
 };
 
 export type CreateMessageDto = {
-  workspaceId: string;
-  role: MessageRole;
+  role: string;
   content: string;
+  senderName: string;
+  clankerId?: string;
+  attachmentIds?: string[];
+};
+
+export type MessagesPage = {
+  messages: Message[];
+  hasMore: boolean;
 };

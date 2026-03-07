@@ -1,0 +1,23 @@
+meta {
+  name: Get Attachment Content
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/attachments/{{attachmentId}}/content
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.attachmentId: isDefined
+  res.body.content: isDefined
+  res.body.mimeType: isDefined
+}

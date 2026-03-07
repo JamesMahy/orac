@@ -14,7 +14,8 @@ import { WorkspacesModule } from '@workspaces/workspaces.module';
 import { SshModule } from '@ssh/ssh.module';
 import { ClankersModule } from '@clankers/clankers.module';
 import { VaultsModule } from '@vaults/vaults.module';
-import { FilesModule } from './files/files.module';
+import { FilesModule } from '@files/files.module';
+import { MessagesModule } from '@messages/messages.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { FilesModule } from './files/files.module';
     ClankersModule,
     VaultsModule,
     FilesModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [

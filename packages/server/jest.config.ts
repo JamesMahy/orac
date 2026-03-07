@@ -23,6 +23,7 @@ const config: Config = {
     '^@helpers/config$': '<rootDir>/helpers/config.helpers',
     '^@helpers/shell$': '<rootDir>/helpers/shell.helpers',
     '^@users/(.*)$': '<rootDir>/users/$1',
+    '^@messages/(.*)$': '<rootDir>/messages/$1',
   },
 };
 
