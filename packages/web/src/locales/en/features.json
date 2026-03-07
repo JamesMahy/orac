@@ -181,6 +181,32 @@
   "Chat": {
     "Select a project to start chatting.": "Select a project to start chatting."
   },
+  "WorkspaceChat": {
+    "Message history": "Message history",
+    "No messages yet": "No messages yet. Send a message to get started.",
+    "Load older messages": "Load older messages",
+    "Loading older messages": "Loading...",
+    "Message...": "Message...",
+    "Message... (@ to mention a clanker)": "Message... (@ to mention a clanker)",
+    "Message input": "Message input",
+    "Send": "Send",
+    "Send message": "Send message",
+    "Enter to send, Shift+Enter for new line": "Enter to send · Shift+Enter for new line",
+    "Shift+Enter to send, Enter for new line": "Shift+Enter to send · Enter for new line",
+    "Enter to send": "Enter to send",
+    "Temperature": "Temperature",
+    "Default": "Default",
+    "Attach file": "Attach file",
+    "Choose files": "Choose files",
+    "Remove attachment": "Remove {{name}}",
+    "Message failed": "Failed to send",
+    "Mention a clanker": "Mention a clanker",
+    "Workspace not found": "Workspace not found",
+    "User": "User",
+    "Send to": "Send to",
+    "Waiting for uploads to finish": "Waiting for uploads to finish",
+    "Commands": "Commands"
+  },
   "NotFound": {
     "Not Found": "Not Found",
     "The page you're looking for doesn't exist.": "The page you're looking for doesn't exist.",

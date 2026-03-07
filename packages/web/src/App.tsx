@@ -6,6 +6,7 @@ import { HostsRoute } from '@routes/HostsRoute';
 import { ClankersRoute } from '@routes/ClankersRoute';
 import { ProjectsRoute } from '@routes/ProjectsRoute';
 import { ChatRoute } from '@routes/ChatRoute';
+import { WorkspaceChatRoute } from '@routes/WorkspaceChatRoute';
 import { NotFoundRoute } from '@routes/NotFoundRoute';
 import { useAuthStore } from '@stores/authStore';
 import { authApi } from '@api/auth';
@@ -46,6 +47,7 @@ export function App() {
         <Route path="clankers" element={<ClankersRoute />} />
         <Route path="projects" element={<ProjectsRoute />} />
         <Route path="chat" element={<ChatRoute />} />
+        <Route path="workspace/:workspaceId" element={<WorkspaceChatRoute />} />
         <Route path="*" element={<NotFoundRoute />} />
       </Route>
     </Routes>

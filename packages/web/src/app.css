@@ -13,6 +13,10 @@ html {
   line-height: normal;
 }
 
+button {
+  cursor: pointer;
+}
+
 .p-input-icon svg {
   display: block;
 }

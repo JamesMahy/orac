@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
@@ -57,7 +57,7 @@ function SidebarProject({ project, onClose }: SidebarProjectProps) {
           {workspaces?.map(workspace => (
             <li key={workspace.workspaceId} className="group flex items-center">
               <NavLink
-                to="/chat"
+                to={`/workspace/${workspace.workspaceId}`}
                 onClick={onClose}
                 className="flex flex-1 items-center gap-2 truncate rounded-md px-2 py-1 text-base text-text-muted transition-colors hover:bg-border/50 hover:text-text">
                 <i className="pi pi-desktop text-xs" aria-hidden="true" />
@@ -112,55 +112,23 @@ export function Sidebar({
   onToggleCollapse,
 }: SidebarProps) {
   const { t } = useTranslation('common');
-  const sidebarRef = useRef<HTMLElement>(null);
-  const previousActiveElement = useRef<HTMLElement | null>(null);
   const { pathname } = useLocation();
 
   const { data: projects } = useProjects();
 
   const { openCreate: openCreateProject } = useProjectModalStore();
 
+  const handleLogout = useCallback(() => {
+    void authApi.logout().finally(() => {
+      useAuthStore.getState().logout();
+    });
+  }, []);
+
   useEffect(() => {
-    if (!open) {
-      if (previousActiveElement.current) {
-        previousActiveElement.current.focus();
-        previousActiveElement.current = null;
-      }
-      return;
-    }
-
-    previousActiveElement.current = document.activeElement as HTMLElement;
-
-    const sidebar = sidebarRef.current;
-    if (!sidebar) return;
-
-    const focusableElements = sidebar.querySelectorAll<HTMLElement>(
-      'a, button, [tabindex]:not([tabindex="-1"])',
-    );
-    const firstFocusable = focusableElements[0];
-    const lastFocusable = focusableElements[focusableElements.length - 1];
-
-    firstFocusable?.focus();
+    if (!open) return;
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        onClose();
-        return;
-      }
-
-      if (event.key !== 'Tab') return;
-
-      if (event.shiftKey) {
-        if (document.activeElement === firstFocusable) {
-          event.preventDefault();
-          lastFocusable?.focus();
-        }
-      } else {
-        if (document.activeElement === lastFocusable) {
-          event.preventDefault();
-          firstFocusable?.focus();
-        }
-      }
+      if (event.key === 'Escape') onClose();
     }
 
     document.addEventListener('keydown', handleKeyDown);
@@ -178,7 +146,6 @@ export function Sidebar({
       )}
 
       <aside
-        ref={sidebarRef}
         id="main-navigation"
         className={clsx(
           'fixed inset-y-0 left-0 z-30 flex flex-col border-r border-border bg-surface md:static md:translate-x-0',
@@ -329,11 +296,7 @@ export function Sidebar({
 
         <div className="border-t border-border p-3">
           <button
-            onClick={() => {
-              authApi.logout().finally(() => {
-                useAuthStore.getState().logout();
-              });
-            }}
+            onClick={handleLogout}
             className={clsx(
               'flex w-full cursor-pointer items-center rounded-lg py-2 text-sm font-medium text-text-muted transition-colors hover:bg-border/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
               collapsed ? 'justify-center px-2' : 'gap-3 px-3',

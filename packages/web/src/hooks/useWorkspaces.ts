@@ -8,6 +8,15 @@ const keys = {
   detail: (workspaceId: string) => ['workspace', workspaceId] as const,
 };
 
+export function useWorkspace(workspaceId: string) {
+  return useQuery({
+    queryKey: keys.detail(workspaceId),
+    queryFn: () => workspacesApi.getById(workspaceId),
+    enabled: !!workspaceId,
+    staleTime: 30_000,
+  });
+}
+
 export function useWorkspaces(projectId: string | null) {
   return useQuery({
     queryKey: keys.all(projectId!),
