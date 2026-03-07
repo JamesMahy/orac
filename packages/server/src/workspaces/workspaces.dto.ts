@@ -18,7 +18,7 @@ export class CreateWorkspaceDto {
     description: 'Project ID this workspace belongs to',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  @IsUUID()
+  @IsUUID('7')
   projectId!: string;
 
   @ApiProperty({
@@ -35,7 +35,7 @@ export class CreateWorkspaceDto {
     description: 'Primary clanker ID for this workspace',
     example: '550e8400-e29b-41d4-a716-446655440002',
   })
-  @IsUUID()
+  @IsUUID('7')
   primaryClankerId!: string;
 
   @ApiProperty({
@@ -44,7 +44,7 @@ export class CreateWorkspaceDto {
     example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @IsOptional()
-  @IsUUID()
+  @IsUUID('7')
   hostId?: string;
 
   @ApiProperty({
@@ -102,7 +102,7 @@ export class UpdateWorkspaceDto {
     example: '550e8400-e29b-41d4-a716-446655440001',
   })
   @IsOptional()
-  @IsUUID()
+  @IsUUID('7')
   hostId?: string | null;
 
   @ApiProperty({
@@ -111,7 +111,7 @@ export class UpdateWorkspaceDto {
     example: '550e8400-e29b-41d4-a716-446655440002',
   })
   @IsOptional()
-  @IsUUID()
+  @IsUUID('7')
   primaryClankerId?: string;
 
   @ApiProperty({
@@ -121,7 +121,7 @@ export class UpdateWorkspaceDto {
     example: '550e8400-e29b-41d4-a716-446655440002',
   })
   @IsOptional()
-  @IsUUID()
+  @IsUUID('7')
   currentClankerId?: string | null;
 }
 
@@ -130,7 +130,7 @@ export class ListWorkspacesQueryDto {
     description: 'Filter workspaces by project ID',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  @IsUUID()
+  @IsUUID('7')
   projectId!: string;
 }
 
@@ -242,7 +242,7 @@ export class AddWorkspaceClankerDto {
     description: 'Clanker ID to invite to this workspace',
     example: '550e8400-e29b-41d4-a716-446655440002',
   })
-  @IsUUID()
+  @IsUUID('7')
   clankerId!: string;
 
   @ApiProperty({

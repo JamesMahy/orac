@@ -12,16 +12,17 @@ model User {
   username  String   @unique @db.VarChar(255)
   createdAt DateTime @default(now())
 
-  hosts      Host[]
-  projects   Project[]
-  workspaces Workspace[]
-  clankers   Clanker[]
-  vaults     Vault[]
-  messages   Message[]
+  hosts       Host[]
+  projects    Project[]
+  workspaces  Workspace[]
+  clankers    Clanker[]
+  vaults      Vault[]
+  messages    Message[]
+  attachments Attachment[]
 }
 
 model Host {
-  hostId String @id @default(uuid())
+  hostId String @id @default(dbgenerated("uuidv7()"))
   userId String @db.VarChar(255)
   user   User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   name   String @db.VarChar(255)
@@ -49,7 +50,7 @@ model Host {
 }
 
 model Project {
-  projectId String   @id @default(uuid())
+  projectId String   @id @default(dbgenerated("uuidv7()"))
   userId    String   @default("admin") @db.VarChar(255)
   user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
   name      String   @db.VarChar(255)
@@ -62,7 +63,7 @@ model Project {
 }
 
 model Workspace {
-  workspaceId String    @id @default(uuid())
+  workspaceId String    @id @default(dbgenerated("uuidv7()"))
   userId      String    @default("admin") @db.VarChar(255)
   user        User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
   projectId   String
@@ -81,6 +82,7 @@ model Workspace {
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   messages         Message[]
+  attachments      Attachment[]
   clankers         WorkspaceClanker[]
 
   @@index([userId])
@@ -92,7 +94,7 @@ model Workspace {
 }
 
 model WorkspaceClanker {
-  workspaceClankerId  String    @id @default(uuid())
+  workspaceClankerId  String    @id @default(dbgenerated("uuidv7()"))
   workspaceId         String
   workspace           Workspace @relation(fields: [workspaceId], references: [workspaceId], onDelete: Cascade)
   clankerId           String
@@ -107,24 +109,56 @@ model WorkspaceClanker {
 }
 
 model Message {
-  messageId   String    @id @default(uuid())
-  userId      String    @default("admin") @db.VarChar(255)
-  user        User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  messageId   String     @id @default(dbgenerated("uuidv7()"))
+  userId      String?    @db.VarChar(255)
+  user        User?      @relation(fields: [userId], references: [userId], onDelete: SetNull)
+  clankerId   String?
+  clanker     Clanker?   @relation(fields: [clankerId], references: [clankerId], onDelete: SetNull)
+  senderName  String     @db.VarChar(255)
   workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [workspaceId], onDelete: Cascade)
-  role        String    @db.VarChar(50)
-  content     String    @db.Text
+  workspace   Workspace  @relation(fields: [workspaceId], references: [workspaceId], onDelete: Cascade)
+  role        String     @db.VarChar(50)
+  content     String     @db.Text
   toolCalls   Json?
   rawEvents   Json?
-  status      String    @default("pending") @db.VarChar(50)
-  createdAt   DateTime  @default(now())
+  status      String     @default("pending") @db.VarChar(50)
+  createdAt   DateTime   @default(now())
+  attachments MessageAttachment[]
+
+  @@index([userId])
+  @@index([clankerId])
+  @@index([workspaceId])
+}
+
+model Attachment {
+  attachmentId String              @id @default(dbgenerated("uuidv7()"))
+  userId       String              @db.VarChar(255)
+  user         User                @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  workspaceId  String
+  workspace    Workspace           @relation(fields: [workspaceId], references: [workspaceId], onDelete: Cascade)
+  filename     String              @db.VarChar(255)
+  mimeType     String              @db.VarChar(100)
+  size         Int
+  storageKey   String              @db.VarChar(500)
+  createdAt    DateTime            @default(now())
+  messages     MessageAttachment[]
 
   @@index([userId])
   @@index([workspaceId])
 }
 
+model MessageAttachment {
+  messageId    String
+  message      Message    @relation(fields: [messageId], references: [messageId], onDelete: Cascade)
+  attachmentId String
+  attachment   Attachment @relation(fields: [attachmentId], references: [attachmentId], onDelete: Cascade)
+
+  @@id([messageId, attachmentId])
+  @@index([attachmentId])
+}
+
 model Vault {
-  vaultId        String   @id @default(uuid())
+  vaultId        String   @id @default(dbgenerated("uuidv7()"))
   userId         String   @default("admin") @db.VarChar(255)
   user           User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
   name           String   @db.VarChar(255)
@@ -139,7 +173,7 @@ model Vault {
 }
 
 model Clanker {
-  clankerId        String @id @default(uuid())
+  clankerId        String @id @default(dbgenerated("uuidv7()"))
   userId           String @default("admin") @db.VarChar(255)
   user             User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   name             String @db.VarChar(255)
@@ -158,6 +192,7 @@ model Clanker {
   primaryWorkspaces  Workspace[]        @relation("PrimaryClanker")
   currentWorkspaces  Workspace[]        @relation("CurrentClanker")
   workspaceClankers  WorkspaceClanker[]
+  messages           Message[]
 
   @@index([userId])
   @@index([hostId])

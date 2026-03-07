@@ -51,8 +51,8 @@ async function expectCreateInvalid(
 }
 
 const validWorkspace = {
-  projectId: '550e8400-e29b-41d4-a716-446655440000',
-  primaryClankerId: '880e8400-e29b-41d4-a716-446655440000',
+  projectId: '019cc824-d7e3-7000-8000-000000000001',
+  primaryClankerId: '019cc824-d7e3-7000-8000-000000000004',
   name: 'exercise-service',
   path: '/home/james/bearly-fit/exercise-service',
 };
@@ -74,14 +74,14 @@ describe('CreateWorkspaceDto', () => {
     it('should accept a workspace with optional hostId', async () => {
       await expectCreateValid({
         ...validWorkspace,
-        hostId: '660e8400-e29b-41d4-a716-446655440000',
+        hostId: '019cc824-d7e3-7000-8000-000000000005',
       });
     });
 
     it('should accept a workspace with clankerIds array', async () => {
       await expectCreateValid({
         ...validWorkspace,
-        clankerIds: ['770e8400-e29b-41d4-a716-446655440000'],
+        clankerIds: ['019cc824-d7e3-7000-8000-000000000006'],
       });
     });
   });
@@ -162,7 +162,7 @@ describe('CreateWorkspaceDto', () => {
     it('should accept an array of valid clanker entries', async () => {
       await expectCreateValid({
         ...validWorkspace,
-        clankers: [{ clankerId: '770e8400-e29b-41d4-a716-446655440001' }],
+        clankers: [{ clankerId: '019cc824-d7e3-7000-8000-000000000007' }],
       });
     });
 
@@ -171,7 +171,7 @@ describe('CreateWorkspaceDto', () => {
         ...validWorkspace,
         clankers: [
           {
-            clankerId: '770e8400-e29b-41d4-a716-446655440001',
+            clankerId: '019cc824-d7e3-7000-8000-000000000007',
             modelOverride: 'claude-opus-4-6',
             temperatureOverride: 0.7,
           },
@@ -251,14 +251,14 @@ describe('UpdateWorkspaceDto', () => {
 
   it('should accept a valid UUID primaryClankerId in update', async () => {
     const errors = await validate(
-      toUpdateDto({ primaryClankerId: '550e8400-e29b-41d4-a716-446655440002' }),
+      toUpdateDto({ primaryClankerId: '019cc824-d7e3-7000-8000-000000000003' }),
     );
     expect(errors).toHaveLength(0);
   });
 
   it('should accept a valid UUID currentClankerId in update', async () => {
     const errors = await validate(
-      toUpdateDto({ currentClankerId: '550e8400-e29b-41d4-a716-446655440002' }),
+      toUpdateDto({ currentClankerId: '019cc824-d7e3-7000-8000-000000000003' }),
     );
     expect(errors).toHaveLength(0);
   });
@@ -281,7 +281,7 @@ describe('UpdateWorkspaceDto', () => {
 describe('ListWorkspacesQueryDto', () => {
   it('should accept a valid UUID projectId', async () => {
     const errors = await validate(
-      toQueryDto({ projectId: '550e8400-e29b-41d4-a716-446655440000' }),
+      toQueryDto({ projectId: '019cc824-d7e3-7000-8000-000000000001' }),
     );
     expect(errors).toHaveLength(0);
   });
@@ -300,7 +300,7 @@ describe('ListWorkspacesQueryDto', () => {
 describe('AddWorkspaceClankerDto', () => {
   it('should accept a valid UUID clankerId', async () => {
     const errors = await validate(
-      toAddClankerDto({ clankerId: '550e8400-e29b-41d4-a716-446655440002' }),
+      toAddClankerDto({ clankerId: '019cc824-d7e3-7000-8000-000000000003' }),
     );
     expect(errors).toHaveLength(0);
   });

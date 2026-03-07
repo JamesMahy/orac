@@ -21,6 +21,7 @@ export type {
   Message,
   MessageRole,
   MessageStatus,
+  MessagesPage,
   CreateMessageDto,
 } from './message';
 export type {
@@ -51,3 +52,4 @@ export type {
   CreateVaultDto,
   UpdateVaultDto,
 } from './storage';
+export type { Attachment } from './messages';

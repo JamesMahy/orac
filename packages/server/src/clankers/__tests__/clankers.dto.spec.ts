@@ -31,7 +31,7 @@ async function expectInvalid(data: Record<string, unknown>, property?: string) {
 const validConsole = {
   name: 'Claude on prod',
   clankerAdapterId: 'claude-code',
-  hostId: '550e8400-e29b-41d4-a716-446655440000',
+  hostId: '019cc824-d7e3-7000-8000-000000000001',
 };
 
 const validApi = {

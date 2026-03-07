@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { basename } from 'path';
 import { VaultsService } from '@vaults/vaults.service';
 
 @Injectable()
@@ -12,7 +13,8 @@ export class FileService {
     data: Buffer,
     mimeType: string,
   ): Promise<string> {
-    const key = `${workspaceId}/${randomUUID()}/${filename}`;
+    const safeName = basename(filename).replace(/[^a-zA-Z0-9._-]/g, '_');
+    const key = `${workspaceId}/${randomUUID()}/${safeName}`;
     const { adapter, connection } =
       await this.vaults.getActiveVault(workspaceId);
 
