@@ -1,0 +1,1 @@
+export { CompactThumbnail } from './CompactThumbnail';

@@ -1,0 +1,1 @@
+export { CompactFilePreview } from './CompactFilePreview';
