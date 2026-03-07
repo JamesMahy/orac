@@ -23,10 +23,18 @@ services:
       - '9000:9000'
       - '9001:9001'
     environment:
+      RUSTFS_ADDRESS: ':9000'
+      RUSTFS_CONSOLE_ADDRESS: ':9001'
+      RUSTFS_CONSOLE_ENABLE: 'true'
       RUSTFS_ACCESS_KEY: rustfsadmin
       RUSTFS_SECRET_KEY: rustfsadmin
     volumes:
       - OracRustFsData:/data
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   OracPostgresData:

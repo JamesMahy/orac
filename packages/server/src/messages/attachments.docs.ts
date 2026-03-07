@@ -18,4 +18,19 @@ export const AttachmentsDocs = {
     ApiResponse({ status: 400, description: 'Invalid attachment ID format' }),
     ApiResponse({ status: 404, description: 'Attachment not found' }),
   ),
+
+  getFile: applyDecorators(
+    ApiOperation({ summary: 'Get raw attachment file' }),
+    ApiParam({
+      name: 'attachmentId',
+      description: 'Attachment UUID',
+      format: 'uuid',
+    }),
+    ApiResponse({
+      status: 200,
+      description: 'Raw file with correct Content-Type header',
+    }),
+    ApiResponse({ status: 400, description: 'Invalid attachment ID format' }),
+    ApiResponse({ status: 404, description: 'Attachment not found' }),
+  ),
 };

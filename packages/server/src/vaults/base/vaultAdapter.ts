@@ -31,6 +31,8 @@ export abstract class VaultAdapter {
 
   abstract exists(connection: unknown, key: string): Promise<boolean>;
 
+  abstract ensureBucket(connection: unknown): Promise<void>;
+
   toDefinition(): VaultAdapterDefinition {
     return {
       vaultAdapterId: this.vaultAdapterId,

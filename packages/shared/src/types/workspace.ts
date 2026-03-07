@@ -1,6 +1,7 @@
 export type WorkspaceClanker = {
   clankerId: string;
   name: string;
+  clankerAdapterId: string;
   modelOverride: string | null;
   temperatureOverride: number | null;
 };
@@ -12,7 +13,7 @@ export type Workspace = {
   hostId: string | null;
   path: string | null;
   primaryClankerId: string | null;
-  primaryClanker: { clankerId: string; name: string } | null;
+  primaryClanker: { clankerId: string; name: string; clankerAdapterId: string } | null;
   currentClankerId: string | null;
   primaryVaultId: string | null;
   clankers: WorkspaceClanker[];

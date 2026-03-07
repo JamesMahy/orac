@@ -6,6 +6,12 @@ import {
   AttachmentContentResponseDto,
 } from './messages.dto';
 
+export type AttachmentFile = {
+  filename: string;
+  mimeType: string;
+  buffer: Buffer;
+};
+
 @Injectable()
 export class AttachmentsService {
   constructor(
@@ -65,6 +71,27 @@ export class AttachmentsService {
       filename: attachment.filename,
       mimeType: attachment.mimeType,
       content: buffer.toString('base64'),
+    };
+  }
+
+  async getFile(
+    attachmentId: string,
+    userId: string,
+  ): Promise<AttachmentFile> {
+    const attachment = await this.prisma.attachment.findFirst({
+      where: { attachmentId, userId },
+    });
+    if (!attachment) throw new NotFoundException('attachment_not_found');
+
+    const buffer = await this.fileService.download(
+      attachment.storageKey,
+      attachment.workspaceId,
+    );
+
+    return {
+      filename: attachment.filename,
+      mimeType: attachment.mimeType,
+      buffer,
     };
   }
 }

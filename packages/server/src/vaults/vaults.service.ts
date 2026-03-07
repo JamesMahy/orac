@@ -1,6 +1,8 @@
 import {
   Injectable,
+  Logger,
   NotFoundException,
+  type OnModuleInit,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
@@ -29,7 +31,9 @@ type VaultResponse = {
 };
 
 @Injectable()
-export class VaultsService {
+export class VaultsService implements OnModuleInit {
+  private readonly logger = new Logger(VaultsService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly encryption: EncryptionService,
@@ -37,6 +41,16 @@ export class VaultsService {
     private readonly workspaces: WorkspacesService,
     private readonly config: ConfigService,
   ) {}
+
+  async onModuleInit() {
+    try {
+      const { adapter, connection } = this.getDefaultVault();
+      await adapter.ensureBucket(connection);
+      this.logger.log('Default storage bucket verified');
+    } catch (error) {
+      this.logger.warn('Failed to verify default storage bucket', error);
+    }
+  }
 
   async findAll(): Promise<VaultResponse[]> {
     const vaults = await this.prisma.vault.findMany({

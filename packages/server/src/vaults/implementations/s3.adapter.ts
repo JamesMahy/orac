@@ -4,6 +4,9 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
   HeadObjectCommand,
+  HeadBucketCommand,
+  CreateBucketCommand,
+  type S3ServiceException,
 } from '@aws-sdk/client-s3';
 import { VaultAdapter } from '@vaults/base';
 import type { VaultAdapterField } from '@vaults/base';
@@ -116,6 +119,31 @@ export class S3VaultAdapter extends VaultAdapter {
     await client.send(
       new DeleteObjectCommand({ Bucket: conn.bucket, Key: key }),
     );
+  }
+
+  async ensureBucket(connection: unknown): Promise<void> {
+    const conn = connection as S3Connection;
+    const client = this.buildClient(conn);
+    try {
+      await client.send(new HeadBucketCommand({ Bucket: conn.bucket }));
+      return;
+    } catch (error: unknown) {
+      const statusCode = (error as S3ServiceException).$metadata
+        ?.httpStatusCode;
+      if (statusCode !== 404 && statusCode !== undefined) throw error;
+    }
+    try {
+      await client.send(new CreateBucketCommand({ Bucket: conn.bucket }));
+    } catch (error: unknown) {
+      const statusCode = (error as S3ServiceException).$metadata
+        ?.httpStatusCode;
+      // 409 = bucket already exists, treat as success
+      // Also ignore deserialization errors (some S3-compatible servers
+      // return non-XML responses) as long as the bucket was created
+      if (statusCode === 409) return;
+      if (statusCode === 200) return;
+      throw error;
+    }
   }
 
   async exists(connection: unknown, key: string): Promise<boolean> {
