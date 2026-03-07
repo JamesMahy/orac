@@ -1,0 +1,1 @@
+export { FileChip } from './FileChip';
