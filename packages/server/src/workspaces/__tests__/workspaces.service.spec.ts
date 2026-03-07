@@ -90,10 +90,10 @@ describe('WorkspacesService', () => {
         where: { projectId },
         orderBy: { createdAt: 'desc' },
         include: {
-          primaryClanker: { select: { clankerId: true, name: true } },
+          primaryClanker: { select: { clankerId: true, name: true, clankerAdapterId: true } },
           clankers: {
             select: {
-              clanker: { select: { clankerId: true, name: true } },
+              clanker: { select: { clankerId: true, name: true, clankerAdapterId: true } },
               modelOverride: true,
               temperatureOverride: true,
             },
@@ -123,10 +123,10 @@ describe('WorkspacesService', () => {
       expect(prisma.workspace.findUnique).toHaveBeenCalledWith({
         where: { workspaceId: mockWorkspace.workspaceId },
         include: {
-          primaryClanker: { select: { clankerId: true, name: true } },
+          primaryClanker: { select: { clankerId: true, name: true, clankerAdapterId: true } },
           clankers: {
             select: {
-              clanker: { select: { clankerId: true, name: true } },
+              clanker: { select: { clankerId: true, name: true, clankerAdapterId: true } },
               modelOverride: true,
               temperatureOverride: true,
             },
@@ -218,10 +218,10 @@ describe('WorkspacesService', () => {
           clankers: undefined,
         },
         include: {
-          primaryClanker: { select: { clankerId: true, name: true } },
+          primaryClanker: { select: { clankerId: true, name: true, clankerAdapterId: true } },
           clankers: {
             select: {
-              clanker: { select: { clankerId: true, name: true } },
+              clanker: { select: { clankerId: true, name: true, clankerAdapterId: true } },
               modelOverride: true,
               temperatureOverride: true,
             },
@@ -268,10 +268,10 @@ describe('WorkspacesService', () => {
           },
         },
         include: {
-          primaryClanker: { select: { clankerId: true, name: true } },
+          primaryClanker: { select: { clankerId: true, name: true, clankerAdapterId: true } },
           clankers: {
             select: {
-              clanker: { select: { clankerId: true, name: true } },
+              clanker: { select: { clankerId: true, name: true, clankerAdapterId: true } },
               modelOverride: true,
               temperatureOverride: true,
             },

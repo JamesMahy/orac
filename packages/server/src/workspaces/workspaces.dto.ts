@@ -148,6 +148,12 @@ class WorkspaceClankerDto {
   name!: string;
 
   @ApiProperty({
+    description: 'Adapter ID for this clanker',
+    example: 'claude-code',
+  })
+  clankerAdapterId!: string;
+
+  @ApiProperty({
     description:
       'Model override for this workspace (null = use clanker default)',
     nullable: true,
@@ -209,7 +215,7 @@ export class WorkspaceResponseDto {
     nullable: true,
     type: WorkspaceClankerDto,
   })
-  primaryClanker!: { clankerId: string; name: string } | null;
+  primaryClanker!: { clankerId: string; name: string; clankerAdapterId: string } | null;
 
   @ApiProperty({
     description: 'Currently active clanker ID (null = use primary)',

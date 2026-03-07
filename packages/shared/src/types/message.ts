@@ -9,6 +9,7 @@ export type Message = {
   workspaceId: string;
   userId?: string;
   clankerId?: string;
+  targetClankerId?: string;
   senderName: string;
   role: string;
   content: string;
@@ -20,10 +21,8 @@ export type Message = {
 };
 
 export type CreateMessageDto = {
-  role: string;
   content: string;
-  senderName: string;
-  clankerId?: string;
+  targetClankerId?: string;
   attachmentIds?: string[];
 };
 

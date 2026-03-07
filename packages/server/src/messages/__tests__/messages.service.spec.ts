@@ -9,6 +9,8 @@ const clankerId = 'cl-uuid-2222-2222-222222222222';
 const attachmentId = 'at-uuid-3333-3333-333333333333';
 const messageId = 'msg-uuid-4444-4444-444444444444';
 
+const mockUser = { userId, username: 'Alice', createdAt: new Date() };
+
 const mockAttachment = {
   attachmentId,
   userId,
@@ -30,6 +32,7 @@ const mockMessage = {
   messageId,
   userId,
   clankerId: null,
+  targetClankerId: null,
   senderName: 'Alice',
   workspaceId,
   role: 'user',
@@ -44,6 +47,7 @@ const mockMessage = {
 describe('MessagesService', () => {
   let service: MessagesService;
   let prisma: {
+    user: Record<string, jest.Mock>;
     message: Record<string, jest.Mock>;
     clanker: Record<string, jest.Mock>;
     attachment: Record<string, jest.Mock>;
@@ -51,6 +55,9 @@ describe('MessagesService', () => {
 
   beforeEach(async () => {
     prisma = {
+      user: {
+        findUnique: jest.fn().mockResolvedValue(mockUser),
+      },
       message: {
         findMany: jest.fn(),
         create: jest.fn(),
@@ -152,14 +159,19 @@ describe('MessagesService', () => {
 
       const result = await service.create(
         workspaceId,
-        { role: 'user', content: 'Hello', senderName: 'Alice' },
+        { content: 'Hello' },
         userId,
       );
+
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        where: { userId },
+      });
 
       expect(prisma.message.create).toHaveBeenCalledWith({
         data: {
           userId,
           clankerId: null,
+          targetClankerId: null,
           senderName: 'Alice',
           workspaceId,
           role: 'user',
@@ -178,12 +190,7 @@ describe('MessagesService', () => {
 
       const result = await service.create(
         workspaceId,
-        {
-          role: 'user',
-          content: 'Hello',
-          senderName: 'Alice',
-          attachmentIds: [attachmentId],
-        },
+        { content: 'Hello', attachmentIds: [attachmentId] },
         userId,
       );
 
@@ -212,18 +219,18 @@ describe('MessagesService', () => {
       ]);
     });
 
-    it('should create a message with clankerId', async () => {
+    it('should create a message with targetClankerId', async () => {
       const mockClanker = { clankerId };
       prisma.clanker.findUnique.mockResolvedValue(mockClanker);
       prisma.message.create.mockResolvedValue({
         ...mockMessage,
-        clankerId,
+        targetClankerId: clankerId,
         attachments: [],
       });
 
       const result = await service.create(
         workspaceId,
-        { role: 'assistant', content: 'Hi', senderName: 'Bot', clankerId },
+        { content: 'Hello', targetClankerId: clankerId },
         userId,
       );
 
@@ -234,35 +241,51 @@ describe('MessagesService', () => {
       expect(prisma.message.create).toHaveBeenCalledWith(
         expect.objectContaining({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          data: expect.objectContaining({ clankerId }),
+          data: expect.objectContaining({ targetClankerId: clankerId }),
         }),
       );
 
-      expect(result.clankerId).toBe(clankerId);
+      expect(result.targetClankerId).toBe(clankerId);
     });
 
-    it('should throw NotFoundException for unknown clankerId', async () => {
+    it('should throw NotFoundException for unknown targetClankerId', async () => {
       prisma.clanker.findUnique.mockResolvedValue(null);
 
       await expect(
         service.create(
           workspaceId,
-          { role: 'assistant', content: 'Hi', senderName: 'Bot', clankerId },
+          { content: 'Hello', targetClankerId: clankerId },
           userId,
         ),
       ).rejects.toThrow(NotFoundException);
     });
 
-    it('should use snake_case error code for unknown clanker', async () => {
+    it('should use snake_case error code for unknown target clanker', async () => {
       prisma.clanker.findUnique.mockResolvedValue(null);
 
       await expect(
         service.create(
           workspaceId,
-          { role: 'assistant', content: 'Hi', senderName: 'Bot', clankerId },
+          { content: 'Hello', targetClankerId: clankerId },
           userId,
         ),
-      ).rejects.toThrow('clanker_not_found');
+      ).rejects.toThrow('target_clanker_not_found');
+    });
+
+    it('should throw NotFoundException for unknown user', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.create(workspaceId, { content: 'Hello' }, userId),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should use snake_case error code for unknown user', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.create(workspaceId, { content: 'Hello' }, userId),
+      ).rejects.toThrow('user_not_found');
     });
 
     it('should throw NotFoundException when attachment count mismatches', async () => {
@@ -271,12 +294,7 @@ describe('MessagesService', () => {
       await expect(
         service.create(
           workspaceId,
-          {
-            role: 'user',
-            content: 'Hello',
-            senderName: 'Alice',
-            attachmentIds: [attachmentId],
-          },
+          { content: 'Hello', attachmentIds: [attachmentId] },
           userId,
         ),
       ).rejects.toThrow(NotFoundException);
@@ -288,12 +306,7 @@ describe('MessagesService', () => {
       await expect(
         service.create(
           workspaceId,
-          {
-            role: 'user',
-            content: 'Hello',
-            senderName: 'Alice',
-            attachmentIds: [attachmentId],
-          },
+          { content: 'Hello', attachmentIds: [attachmentId] },
           userId,
         ),
       ).rejects.toThrow('attachment_not_found');

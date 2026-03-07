@@ -33,11 +33,11 @@ type WorkspaceResponse = {
 
 const workspaceInclude = {
   primaryClanker: {
-    select: { clankerId: true, name: true },
+    select: { clankerId: true, name: true, clankerAdapterId: true },
   },
   clankers: {
     select: {
-      clanker: { select: { clankerId: true, name: true } },
+      clanker: { select: { clankerId: true, name: true, clankerAdapterId: true } },
       modelOverride: true,
       temperatureOverride: true,
     },
@@ -66,13 +66,18 @@ function toResponse(
     ({ clanker, modelOverride, temperatureOverride }) => ({
       clankerId: clanker.clankerId,
       name: clanker.name,
+      clankerAdapterId: clanker.clankerAdapterId,
       modelOverride,
       temperatureOverride,
     }),
   );
 
   const mappedPrimaryClanker = primaryClanker
-    ? { clankerId: primaryClanker.clankerId, name: primaryClanker.name }
+    ? {
+        clankerId: primaryClanker.clankerId,
+        name: primaryClanker.name,
+        clankerAdapterId: primaryClanker.clankerAdapterId,
+      }
     : null;
 
   return {

@@ -87,9 +87,7 @@ describe('MessagesController', () => {
   describe('POST /workspaces/:workspaceId/messages', () => {
     it('should call create with workspaceId, dto, and userId', async () => {
       const dto: CreateMessageDto = {
-        role: 'user',
         content: 'Hello',
-        senderName: 'Alice',
       };
 
       mockMessagesService.create.mockResolvedValue(mockMessage);
@@ -112,7 +110,7 @@ describe('MessagesController', () => {
       await expect(
         controller.create(
           workspaceId,
-          { role: 'user', content: 'Hi', senderName: 'Alice' },
+          { content: 'Hi' },
           userId,
         ),
       ).rejects.toThrow(NotFoundException);

@@ -109,24 +109,27 @@ model WorkspaceClanker {
 }
 
 model Message {
-  messageId   String     @id @default(dbgenerated("uuidv7()"))
-  userId      String?    @db.VarChar(255)
-  user        User?      @relation(fields: [userId], references: [userId], onDelete: SetNull)
-  clankerId   String?
-  clanker     Clanker?   @relation(fields: [clankerId], references: [clankerId], onDelete: SetNull)
-  senderName  String     @db.VarChar(255)
-  workspaceId String
-  workspace   Workspace  @relation(fields: [workspaceId], references: [workspaceId], onDelete: Cascade)
-  role        String     @db.VarChar(50)
-  content     String     @db.Text
-  toolCalls   Json?
-  rawEvents   Json?
-  status      String     @default("pending") @db.VarChar(50)
-  createdAt   DateTime   @default(now())
-  attachments MessageAttachment[]
+  messageId       String     @id @default(dbgenerated("uuidv7()"))
+  userId          String?    @db.VarChar(255)
+  user            User?      @relation(fields: [userId], references: [userId], onDelete: SetNull)
+  clankerId       String?
+  clanker         Clanker?   @relation("SentMessages", fields: [clankerId], references: [clankerId], onDelete: SetNull)
+  targetClankerId String?
+  targetClanker   Clanker?   @relation("TargetedMessages", fields: [targetClankerId], references: [clankerId], onDelete: SetNull)
+  senderName      String     @db.VarChar(255)
+  workspaceId     String
+  workspace       Workspace  @relation(fields: [workspaceId], references: [workspaceId], onDelete: Cascade)
+  role            String     @db.VarChar(50)
+  content         String     @db.Text
+  toolCalls       Json?
+  rawEvents       Json?
+  status          String     @default("pending") @db.VarChar(50)
+  createdAt       DateTime   @default(now())
+  attachments     MessageAttachment[]
 
   @@index([userId])
   @@index([clankerId])
+  @@index([targetClankerId])
   @@index([workspaceId])
 }
 
@@ -192,7 +195,8 @@ model Clanker {
   primaryWorkspaces  Workspace[]        @relation("PrimaryClanker")
   currentWorkspaces  Workspace[]        @relation("CurrentClanker")
   workspaceClankers  WorkspaceClanker[]
-  messages           Message[]
+  sentMessages       Message[]  @relation("SentMessages")
+  targetedMessages   Message[]  @relation("TargetedMessages")
 
   @@index([userId])
   @@index([hostId])

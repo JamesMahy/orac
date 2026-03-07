@@ -49,13 +49,18 @@ export class MessagesService {
     dto: CreateMessageDto,
     userId: string,
   ): Promise<MessageResponseDto> {
-    const { role, content, senderName, clankerId, attachmentIds } = dto;
+    const { content, targetClankerId, attachmentIds } = dto;
 
-    if (clankerId) {
-      const clanker = await this.prisma.clanker.findUnique({
-        where: { clankerId },
+    const user = await this.prisma.user.findUnique({
+      where: { userId },
+    });
+    if (!user) throw new NotFoundException('user_not_found');
+
+    if (targetClankerId) {
+      const targetClanker = await this.prisma.clanker.findUnique({
+        where: { clankerId: targetClankerId },
       });
-      if (!clanker) throw new NotFoundException('clanker_not_found');
+      if (!targetClanker) throw new NotFoundException('target_clanker_not_found');
     }
 
     if (attachmentIds && attachmentIds.length > 0) {
@@ -70,10 +75,11 @@ export class MessagesService {
     const created = await this.prisma.message.create({
       data: {
         userId,
-        clankerId: clankerId ?? null,
-        senderName,
+        clankerId: null,
+        targetClankerId: targetClankerId ?? null,
+        senderName: user.username,
         workspaceId,
-        role,
+        role: 'user',
         content,
         attachments: {
           create: (attachmentIds ?? []).map(attachmentId => ({
@@ -93,6 +99,7 @@ export class MessagesService {
       workspaceId: message.workspaceId,
       userId: message.userId,
       clankerId: message.clankerId,
+      targetClankerId: message.targetClankerId,
       senderName: message.senderName,
       role: message.role,
       content: message.content,

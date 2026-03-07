@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsString,
-  IsNotEmpty,
   IsOptional,
   IsArray,
   IsUUID,
@@ -37,32 +36,18 @@ export class MessagesQueryDto {
 }
 
 export class CreateMessageDto {
-  @ApiProperty({ description: 'Message role', example: 'user' })
-  @IsString()
-  @IsNotEmpty()
-  role!: string;
-
   @ApiProperty({ description: 'Message content', example: 'Hello!' })
   @IsString()
-  @IsNotEmpty()
   content!: string;
 
   @ApiProperty({
-    description: 'Display name of the sender',
-    example: 'Alice',
-  })
-  @IsString()
-  @IsNotEmpty()
-  senderName!: string;
-
-  @ApiProperty({
-    description: 'Clanker ID if sent by a clanker',
+    description: 'Target clanker ID to send this message to',
     required: false,
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @IsOptional()
   @IsUUID('7')
-  clankerId?: string;
+  targetClankerId?: string;
 
   @ApiProperty({
     description: 'Attachment IDs to link to this message',
@@ -141,6 +126,15 @@ export class MessageResponseDto {
     example: '550e8400-e29b-41d4-a716-446655440002',
   })
   clankerId!: string | null;
+
+  @ApiProperty({
+    description:
+      'ID of the clanker this message is directed to, null if not targeted',
+    required: false,
+    nullable: true,
+    example: '550e8400-e29b-41d4-a716-446655440003',
+  })
+  targetClankerId!: string | null;
 
   @ApiProperty({
     description: 'Display name of the sender',
